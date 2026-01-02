@@ -1,9 +1,0 @@
-/* Custom scrollbar for notifications */
-.max-h-96::-webkit-scrollbar {
-    width: 4px;
-}
-
-.max-h-96::-webkit-scrollbar-thumb {
-    background: var(--color-bg-tertiary);
-    border-radius: 4px;
-}

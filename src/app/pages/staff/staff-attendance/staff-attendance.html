@@ -1,43 +1,38 @@
-<div class="page-container fade-in">
-    <div class="page-header mb-lg">
+<div>
+    <div>
         <div>
-            <h2 class="mb-xs">Staff Attendance</h2>
-            <p class="text-secondary">Marking attendance for {{ currentDate | date:'fullDate' }}</p>
+            <h2>Staff Attendance</h2>
+            <p>Marking attendance for {{ currentDate | date:'fullDate' }}</p>
         </div>
     </div>
 
-    <div class="grid grid-cols-3 gap-md">
-        <div *ngFor="let staff of staff$ | async" class="card fade-in">
-            <div class="flex items-center gap-md mb-lg">
-                <div class="avatar bg-secondary rounded-full flex items-center justify-center"
-                    style="width: 48px; height: 48px;">
-                    <span class="material-icons text-muted">person</span>
+    <div>
+        <div *ngFor="let staff of staff$ | async">
+            <div>
+                <div>
+                    <span>person</span>
                 </div>
                 <div>
-                    <h3 class="mb-0">{{ staff.name }}</h3>
-                    <p class="text-muted text-xs uppercase tracking-wider">{{ staff.role }}</p>
+                    <h3>{{ staff.name }}</h3>
+                    <p>{{ staff.role }}</p>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-sm">
-                <button class="btn btn-outline w-full justify-between"
-                    [class.btn-success]="attendance[staff.id] === 'present'"
+            <div>
+                <button [class.btn-success]="attendance[staff.id] === 'present'"
                     (click)="markAttendance(staff.id, 'present')">
                     <span>Present</span>
-                    <span class="material-icons" style="font-size: 1.25rem;"
-                        *ngIf="attendance[staff.id] === 'present'">check_circle</span>
+                    <span *ngIf="attendance[staff.id] === 'present'">check_circle</span>
                 </button>
-                <button class="btn btn-outline w-full justify-between"
-                    [class.btn-danger]="attendance[staff.id] === 'absent'" (click)="markAttendance(staff.id, 'absent')">
+                <button [class.btn-danger]="attendance[staff.id] === 'absent'"
+                    (click)="markAttendance(staff.id, 'absent')">
                     <span>Absent</span>
-                    <span class="material-icons" style="font-size: 1.25rem;"
-                        *ngIf="attendance[staff.id] === 'absent'">cancel</span>
+                    <span *ngIf="attendance[staff.id] === 'absent'">cancel</span>
                 </button>
-                <button class="btn btn-outline w-full justify-between"
-                    [class.btn-warning]="attendance[staff.id] === 'leave'" (click)="markAttendance(staff.id, 'leave')">
+                <button [class.btn-warning]="attendance[staff.id] === 'leave'"
+                    (click)="markAttendance(staff.id, 'leave')">
                     <span>On Leave</span>
-                    <span class="material-icons" style="font-size: 1.25rem;"
-                        *ngIf="attendance[staff.id] === 'leave'">history_toggle_off</span>
+                    <span *ngIf="attendance[staff.id] === 'leave'">history_toggle_off</span>
                 </button>
             </div>
         </div>

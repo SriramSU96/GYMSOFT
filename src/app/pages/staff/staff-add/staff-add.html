@@ -1,37 +1,37 @@
-<div class="app-container flex justify-center">
-    <div class="card" style="width: 100%; max-width: 600px;">
-        <div class="flex justify-between items-center" style="margin-bottom: var(--spacing-lg);">
+<div>
+    <div>
+        <div>
             <h2>Add New Staff Member</h2>
-            <a routerLink="/staff" class="btn btn-outline btn-sm">
-                <span class="material-icons" style="font-size: 18px;">arrow_back</span>
+            <a routerLink="/staff">
+                <span>arrow_back</span>
                 Back
             </a>
         </div>
 
         <form [formGroup]="staffForm" (ngSubmit)="onSubmit()">
-            <div class="form-group">
+            <div>
                 <label>Name</label>
                 <input type="text" formControlName="name" placeholder="Full Name">
             </div>
 
-            <div class="grid grid-2 gap-md">
-                <div class="form-group">
+            <div>
+                <div>
                     <label>Role</label>
                     <input type="text" formControlName="role" placeholder="e.g., Trainer, Receptionist">
                 </div>
 
-                <div class="form-group">
+                <div>
                     <label>Phone</label>
                     <input type="tel" formControlName="phone" placeholder="Phone Number">
                 </div>
             </div>
 
-            <div class="form-group">
+            <div>
                 <label>Monthly Salary</label>
                 <input type="number" formControlName="salary" placeholder="0">
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block mt-4" [disabled]="staffForm.invalid">
+            <button type="submit" [disabled]="staffForm.invalid">
                 Add Staff Member
             </button>
         </form>

@@ -1,51 +1,48 @@
-<div class="page-container fade-in">
-    <div class="page-header mb-lg">
+<div>
+    <div>
         <div>
-            <h2 class="mb-xs">Role Management</h2>
-            <p class="text-secondary">Define permissions and control access levels across the system.</p>
+            <h2>Role Management</h2>
+            <p>Define permissions and control access levels across the system.</p>
         </div>
-        <button class="btn btn-primary">
-            <span class="material-icons">add</span>
+        <button>
+            <span>add</span>
             <span>Create New Role</span>
         </button>
     </div>
 
-    <div class="grid grid-cols-3 gap-md">
-        <div *ngFor="let role of roles$ | async" class="card fade-in">
-            <div class="flex items-center justify-between mb-md">
-                <h3 class="mb-0">{{ role.name }}</h3>
-                <span class="badge badge-info">{{ role.userCount }} Users</span>
+    <div>
+        <div *ngFor="let role of roles$ | async">
+            <div>
+                <h3>{{ role.name }}</h3>
+                <span>{{ role.userCount }} Users</span>
             </div>
 
-            <div class="flex flex-wrap gap-xs mb-lg" style="min-height: 80px;">
-                <span *ngFor="let perm of role.permissions" class="badge badge-secondary"
-                    style="font-size: 0.7rem; opacity: 0.8;">
+            <div>
+                <span *ngFor="let perm of role.permissions">
                     {{ perm }}
                 </span>
             </div>
 
-            <div class="flex items-center justify-between pt-md border-t border-muted"
-                style="border-top-style: dashed;">
-                <div class="text-xs text-muted flex items-center gap-xs">
-                    <span class="material-icons" style="font-size: 1rem;">security</span>
+            <div>
+                <div>
+                    <span>security</span>
                     <span>System Role</span>
                 </div>
-                <div class="flex gap-xs">
-                    <button class="btn btn-secondary btn-sm p-2">
-                        <span class="material-icons" style="font-size: 1.25rem;">edit</span>
+                <div>
+                    <button>
+                        <span>edit</span>
                     </button>
-                    <button class="btn btn-ghost btn-sm p-2 text-danger">
-                        <span class="material-icons" style="font-size: 1.25rem;">delete</span>
+                    <button>
+                        <span>delete</span>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Add Role Placeholder -->
-        <div class="card flex flex-col items-center justify-center border-dashed border-2 p-xl"
-            style="border-style: dashed; background: transparent; opacity: 0.6; cursor: pointer; border-color: var(--border);">
-            <span class="material-icons mb-md" style="font-size: 2.5rem;">add_moderator</span>
-            <span class="font-bold">Add Custom Role</span>
+        <div>
+            <span>add_moderator</span>
+            <span>Add Custom Role</span>
         </div>
     </div>
 </div>

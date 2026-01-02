@@ -1,112 +1,108 @@
-<div class="profit-loss-container space-y-lg">
+<div>
 
     <!-- Header & Controls -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
         <div>
-            <h2 class="text-2xl font-bold text-white mb-1">Profit & Loss Report</h2>
-            <p class="text-sm text-[var(--color-text-secondary)]">Financial overview for your gym</p>
+            <h2>Profit & Loss Report</h2>
+            <p>Financial overview for your gym</p>
         </div>
-        <div class="flex items-center gap-2">
-            <select class="form-select w-48" (change)="onMonthChange($event)">
+        <div>
+            <select (change)="onMonthChange($event)">
                 <option *ngFor="let m of months" [value]="m.value" [selected]="m.value === selectedMonth">
                     {{ m.label }}
                 </option>
             </select>
-            <button (click)="downloadPdf()" class="btn btn-secondary">
+            <button (click)="downloadPdf()">
                 ⬇ PDF
             </button>
         </div>
     </div>
 
-    <div *ngIf="isLoading$ | async" class="flex flex-col items-center justify-center py-20">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mb-4"></div>
-        <p class="text-white">Loading financial report...</p>
+    <div *ngIf="isLoading$ | async">
+        <div></div>
+        <p>Loading financial report...</p>
     </div>
 
-    <div *ngIf="error$ | async as error" class="bg-red-900/20 border border-red-500 text-red-100 p-6 rounded mb-8">
-        <h3 class="text-lg font-bold mb-2">Error Loading Report</h3>
+    <div *ngIf="error$ | async as error">
+        <h3>Error Loading Report</h3>
         <p>{{ error.message || 'Something went wrong while fetching the financial report.' }}</p>
-        <button (click)="fetchData(selectedMonth)" class="btn btn-primary mt-4">Try Again</button>
+        <button (click)="fetchData(selectedMonth)">Try Again</button>
     </div>
 
     <ng-container *ngIf="report$ | async as report">
         <!-- Key Metrics Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+        <div>
 
             <!-- Revenue -->
-            <div class="card border-l-4 border-l-[var(--color-success)]">
-                <h3 class="text-sm text-[var(--color-text-secondary)] font-medium uppercase mb-2">Total Revenue</h3>
-                <div class="text-3xl font-bold text-white">₹{{ report.revenue | number }}</div>
-                <div class="text-xs text-[var(--color-success)] mt-2">▲ 12% vs last month</div>
+            <div>
+                <h3>Total Revenue</h3>
+                <div>₹{{ report.revenue | number }}</div>
+                <div>▲ 12% vs last month</div>
             </div>
 
             <!-- Expenses -->
-            <div class="card border-l-4 border-l-[var(--color-danger)]">
-                <h3 class="text-sm text-[var(--color-text-secondary)] font-medium uppercase mb-2">Total Expenses</h3>
-                <div class="text-3xl font-bold text-white">₹{{ report.expenses | number }}</div>
-                <div class="text-xs text-[var(--color-danger)] mt-2">▼ 5% vs last month</div>
+            <div>
+                <h3>Total Expenses</h3>
+                <div>₹{{ report.expenses | number }}</div>
+                <div>▼ 5% vs last month</div>
             </div>
 
             <!-- Net Profit -->
-            <div
-                class="card border-l-4 border-l-[var(--color-accent-primary)] bg-gradient-to-br from-[var(--color-bg-secondary)] to-[rgba(220,38,38,0.1)]">
-                <h3 class="text-sm text-[var(--color-text-secondary)] font-medium uppercase mb-2">Net Profit</h3>
-                <div class="text-3xl font-bold text-[var(--color-accent-primary)]">₹{{ report.netProfit | number }}
+            <div>
+                <h3>Net Profit</h3>
+                <div>₹{{ report.netProfit | number }}
                 </div>
-                <div class="text-xs text-[var(--color-text-secondary)] mt-2">Margin: {{ (report.netProfit /
+                <div>Margin: {{ (report.netProfit /
                     report.revenue * 100) | number:'1.0-1' }}%</div>
             </div>
         </div>
 
         <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
-            <div class="card lg:col-span-2 relative h-80 flex flex-col justify-center items-center">
-                <h3 class="absolute top-4 left-4 text-sm font-medium text-[var(--color-text-muted)]">CASH FLOW TREND
+        <div>
+            <div>
+                <h3>CASH FLOW TREND
                 </h3>
 
                 <!-- CSS-only Bar Chart -->
-                <div class="w-full h-48 flex items-end justify-around px-8 gap-4">
-                    <div *ngFor="let data of report.chartData" class="flex flex-col items-center gap-2 group w-full">
-                        <div class="relative w-full h-full flex items-end justify-center">
+                <div>
+                    <div *ngFor="let data of report.chartData">
+                        <div>
                             <!-- Expense Bar -->
-                            <div class="w-3 bg-[var(--color-danger)] opacity-80 rounded-t"
-                                [style.height.%]="(data.expense / 40000) * 100"></div>
+                            <div [style.height.%]="(data.expense / 40000) * 100"></div>
                             <!-- Revenue Bar -->
-                            <div class="w-3 bg-[var(--color-success)] opacity-80 rounded-t -ml-1"
-                                [style.height.%]="(data.revenue / 40000) * 100"></div>
+                            <div [style.height.%]="(data.revenue / 40000) * 100"></div>
                         </div>
-                        <span class="text-xs text-[var(--color-text-secondary)]">{{ data.label }}</span>
+                        <span>{{ data.label }}</span>
                     </div>
                 </div>
 
                 <!-- Legend -->
-                <div class="flex gap-4 mt-4">
-                    <div class="flex items-center gap-1 text-xs text-[var(--color-text-secondary)]">
-                        <span class="w-2 h-2 rounded-full bg-[var(--color-success)]"></span> Revenue
+                <div>
+                    <div>
+                        <span></span> Revenue
                     </div>
-                    <div class="flex items-center gap-1 text-xs text-[var(--color-text-secondary)]">
-                        <span class="w-2 h-2 rounded-full bg-[var(--color-danger)]"></span> Expense
+                    <div>
+                        <span></span> Expense
                     </div>
                 </div>
 
             </div>
 
-            <div class="card h-80 flex flex-col justify-center items-center">
-                <h3 class="text-sm font-medium text-[var(--color-text-muted)] w-full text-left mb-4">EXPENSE BREAKDOWN
+            <div>
+                <h3>EXPENSE BREAKDOWN
                 </h3>
                 <!-- Pie Chart CSS Placeholder -->
-                <div
-                    class="w-32 h-32 rounded-full border-8 border-[var(--color-bg-tertiary)] border-t-[var(--color-accent-primary)] border-r-[var(--color-accent-primary)] rotate-45">
+                <div>
                 </div>
 
-                <ul class="mt-6 space-y-2 text-sm w-full">
-                    <li class="flex justify-between text-[var(--color-text-secondary)]">
+                <ul>
+                    <li>
                         <span>Rent & Utilities</span>
-                        <span class="text-white font-medium">40%</span>
+                        <span>40%</span>
                     </li>
-                    <li class="flex justify-between text-[var(--color-text-secondary)]">
+                    <li>
                         <span>Staff Salaries</span>
-                        <span class="text-white font-medium">35%</span>
+                        <span>35%</span>
                     </li>
                 </ul>
             </div>

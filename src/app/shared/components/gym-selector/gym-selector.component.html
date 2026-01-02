@@ -1,9 +1,8 @@
-<div class="relative inline-block text-left">
+<div>
     <div>
-        <button (click)="toggleDropdown()"
-            class="inline-flex justify-center w-full rounded-md border border-[var(--color-border)] px-4 py-2 bg-[var(--color-bg-tertiary)] text-sm font-medium text-white hover:bg-[var(--color-bg-secondary)] focus:outline-none">
+        <button (click)="toggleDropdown()">
             🏢 {{ selectedGym.name }}
-            <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
                     d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                     clip-rule="evenodd" />
@@ -11,16 +10,13 @@
         </button>
     </div>
 
-    <div *ngIf="isDropdownOpen"
-        class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-[var(--color-bg-secondary)] ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-        <div class="py-1">
-            <a *ngFor="let gym of gyms" (click)="selectGym(gym)"
-                class="block px-4 py-2 text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)] cursor-pointer">
-                {{ gym.name }} <span class="text-xs text-[var(--color-text-secondary)]">({{ gym.location }})</span>
+    <div *ngIf="isDropdownOpen">
+        <div>
+            <a *ngFor="let gym of gyms" (click)="selectGym(gym)">
+                {{ gym.name }} <span>({{ gym.location }})</span>
             </a>
-            <div class="border-t border-[var(--color-border)] my-1"></div>
-            <a (click)="createGym()"
-                class="block px-4 py-2 text-sm text-[var(--color-accent-primary)] hover:bg-[var(--color-bg-tertiary)] cursor-pointer font-bold">
+            <div></div>
+            <a (click)="createGym()">
                 + Add New Gym
             </a>
         </div>

@@ -1,52 +1,49 @@
-<div class="page-container fade-in">
-    <div class="page-header mb-lg">
+<div>
+    <div>
         <div>
-            <h1 class="mb-xs">Account Security</h1>
-            <p class="text-secondary">Manage your password and security preferences.</p>
+            <h1>Account Security</h1>
+            <p>Manage your password and security preferences.</p>
         </div>
     </div>
 
-    <div class="card max-w-2xl">
-        <h3 class="mb-lg">Change Password</h3>
+    <div>
+        <h3>Change Password</h3>
 
         <form [formGroup]="passwordForm" (ngSubmit)="onSubmit()">
 
-            <div class="form-group">
-                <label class="label" for="currentPassword">Current Password</label>
-                <input type="password" id="currentPassword" formControlName="currentPassword" class="input"
+            <div>
+                <label for="currentPassword">Current Password</label>
+                <input type="password" id="currentPassword" formControlName="currentPassword"
                     placeholder="Enter current password"
                     [class.error]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched">
-                <div *ngIf="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched"
-                    class="text-danger text-xs mt-1">
+                <div
+                    *ngIf="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched">
                     Current password is required
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="label" for="newPassword">New Password</label>
-                <input type="password" id="newPassword" formControlName="newPassword" class="input"
-                    placeholder="Minimum 6 characters"
+            <div>
+                <label for="newPassword">New Password</label>
+                <input type="password" id="newPassword" formControlName="newPassword" placeholder="Minimum 6 characters"
                     [class.error]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
-                <div *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched"
-                    class="text-danger text-xs mt-1">
+                <div *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
                     New password is required (min 6 chars)
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="label" for="confirmPassword">Confirm New Password</label>
-                <input type="password" id="confirmPassword" formControlName="confirmPassword" class="input"
+            <div>
+                <label for="confirmPassword">Confirm New Password</label>
+                <input type="password" id="confirmPassword" formControlName="confirmPassword"
                     placeholder="Repeat your new password"
                     [class.error]="passwordForm.errors?.['mismatch'] && passwordForm.get('confirmPassword')?.touched">
-                <div *ngIf="passwordForm.errors?.['mismatch'] && passwordForm.get('confirmPassword')?.touched"
-                    class="text-danger text-xs mt-1">
+                <div *ngIf="passwordForm.errors?.['mismatch'] && passwordForm.get('confirmPassword')?.touched">
                     Passwords do not match
                 </div>
             </div>
 
-            <div class="flex justify-end gap-md mt-lg">
-                <button type="button" class="btn btn-secondary">Cancel</button>
-                <button type="submit" class="btn btn-primary" [disabled]="passwordForm.invalid || isSubmitting">
+            <div>
+                <button type="button">Cancel</button>
+                <button type="submit" [disabled]="passwordForm.invalid || isSubmitting">
                     {{ isSubmitting ? 'Updating...' : 'Update Password' }}
                 </button>
             </div>
@@ -54,10 +51,10 @@
         </form>
 
         <!-- Success/Error Messages -->
-        <div *ngIf="message" class="mt-md p-md rounded-md" [class.badge-success]="messageType === 'success'"
+        <div *ngIf="message" [class.badge-success]="messageType === 'success'"
             [class.badge-danger]="messageType === 'error'">
-            <div class="flex items-center gap-sm">
-                <span class="material-icons" style="font-size: 1.25rem;">
+            <div>
+                <span>
                     {{ messageType === 'success' ? 'check_circle' : 'error' }}
                 </span>
                 <span>{{ message }}</span>
