@@ -1,0 +1,83 @@
+<div>
+    <div>
+        <div>
+            <h2>My Workout Plan</h2>
+            <p>{{ workout ? 'Your assigned training routine' : 'No active plan found' }}</p>
+        </div>
+        <div *ngIf="workout">
+            <span>{{ workout.level }}</span>
+            <div>{{ workout.goal }}</div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading">
+        <div>Loading your plan...</div>
+    </div>
+
+    <!-- No Plan State -->
+    <div *ngIf="!isLoading && !workout">
+        <span>fitness_center</span>
+        <h3>No Workout Assigned</h3>
+        <p>Ask your trainer to create a personalized plan for you.</p>
+    </div>
+
+    <!-- Workout View -->
+    <div *ngIf="workout">
+
+        <!-- Progress Bar -->
+        <div>
+            <div>
+                <span>Daily Progress</span>
+                <span>{{ completionPercentage }}%</span>
+            </div>
+            <div>
+                <div></div>
+            </div>
+        </div>
+
+        <div>
+            <div *ngFor="let exercise of workout.exercises; let i = index">
+
+                <div>
+                    <!-- Checkbox -->
+                    <div>
+                        <button (click)="toggleComplete(i)">
+                            <span *ngIf="exerciseProgress[i]">check</span>
+                        </button>
+                    </div>
+
+                    <!-- Details -->
+                    <div>
+                        <h3>{{ exercise.name }}</h3>
+                        <div>
+                            <div>
+                                <span>Sets</span>
+                                <span>{{ exercise.sets }}</span>
+                            </div>
+                            <div>
+                                <span>Reps</span>
+                                <span>{{ exercise.reps }}</span>
+                            </div>
+                            <div>
+                                <span>Rest</span>
+                                <span>{{ exercise.restTime }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Indicator (Optional Icon) -->
+                    <div>
+                        <span>fitness_center</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completion Message -->
+        <div *ngIf="completionPercentage === 100">
+            <h3>Great job! Workout Complete 🏆</h3>
+            <p>You crushed it today. Rest up and verify your nutrition.</p>
+        </div>
+    </div>
+</div>

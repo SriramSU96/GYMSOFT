@@ -1,0 +1,72 @@
+<div>
+    <div>
+        <div>
+            <h2>Assign Plans</h2>
+            <p>Distribute workout and diet plans to members.</p>
+        </div>
+    </div>
+
+    <div>
+        <form [formGroup]="assignForm" (ngSubmit)="onSubmit()">
+
+            <!-- Member Selection -->
+            <div>
+                <label for="member">Select Member</label>
+                <select id="member" formControlName="memberId">
+                    <option value="" disabled>-- Choose a Member --</option>
+                    <option *ngFor="let m of members" [value]="m._id || m.id">{{ m.name }} ({{ m.memberId || m.id }})
+                    </option>
+                </select>
+            </div>
+
+            <div>
+                <!-- Workout Selection -->
+                <div>
+                    <label for="workout">Assign Workout</label>
+                    <select id="workout" formControlName="workoutId">
+                        <option value="" disabled>-- Select Workout --</option>
+                        <option *ngFor="let w of workouts" [value]="w._id">
+                            {{ w.title }} ({{ w.level }})
+                        </option>
+                    </select>
+                    <p *ngIf="assignForm.get('workoutId')?.value">
+                        Target Goal: {{ getWorkoutGoal(assignForm.get('workoutId')?.value) }}
+                    </p>
+                </div>
+
+                <!-- Diet Selection -->
+                <div>
+                    <label for="diet">Assign Diet Plan</label>
+                    <select id="diet" formControlName="dietPlanId">
+                        <option value="" disabled>-- Select Diet Plan --</option>
+                        <option *ngFor="let d of diets" [value]="d._id">
+                            {{ d.title }} (~{{ d.calories }} kcal)
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <div>
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate" formControlName="startDate">
+                </div>
+                <div>
+                    <label for="endDate">End Date (Optional)</label>
+                    <input type="date" id="endDate" formControlName="endDate">
+                </div>
+            </div>
+
+            <!-- Validation/Status Messages -->
+            <div *ngIf="successMessage">
+                <span>check_circle</span>
+                {{ successMessage }}
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" [disabled]="assignForm.invalid || isLoading">
+                {{ isLoading ? 'Assigning...' : 'Assign Plans to Member' }}
+            </button>
+        </form>
+    </div>
+</div>

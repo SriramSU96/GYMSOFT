@@ -1,0 +1,44 @@
+<div class="page-container fade-in">
+    <div class="page-header mb-lg">
+        <div>
+            <h2 class="mb-xs">Weekly Schedule</h2>
+            <p class="text-secondary">{{ dateRangeLabel }}</p>
+        </div>
+        <!-- Could add Prev/Next week buttons here -->
+    </div>
+
+    <div class="overflow-x-auto pb-md">
+        <div class="min-w-[800px] grid grid-cols-7 gap-sm">
+
+            <!-- Headers -->
+            <div *ngFor="let date of weekDates; let i = index"
+                class="text-center pb-sm border-b border-[var(--color-border)]">
+                <div class="text-sm text-accent font-bold uppercase">{{ weekDays[i] }}</div>
+                <div class="text-xs text-muted">{{ date | date:'d MMM' }}</div>
+            </div>
+
+            <!-- Calendar Columns -->
+            <div *ngFor="let date of weekDates" class="min-h-[400px] bg-[var(--bg-secondary)]/30 rounded-md p-xs">
+
+                <div *ngFor="let c of calendarData[date.toISOString().split('T')[0]]"
+                    class="bg-[var(--bg-app)] p-sm rounded border border-[var(--color-border)] mb-sm hover:border-[var(--accent-primary)] transition-colors cursor-pointer group">
+
+                    <div class="text-xs text-accent font-bold mb-1">{{ c.startTime }}</div>
+                    <div class="font-bold text-sm mb-1 truncate">{{ c.title }}</div>
+                    <div class="text-xs text-muted flex justify-between">
+                        <span>{{ c.duration }} min</span>
+                        <span [class.text-danger]="c.bookingsCount >= c.capacity">
+                            {{ c.bookingsCount }}/{{ c.capacity }}
+                        </span>
+                    </div>
+                </div>
+
+                <div *ngIf="!calendarData[date.toISOString().split('T')[0]]?.length"
+                    class="text-center text-xs text-muted py-lg opacity-50">
+                    No classes
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

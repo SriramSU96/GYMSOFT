@@ -1,0 +1,91 @@
+<div class="page-container fade-in">
+    <div class="page-header mb-lg">
+        <div>
+            <h2 class="mb-xs">Sales Report</h2>
+            <p class="text-secondary">Track daily sales and revenue.</p>
+        </div>
+
+        <form [formGroup]="filterForm" (ngSubmit)="loadReport()" class="flex items-end gap-sm">
+            <div class="form-group mb-0">
+                <input type="date" formControlName="date"
+                    class="py-sm bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded text-white">
+            </div>
+            <button type="submit" class="btn btn-primary py-sm">
+                <span class="material-icons text-sm">search</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center p-xl">
+        <div class="animate-pulse text-accent">Loading report...</div>
+    </div>
+
+    <div *ngIf="!isLoading && salesData" class="grid gap-lg">
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+            <div class="card bg-gradient-to-br from-[var(--bg-secondary)] to-[var(--bg-app)]">
+                <div class="text-secondary uppercase text-xs tracking-wider mb-sm">Total Revenue</div>
+                <div class="text-2xl font-bold text-success font-mono">
+                    ${{ salesData.totalRevenue | number:'1.2-2' }}
+                </div>
+            </div>
+            <div class="card bg-gradient-to-br from-[var(--bg-secondary)] to-[var(--bg-app)]">
+                <div class="text-secondary uppercase text-xs tracking-wider mb-sm">Total Transactions</div>
+                <div class="text-2xl font-bold text-white font-mono">
+                    {{ salesData.totalTransactions }}
+                </div>
+            </div>
+            <div class="card bg-gradient-to-br from-[var(--bg-secondary)] to-[var(--bg-app)]">
+                <div class="text-secondary uppercase text-xs tracking-wider mb-sm">Items Sold</div>
+                <div class="text-2xl font-bold text-accent font-mono">
+                    {{ salesData.totalItemsSold }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="card">
+            <h3 class="border-b border-[var(--color-border)] pb-md mb-md">Transactions</h3>
+
+            <div *ngIf="salesData.sales?.length === 0" class="text-center text-muted py-lg">
+                No transactions found for this date.
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse" *ngIf="salesData.sales?.length > 0">
+                    <thead>
+                        <tr class="text-xs text-muted uppercase border-b border-[var(--color-border)]">
+                            <th class="p-sm">Time</th>
+                            <th class="p-sm">Customer</th>
+                            <th class="p-sm">Payment</th>
+                            <th class="p-sm">Items</th>
+                            <th class="p-sm text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let sale of salesData.sales"
+                            class="border-b border-[var(--color-border)] hover:bg-[var(--bg-app)]">
+                            <td class="p-sm text-sm font-mono">{{ sale.date | date:'shortTime' }}</td>
+                            <td class="p-sm text-sm">{{ sale.customerName || 'Walk-in' }}</td>
+                            <td class="p-sm text-sm">
+                                <span class="badge badge-outline text-xs">{{ sale.paymentMethod }}</span>
+                            </td>
+                            <td class="p-sm text-sm">
+                                <div class="flex flex-col gap-xs">
+                                    <span *ngFor="let item of sale.items" class="text-xs text-secondary">
+                                        {{ item.quantity }}x {{ item.productName }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="p-sm text-sm text-right font-mono font-bold text-success">
+                                ${{ sale.totalAmount | number:'1.2-2' }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

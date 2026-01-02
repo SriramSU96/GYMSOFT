@@ -14,7 +14,7 @@ export class MemberService {
     private apiUrl = `${environment.apiUrl}/members`;
 
     registerMember(member: Partial<Member>): Observable<Member> {
-        return this.http.post<Member>(`${this.apiUrl}/`, member);
+        return this.http.post<Member>(`${this.apiUrl}`, member);
     }
 
     getMember(id: string): Observable<Member> {
@@ -26,7 +26,7 @@ export class MemberService {
         if (keyword) params = params.set('keyword', keyword);
         params = params.set('pageNumber', pageNumber);
 
-        return this.http.get<{ members: Member[], total: number }>(`${this.apiUrl}/`, { params }).pipe(
+        return this.http.get<{ members: Member[], total: number }>(`${this.apiUrl}`, { params }).pipe(
             map(response => response.members)
         );
     }

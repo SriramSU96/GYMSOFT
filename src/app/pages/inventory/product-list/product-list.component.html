@@ -1,0 +1,94 @@
+<div class="page-container fade-in">
+    <div class="page-header mb-lg">
+        <div>
+            <h2 class="mb-xs">Inventory Management</h2>
+            <p class="text-secondary">Track stock levels and manage products.</p>
+        </div>
+        <button class="btn btn-primary" (click)="openModal()">
+            <span class="material-icons text-sm">add</span> Add New Product
+        </button>
+    </div>
+
+    <!-- Inventory Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
+        <div *ngFor="let product of products"
+            class="card relative group hover:border-[var(--accent-primary)] transition-colors">
+
+            <button
+                class="absolute top-2 right-2 text-[var(--color-text-secondary)] hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                (click)="openModal(product)">
+                <span class="material-icons text-sm">edit</span>
+            </button>
+
+            <div class="flex justify-between items-start mb-sm">
+                <span class="badge badge-outline text-xs">{{ product.category }}</span>
+                <span *ngIf="product.stock < 5" class="badge badge-danger text-xs animate-pulse">Low Stock</span>
+            </div>
+
+            <h3 class="text-lg font-bold mb-1 truncate">{{ product.name }}</h3>
+
+            <div class="flex justify-between items-end mt-md">
+                <div>
+                    <div class="text-xs text-muted uppercase tracking-wider">Price</div>
+                    <div class="text-xl text-white font-mono">${{ product.price }}</div>
+                </div>
+                <div class="text-right">
+                    <div class="text-xs text-muted uppercase tracking-wider">In Stock</div>
+                    <div class="text-xl font-mono" [class.text-danger]="product.stock < 5"
+                        [class.text-success]="product.stock >= 5">
+                        {{ product.stock }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && products.length === 0" class="card text-center p-xl mt-lg">
+        <span class="material-icons text-muted text-4xl mb-md">inventory_2</span>
+        <h3>No Products Found</h3>
+        <p>Add products to start tracking your inventory.</p>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div *ngIf="showModal"
+        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm fade-in">
+        <div class="card w-full max-w-md m-md" (click)="$event.stopPropagation()">
+            <h3 class="mb-lg border-b border-[var(--color-border)] pb-sm">
+                {{ isEditing ? 'Edit Product' : 'New Product' }}
+            </h3>
+
+            <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                    <label>Product Name</label>
+                    <input type="text" formControlName="name" placeholder="e.g. Whey Protein">
+                </div>
+
+                <div class="form-group">
+                    <label>Category</label>
+                    <select formControlName="category">
+                        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-md">
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input type="number" formControlName="price" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Qty</label>
+                        <input type="number" formControlName="stock" min="0">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-md mt-lg">
+                    <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid || isLoading">
+                        {{ isLoading ? 'Saving...' : 'Save Product' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

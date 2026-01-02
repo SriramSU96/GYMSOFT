@@ -1,0 +1,76 @@
+<div class="page-container fade-in">
+    <div class="page-header mb-lg">
+        <div>
+            <h2 class="mb-xs">Available Classes</h2>
+            <p class="text-secondary">Join a group class to stay motivated.</p>
+        </div>
+        <!-- Filter could go here -->
+    </div>
+
+    <!-- Messages -->
+    <div *ngIf="successMessage"
+        class="mb-lg p-md bg-[var(--success-dim)] text-[var(--success)] rounded-md flex items-center gap-sm animate-bounce-in">
+        <span class="material-icons">check_circle</span>
+        {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage"
+        class="mb-lg p-md bg-[var(--danger-dim)] text-[var(--danger)] rounded-md flex items-center gap-sm animate-bounce-in">
+        <span class="material-icons">error</span>
+        {{ errorMessage }}
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="flex justify-center p-xl">
+        <div class="animate-pulse text-accent">Loading classes...</div>
+    </div>
+
+    <!-- Class Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+        <div *ngFor="let c of classes"
+            class="card relative overflow-hidden group hover:border-[var(--accent-primary)] transition-colors">
+            <!-- Full Overlay -->
+            <div *ngIf="c.bookingsCount >= c.capacity"
+                class="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-2 py-1 z-10">
+                FULL
+            </div>
+
+            <div class="flex justify-between items-start mb-md">
+                <div>
+                    <h3 class="text-xl font-bold mb-1">{{ c.title }}</h3>
+                    <div class="text-sm text-muted flex items-center gap-1">
+                        <span class="material-icons text-sm">schedule</span>
+                        {{ c.startTime }} ({{ c.duration }} min)
+                    </div>
+                    <div class="text-sm text-accent mt-1">
+                        {{ c.scheduleDate | date:'mediumDate' }}
+                    </div>
+                </div>
+                <div class="text-center bg-[var(--bg-app)] p-sm rounded border border-[var(--color-border)]">
+                    <div class="text-xs text-muted uppercase">Spots</div>
+                    <div class="font-mono font-bold" [class.text-danger]="c.capacity - c.bookingsCount < 5">
+                        {{ c.capacity - c.bookingsCount }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between mt-auto pt-md border-t border-[var(--color-border)]">
+                <div class="text-xs text-muted">
+                    <span class="block">Trainer</span>
+                    <span class="text-white">Active Trainer</span>
+                    <!-- Replace with actual trainer name if populated -->
+                </div>
+
+                <button class="btn btn-primary btn-sm" (click)="bookClass(c)"
+                    [disabled]="c.bookingsCount >= c.capacity">
+                    {{ c.bookingsCount >= c.capacity ? 'Class Full' : 'Book Now' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && classes.length === 0" class="text-center py-xl text-muted">
+        <span class="material-icons text-4xl mb-md">event_busy</span>
+        <p>No classes scheduled at the moment.</p>
+    </div>
+</div>

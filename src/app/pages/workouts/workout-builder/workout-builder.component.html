@@ -1,0 +1,104 @@
+<div>
+    <div>
+        <div>
+            <h2>{{ isEditing ? 'Edit Workout' : 'Create New Workout' }}</h2>
+            <p>Design a workout plan by adding exercises and details.</p>
+        </div>
+        <a routerLink="/workouts">Back to List</a>
+    </div>
+
+    <div>
+        <!-- Main Form -->
+        <div>
+            <form [formGroup]="workoutForm" (ngSubmit)="onSubmit()">
+
+                <!-- Basic Details -->
+                <div>
+                    <h3>Workout Details</h3>
+                    <div>
+                        <div>
+                            <label for="title">Workout Title</label>
+                            <input id="title" type="text" formControlName="title"
+                                placeholder="e.g. Full Body Destruction">
+                        </div>
+                        <div>
+                            <label for="goal">Goal</label>
+                            <select id="goal" formControlName="goal">
+                                <option *ngFor="let g of goals" [value]="g">{{ g }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="level">Difficulty Level</label>
+                            <select id="level" formControlName="level">
+                                <option *ngFor="let l of levels" [value]="l">{{ l }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exercises List -->
+                <div>
+                    <div>
+                        <h3>Exercises</h3>
+                        <button type="button" (click)="addExercise()">
+                            <span>add</span> Add Exercise
+                        </button>
+                    </div>
+
+                    <div formArrayName="exercises">
+                        <div *ngFor="let exercise of exercises.controls; let i=index" [formGroupName]="i">
+
+                            <!-- Remove Button -->
+                            <button type="button" (click)="removeExercise(i)">
+                                <span>close</span>
+                            </button>
+
+                            <div>
+                                <div>
+                                    <label *ngIf="i===0">Exercise Name</label>
+                                    <input type="text" formControlName="name" placeholder="Name">
+                                </div>
+                                <div>
+                                    <label *ngIf="i===0">Sets</label>
+                                    <input type="number" formControlName="sets" placeholder="3">
+                                </div>
+                                <div>
+                                    <label *ngIf="i===0">Reps</label>
+                                    <input type="text" formControlName="reps" placeholder="12 or 10-12">
+                                </div>
+                                <div>
+                                    <label *ngIf="i===0">Rest</label>
+                                    <input type="text" formControlName="restTime" placeholder="60s">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="exercises.length === 0">
+                        No exercises added yet. Click "Add Exercise" to start.
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div>
+                    <button type="button" routerLink="/workouts">Cancel</button>
+                    <button type="submit" [disabled]="workoutForm.invalid || isLoading">
+                        {{ isLoading ? 'Saving...' : (isEditing ? 'Update Workout' : 'Create Workout') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sidebar / Tips -->
+        <div>
+            <div>
+                <h4>Builder Tips</h4>
+                <ul>
+                    <li>Start with compound movements (Squats, Bench, Deadlift).</li>
+                    <li>Adjust sets and reps based on the goal (Strength: 1-5, Hypertrophy: 8-12).</li>
+                    <li>Ensure rest times are adequate for recovery.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,8 @@
 
 export interface Member {
     id: string;
+    _id?: string; // MongoDB alias
+    memberId?: string; // Custom ID alias
     name: string;
     email: string;
     phone: string;

@@ -28,6 +28,23 @@ import { AuditLog } from './pages/security/audit-log/audit-log';
 import { RoleManagement } from './pages/security/role-management/role-management';
 import { SecurityComponent } from './pages/settings/security/security.component';
 
+// Workouts & Diets
+import { WorkoutBuilder } from './pages/workouts/workout-builder/workout-builder.component';
+import { DietBuilder } from './pages/workouts/diet-builder/diet-builder.component';
+import { PlanAssignment } from './pages/workouts/plan-assignment/plan-assignment.component';
+import { MyWorkout } from './pages/members/my-workout/my-workout.component';
+import { MyDiet } from './pages/members/my-diet/my-diet.component';
+
+// Inventory & POS
+import { ProductList } from './pages/inventory/product-list/product-list.component';
+import { PosTerminal } from './pages/inventory/pos-terminal/pos-terminal.component';
+import { SalesReport } from './pages/inventory/sales-report/sales-report.component';
+
+// Classes
+import { ClassList } from './pages/classes/class-list/class-list.component';
+import { ClassCalendar } from './pages/classes/class-calendar/class-calendar.component';
+import { MyBookings } from './pages/classes/my-bookings/my-bookings.component';
+
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -85,7 +102,26 @@ export const routes: Routes = [
             { path: 'security/roles', component: RoleManagement },
 
             // User Settings
-            { path: 'settings/security', component: SecurityComponent }
+            { path: 'settings/security', component: SecurityComponent },
+
+            // Workouts & Diets
+            { path: 'workouts/builder', component: WorkoutBuilder },
+            { path: 'workouts/builder/:id', component: WorkoutBuilder },
+            { path: 'diets/builder', component: DietBuilder },
+            { path: 'diets/builder/:id', component: DietBuilder },
+            { path: 'plans/assign', component: PlanAssignment },
+            { path: 'my-workout', component: MyWorkout },
+            { path: 'my-diet', component: MyDiet },
+
+            // Inventory & POS
+            { path: 'inventory/products', component: ProductList },
+            { path: 'inventory/pos', component: PosTerminal },
+            { path: 'inventory/sales', component: SalesReport },
+
+            // Classes
+            { path: 'classes/list', component: ClassList },
+            { path: 'classes/calendar', component: ClassCalendar },
+            { path: 'my-bookings', component: MyBookings }
         ]
     },
     { path: '**', redirectTo: '' }

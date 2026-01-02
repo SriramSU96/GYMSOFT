@@ -44,4 +44,17 @@ export class AuthService {
     isLoggedIn(): boolean {
         return !!this.getToken();
     }
+
+    getCurrentUser(): User | null {
+        const userStr = localStorage.getItem('user'); // Assuming user object is stored in localStorage
+        if (userStr) {
+            try {
+                return JSON.parse(userStr);
+            } catch (e) {
+                console.error('Error parsing user from localStorage', e);
+                return null;
+            }
+        }
+        return null;
+    }
 }

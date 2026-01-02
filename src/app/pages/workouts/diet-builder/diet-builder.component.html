@@ -1,0 +1,120 @@
+<div>
+    <div>
+        <div>
+            <h2>{{ isEditing ? 'Edit Diet Plan' : 'Create New Diet Plan' }}</h2>
+            <p>Create a nutrition plan with meals and macros.</p>
+        </div>
+        <a routerLink="/diets">Back to List</a>
+    </div>
+
+    <div>
+        <!-- Main Form -->
+        <div>
+            <form [formGroup]="dietForm" (ngSubmit)="onSubmit()">
+
+                <!-- Basic Details -->
+                <div>
+                    <h3>Plan Overview</h3>
+                    <div>
+                        <div>
+                            <label for="title">Plan Title</label>
+                            <input id="title" type="text" formControlName="title" placeholder="e.g. High Protein Bulk">
+                        </div>
+                        <div>
+                            <label for="calories">Daily Calories Target</label>
+                            <input id="calories" type="number" formControlName="calories" placeholder="2500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Meals List -->
+                <div>
+                    <div>
+                        <h3>Meals</h3>
+                        <button type="button" (click)="addMeal()">
+                            <span>restaurant</span> Add Meal
+                        </button>
+                    </div>
+
+                    <div formArrayName="meals">
+                        <div *ngFor="let meal of meals.controls; let i=index" [formGroupName]="i">
+
+                            <!-- Remove Button -->
+                            <button type="button" (click)="removeMeal(i)">
+                                <span>close</span>
+                            </button>
+
+                            <div>
+                                <div>
+                                    <div>
+                                        <label>Time / Meal Type</label>
+                                        <input type="text" formControlName="time" placeholder="Breakfast / 8:00 AM">
+                                    </div>
+                                    <div>
+                                        <label>Foods</label>
+                                        <input type="text" formControlName="foodItems" placeholder="Oats, Eggs, Apple">
+                                    </div>
+                                </div>
+
+                                <!-- Macros Inline -->
+                                <div>
+                                    <div>
+                                        <label>Protein
+                                            (g)</label>
+                                        <input type="number" formControlName="protein">
+                                    </div>
+                                    <div>
+                                        <label>Carbs
+                                            (g)</label>
+                                        <input type="number" formControlName="carbs">
+                                    </div>
+                                    <div>
+                                        <label>Fats
+                                            (g)</label>
+                                        <input type="number" formControlName="fats">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="meals.length === 0">
+                        No meals added. Click "Add Meal" to start planning.
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div>
+                    <button type="button" routerLink="/diets">Cancel</button>
+                    <button type="submit" [disabled]="dietForm.invalid || isLoading">
+                        {{ isLoading ? 'Saving...' : (isEditing ? 'Update Plan' : 'Create Plan') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sidebar / Macros Quick View -->
+        <div>
+            <div>
+                <h4>Macro Guide</h4>
+                <div>
+                    <div>
+                        <span>Protein</span>
+                        <span>4 cal/g</span>
+                    </div>
+                    <div>
+                        <span>Carbs</span>
+                        <span>4 cal/g</span>
+                    </div>
+                    <div>
+                        <span>Fats</span>
+                        <span>9 cal/g</span>
+                    </div>
+                    <div>
+                        <p>Use the macro inputs to estimate total calories.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
