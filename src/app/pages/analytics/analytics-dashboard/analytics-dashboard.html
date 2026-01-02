@@ -1,25 +1,25 @@
-<div class="page-container">
-    <div class="page-header">
+<div>
+    <div>
         <h2>Analytics Dashboard</h2>
     </div>
 
-    <div *ngIf="analytics$ | async as analytics" class="analytics-grid">
-        <div class="metric-card">
+    <div *ngIf="analytics$ | async as analytics">
+        <div>
             <h3>Member Retention Rate</h3>
-            <p class="value">{{ analytics.retentionRate }}%</p>
+            <p>{{ analytics.retentionRate }}%</p>
         </div>
 
-        <div class="metric-card">
+        <div>
             <h3>Peak Hours</h3>
-            <p class="value">{{ analytics.peakHours }}</p>
+            <p>{{ analytics.peakHours }}</p>
         </div>
 
-        <div class="metric-card">
+        <div>
             <h3>Avg. Session Duration</h3>
-            <p class="value">{{ analytics.avgSessionDuration }} min</p>
+            <p>{{ analytics.avgSessionDuration }} min</p>
         </div>
 
-        <div class="chart-placeholder">
+        <div>
             <p>📊 Charts coming soon (integrate chart.js or ng2-charts)</p>
         </div>
     </div>

@@ -1,92 +1,87 @@
-<div *ngIf="isLoading$ | async" class="loading-state">
+<div *ngIf="isLoading$ | async">
     <p>Loading your dashboard...</p>
 </div>
 
 <ng-container *ngIf="member$ | async as member">
-    <div class="dashboard-container grid grid-3 gap-lg" [class.opacity-50]="(isLoading$ | async)">
+    <div>
 
         <!-- Profile Card -->
-        <div class="card profile-card">
-            <div class="avatar-ring">
-                <div class="avatar">👤</div>
+        <div>
+            <div>
+                <div>👤</div>
             </div>
-            <h2 class="text-xl mb-1">{{ member.name }}</h2>
-            <p class="text-sm text-secondary mb-4">{{ member.email }}</p>
+            <h2>{{ member.name }}</h2>
+            <p>{{ member.email }}</p>
 
-            <div class="badge mb-4" [ngClass]="{
-            'badge-success': member.membershipStatus === 'active',
-            'badge-danger': member.membershipStatus === 'expired',
-            'badge-warning': member.membershipStatus === 'pending'
-        }">{{ member.membershipStatus | uppercase }}</div>
+            <div>{{ member.membershipStatus | uppercase }}</div>
 
-            <div class="profile-details">
+            <div>
                 <div>
-                    <span class="detail-label">Phone</span>
-                    <span class="detail-value">{{ member.phone }}</span>
+                    <span>Phone</span>
+                    <span>{{ member.phone }}</span>
                 </div>
                 <div>
-                    <span class="detail-label">Expiry</span>
-                    <span class="detail-value">{{ member.membershipExpiry || 'N/A' }}</span>
+                    <span>Expiry</span>
+                    <span>{{ member.membershipExpiry || 'N/A' }}</span>
                 </div>
             </div>
 
-            <button (click)="onQrCheckIn()" class="btn btn-primary btn-block mt-4">
-                <span class="material-icons" style="font-size: 18px;">qr_code_scanner</span> QR Check-in
+            <button (click)="onQrCheckIn()">
+                <span>qr_code_scanner</span> QR Check-in
             </button>
         </div>
 
         <!-- Stats & Progress -->
-        <div class="col-span-2 grid gap-lg" style="grid-column: span 2;">
+        <div>
 
             <!-- Progress Row -->
-            <div class="grid grid-4 gap-md" *ngIf="progress$ | async as progressRecords">
-                <div class="card progress-stat">
-                    <span class="stat-val-lg text-accent">{{ progressRecords[0]?.weight || '--' }} kg</span>
-                    <span class="stat-label-sm">Current Weight</span>
+            <div *ngIf="progress$ | async as progressRecords">
+                <div>
+                    <span>{{ progressRecords[0]?.weight || '--' }} kg</span>
+                    <span>Current Weight</span>
                 </div>
-                <div class="card progress-stat">
-                    <span class="stat-val-lg">{{ progressRecords[0]?.bmi || '--' }}</span>
-                    <span class="stat-label-sm">BMI</span>
+                <div>
+                    <span>{{ progressRecords[0]?.bmi || '--' }}</span>
+                    <span>BMI</span>
                 </div>
-                <div class="card progress-stat">
-                    <span class="stat-val-lg">{{ (attendance$ | async)?.length || 0 }} 🔥</span>
-                    <span class="stat-label-sm">Total Check-ins</span>
+                <div>
+                    <span>{{ (attendance$ | async)?.length || 0 }} 🔥</span>
+                    <span>Total Check-ins</span>
                 </div>
-                <div class="card progress-stat" *ngIf="achievements$ | async as achievementsList">
-                    <span class="stat-val-lg">{{ achievementsList.length }}</span>
-                    <span class="stat-label-sm">Achievements</span>
+                <div *ngIf="achievements$ | async as achievementsList">
+                    <span>{{ achievementsList.length }}</span>
+                    <span>Achievements</span>
                 </div>
             </div>
 
             <!-- Attendance & Achievements Row -->
-            <div class="grid grid-2 gap-lg">
+            <div>
 
                 <!-- Recent Attendance -->
-                <div class="card">
+                <div>
                     <h3>Recent Attendance</h3>
-                    <ul class="attendance-list" *ngIf="attendance$ | async as records; else noAttendance">
-                        <li *ngFor="let record of records.slice(0, 5)" class="attendance-item">
-                            <span class="text-secondary">{{ record.date | date:'mediumDate' }}</span>
-                            <span class="font-mono">{{ record.checkInTime }}</span>
-                            <span class="badge badge-success">Present</span>
+                    <ul *ngIf="attendance$ | async as records; else noAttendance">
+                        <li *ngFor="let record of records.slice(0, 5)">
+                            <span>{{ record.date | date:'mediumDate' }}</span>
+                            <span>{{ record.checkInTime }}</span>
+                            <span>Present</span>
                         </li>
-                        <li *ngIf="records.length === 0" class="text-muted text-sm">No attendance records found.</li>
+                        <li *ngIf="records.length === 0">No attendance records found.</li>
                     </ul>
                     <ng-template #noAttendance>
-                        <p class="text-muted text-sm">Loading logs...</p>
+                        <p>Loading logs...</p>
                     </ng-template>
                 </div>
 
                 <!-- Achievements -->
-                <div class="card">
+                <div>
                     <h3>Achievements</h3>
-                    <div class="achievement-grid" *ngIf="achievements$ | async as achievements">
-                        <div *ngFor="let badger of achievements" class="achievement-badge">
-                            <span class="badge-emoji">🏆</span>
-                            <span class="badge-title">{{ badger.title }}</span>
+                    <div *ngIf="achievements$ | async as achievements">
+                        <div *ngFor="let badger of achievements">
+                            <span>🏆</span>
+                            <span>{{ badger.title }}</span>
                         </div>
-                        <div *ngIf="achievements.length === 0" class="text-center text-muted text-xs"
-                            style="grid-column: span 3; padding: 1rem;">
+                        <div *ngIf="achievements.length === 0">
                             No achievements yet. Keep grinding!
                         </div>
                     </div>

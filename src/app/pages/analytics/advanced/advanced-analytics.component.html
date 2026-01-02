@@ -1,62 +1,56 @@
-<div class="analytics-container">
-    <div class="header-section">
+<div>
+    <div>
         <h2>Advanced Analytics</h2>
-        <div class="filter-controls">
-            <button class="filter-btn" [class.active]="selectedFilter === '7days'" (click)="onFilterChange('7days')">7
+        <div>
+            <button (click)="onFilterChange('7days')">7
                 Days</button>
-            <button class="filter-btn" [class.active]="selectedFilter === '30days'"
-                (click)="onFilterChange('30days')">30 Days</button>
-            <button class="filter-btn" [class.active]="selectedFilter === 'year'"
-                (click)="onFilterChange('year')">Year</button>
+            <button (click)="onFilterChange('30days')">30 Days</button>
+            <button (click)="onFilterChange('year')">Year</button>
         </div>
     </div>
 
     <!-- KPIs -->
-    <div *ngIf="isLoading$ | async" class="loading-state">
+    <div *ngIf="isLoading$ | async">
         <p>Loading analytics...</p>
     </div>
 
-    <div *ngIf="error$ | async as error" class="error-state">
+    <div *ngIf="error$ | async as error">
         <p>Error loading analytics: {{ error.message || 'Unknown error' }}</p>
     </div>
 
-    <div *ngIf="kpis$ | async as kpis" class="kpi-grid">
-        <div *ngFor="let kpi of kpis" class="card kpi-card">
-            <p class="kpi-label">{{ kpi.label }}</p>
-            <div class="kpi-content">
-                <span class="kpi-value">{{ kpi.value }}</span>
-                <span class="trend-indicator" [ngClass]="{
-                    'trend-success': kpi.trend === 'up' || kpi.trend === 'down-good',
-                    'trend-danger': kpi.trend === 'down'
-                }">
+    <div *ngIf="kpis$ | async as kpis">
+        <div *ngFor="let kpi of kpis">
+            <p>{{ kpi.label }}</p>
+            <div>
+                <span>{{ kpi.value }}</span>
+                <span>
                     {{ kpi.change }}
                 </span>
             </div>
         </div>
     </div>
 
-    <!-- Charts Grid -->
-    <div class="charts-grid">
+ 
+    <div>
         <!-- Member Growth Chart Placeholder -->
-        <div class="card chart-card">
-            <h3 class="chart-title">MEMBER ACQUISITION</h3>
-            <div class="chart-placeholder-bar">
+        <div>
+            <h3>MEMBER ACQUISITION</h3>
+            <div>
                 <!-- Mock bars -->
-                <div class="bar" style="height: 40%; opacity: 0.5;"></div>
-                <div class="bar" style="height: 60%; opacity: 0.6;"></div>
-                <div class="bar" style="height: 55%; opacity: 0.55;"></div>
-                <div class="bar" style="height: 75%; opacity: 0.75;"></div>
-                <div class="bar" style="height: 90%; opacity: 0.9;"></div>
-                <div class="bar" style="height: 80%; opacity: 0.8;"></div>
+                <div style="height: 40%; opacity: 0.5;"></div>
+                <div style="height: 60%; opacity: 0.6;"></div>
+                <div style="height: 55%; opacity: 0.55;"></div>
+                <div style="height: 75%; opacity: 0.75;"></div>
+                <div style="height: 90%; opacity: 0.9;"></div>
+                <div style="height: 80%; opacity: 0.8;"></div>
             </div>
         </div>
 
         <!-- Attendance Heatmap Placeholder -->
-        <div class="card chart-card">
-            <h3 class="chart-title">PEAK HOURS</h3>
-            <div class="heatmap-grid">
-                <div *ngFor="let i of [].constructor(28); let idx = index" class="heatmap-cell"
-                    [style.opacity]="(idx % 5 + 1) * 0.2">
+        <div>
+            <h3>PEAK HOURS</h3>
+            <div>
+                <div *ngFor="let i of [].constructor(28); let idx = index" [style.opacity]="(idx % 5 + 1) * 0.2">
                 </div>
             </div>
         </div>
