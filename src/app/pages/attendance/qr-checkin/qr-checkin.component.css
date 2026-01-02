@@ -1,0 +1,22 @@
+/* Scan Animation */
+@keyframes scanMove {
+    0% {
+        top: 0;
+    }
+
+    50% {
+        top: 100%;
+    }
+
+    100% {
+        top: 0;
+    }
+}
+
+.animate-scan {
+    animation: scanMove 3s linear infinite;
+}
+
+.shadow-glow {
+    box-shadow: 0 0 10px var(--color-accent-primary);
+}

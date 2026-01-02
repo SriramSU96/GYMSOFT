@@ -1,0 +1,59 @@
+<div class="app-container" *ngIf="member$ | async as member">
+    <div class="flex justify-between items-center" style="margin-bottom: var(--spacing-lg);">
+        <h2>Member Details</h2>
+        <a routerLink="/members" class="btn btn-outline btn-sm">
+            <span class="material-icons" style="font-size: 18px;">arrow_back</span> Back
+        </a>
+    </div>
+
+    <div class="grid grid-3 gap-lg">
+        <!-- Profile Card -->
+        <div class="card flex-col items-center text-center">
+            <div class="avatar"
+                style="width: 80px; height: 80px; font-size: 2rem; border-radius: 50%; background: var(--bg-hover); display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                👤</div>
+            <h3 class="mt-4">{{ member.name }}</h3>
+            <p class="text-secondary">{{ member.email }}</p>
+            <div class="badge mt-2" [ngClass]="{
+            'badge-success': member.membershipStatus === 'active',
+            'badge-danger': member.membershipStatus === 'expired',
+            'badge-warning': member.membershipStatus === 'pending'
+        }">{{ member.membershipStatus | uppercase }}</div>
+        </div>
+
+        <!-- Details Card -->
+        <div class="card" style="grid-column: span 2;">
+            <h3 class="text-secondary section-title">Information</h3>
+            <div class="grid grid-2 gap-md">
+                <div>
+                    <label class="text-xs text-muted uppercase">Phone</label>
+                    <p>{{ member.phone }}</p>
+                </div>
+                <!-- <div>
+                    <label class="text-xs text-muted uppercase">Joined</label>
+                    <p>{{ member.joinedDate | date }}</p>
+                </div> -->
+                <div>
+                    <label class="text-xs text-muted uppercase">Expiry</label>
+                    <p>{{ member.membershipExpiry | date }}</p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex gap-md">
+                <button class="btn btn-outline">Edit Profile</button>
+                <button class="btn btn-danger">Delete Member</button>
+            </div>
+        </div>
+
+        <!-- Additional sections like Attendance/Payments placeholders -->
+        <div class="card placeholders">
+            <h3>History</h3>
+            <p class="placeholder-text">Attendance & Payment history coming soon.</p>
+        </div>
+    </div>
+
+    <ng-template #loading>
+        <div class="loading-state">
+            Loading Member Details...
+        </div>
+    </ng-template>

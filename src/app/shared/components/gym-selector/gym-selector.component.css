@@ -1,0 +1,5 @@
+/* Dropdown Z-Index */
+.origin-top-right {
+    z-index: 50;
+    border: 1px solid var(--color-border);
+}

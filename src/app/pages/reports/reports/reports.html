@@ -1,0 +1,31 @@
+<div class="app-container">
+    <div class="page-header" style="margin-bottom: var(--spacing-lg);">
+        <h2>Financial Reports</h2>
+    </div>
+
+    <div *ngIf="profitLoss$ | async" class="grid grid-4 gap-md">
+        <div class="card stat-card" style="border-left: 4px solid var(--success);">
+            <h3 class="stat-label">Total Revenue</h3>
+            <p class="stat-value text-success">${{ (profitLoss$ | async)?.totalRevenue | number }}</p>
+        </div>
+
+        <div class="card stat-card" style="border-left: 4px solid var(--danger);">
+            <h3 class="stat-label">Total Expenses</h3>
+            <p class="stat-value text-danger">${{ (profitLoss$ | async)?.totalExpenses | number }}</p>
+        </div>
+
+        <div class="card stat-card" style="border-left: 4px solid var(--accent-primary);">
+            <h3 class="stat-label">Net Profit</h3>
+            <p class="stat-value text-accent">${{ (profitLoss$ | async)?.netProfit | number }}</p>
+        </div>
+
+        <div class="card stat-card">
+            <h3 class="stat-label">Period</h3>
+            <p class="stat-value text-white">{{ (profitLoss$ | async)?.month }} {{ (profitLoss$ | async)?.year }}</p>
+        </div>
+    </div>
+
+    <div *ngIf="isLoading$ | async" class="loading-state">
+        Loading reports...
+    </div>
+</div>

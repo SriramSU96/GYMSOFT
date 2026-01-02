@@ -1,0 +1,49 @@
+<div class="relative inline-block text-left">
+    <!-- Trigger Button (Bell) -->
+    <!-- Note: This component is intended to be used in the header -->
+</div>
+
+<!-- For demo/page view purposes, we display the list directly. 
+     In a real app, this might be a dropdown from the bell request. 
+     The instruction implies a page or component for it. -->
+
+<div
+    class="notification-panel bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-lg shadow-lg w-full max-w-sm overflow-hidden">
+    <div class="p-4 border-b border-[var(--color-border)] flex justify-between items-center">
+        <h3 class="font-bold text-white">Notifications</h3>
+        <div class="flex gap-2 text-xs">
+            <button (click)="filter = 'all'" [class.text-white]="filter === 'all'"
+                class="text-[var(--color-text-secondary)] hover:underline">All</button>
+            <button (click)="filter = 'unread'" [class.text-white]="filter === 'unread'"
+                class="text-[var(--color-text-secondary)] hover:underline">Unread</button>
+        </div>
+    </div>
+
+    <div class="max-h-96 overflow-y-auto">
+        <div *ngFor="let n of filteredNotifications"
+            class="p-4 border-b border-[var(--color-border)] hover:bg-[var(--color-bg-tertiary)] transition-colors relative group"
+            [class.bg-black]="!n.read">
+            <div class="flex justify-between items-start mb-1">
+                <span class="text-sm font-bold" [ngClass]="{'text-[var(--color-success)]': n.type === 'info', 
+                           'text-[var(--color-danger)]': n.type === 'error',
+                           'text-[var(--color-warning)]': n.type === 'warning'}">
+                    {{ n.title }}
+                </span>
+                <span class="text-[10px] text-[var(--color-text-secondary)]">{{ n.time }}</span>
+            </div>
+            <p class="text-xs text-[var(--color-text-primary)] mb-2">{{ n.message }}</p>
+
+            <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button *ngIf="!n.read" (click)="markAsRead(n.id)"
+                    class="text-[10px] text-[var(--color-accent-primary)] hover:underline">Mark as Read</button>
+                <button (click)="deleteNotification(n.id)"
+                    class="text-[10px] text-[var(--color-text-muted)] hover:text-white">Dismiss</button>
+            </div>
+        </div>
+
+        <div *ngIf="filteredNotifications.length === 0"
+            class="p-8 text-center text-sm text-[var(--color-text-secondary)]">
+            No notifications to show.
+        </div>
+    </div>
+</div>

@@ -1,0 +1,52 @@
+<div class="page-container fade-in">
+    <div class="page-header mb-lg">
+        <div>
+            <h1 class="mb-xs">Performance Overview</h1>
+            <p class="text-secondary">Summary of your gym's key metrics and member activity.</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary">
+                <span class="material-icons">download</span>
+                <span>Export Report</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-md mb-lg" *ngIf="analytics$ | async as stats">
+        <div class="card stat-card">
+            <span class="stat-label">Active Members</span>
+            <div class="stat-value text-accent">{{ stats.activeCount }}</div>
+            <div class="text-muted text-xs flex items-center gap-xs">
+                <span class="text-success material-icons" style="font-size: 1rem;">trending_up</span>
+                <span>+12% from last month</span>
+            </div>
+        </div>
+        <div class="card stat-card">
+            <span class="stat-label">Daily Attendance</span>
+            <div class="stat-value text-success">{{ stats.totalMembers }}</div>
+            <div class="text-muted text-xs">Based on current check-ins</div>
+        </div>
+        <div class="card stat-card">
+            <span class="stat-label">Monthly Revenue</span>
+            <div class="stat-value text-warning">${{ stats.netProfit }}</div>
+            <div class="text-muted text-xs">Projected current month</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-md">
+        <div class="card">
+            <div class="flex items-center justify-between mb-lg">
+                <h3 class="mb-0">Analytics Trends</h3>
+                <div class="flex gap-sm">
+                    <button class="btn btn-secondary btn-sm">Day</button>
+                    <button class="btn btn-primary btn-sm">Week</button>
+                    <button class="btn btn-secondary btn-sm">Month</button>
+                </div>
+            </div>
+            <div class="chart-container" style="height: 300px;">
+                <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="barChartType">
+                </canvas>
+            </div>
+        </div>
+    </div>
+</div>

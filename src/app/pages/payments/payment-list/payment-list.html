@@ -1,0 +1,78 @@
+<div class="page-container fade-in">
+    <div class="page-header mb-lg">
+        <div>
+            <h2 class="mb-xs">Financial Transactions</h2>
+            <p class="text-secondary">Track and manage all revenue and payment history.</p>
+        </div>
+        <a routerLink="/payments/invoice-generator" class="btn btn-primary">
+            <span class="material-icons">add</span>
+            <span>New Invoice</span>
+        </a>
+    </div>
+
+    <div class="card p-0 overflow-hidden">
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Member ID</th>
+                        <th>Amount</th>
+                        <th>Payment Type</th>
+                        <th>Status</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let payment of payments$ | async">
+                        <td>
+                            <div class="font-mono text-sm text-primary">{{ payment.paymentDate | date:'mediumDate' }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex items-center gap-sm">
+                                <span class="material-icons text-muted"
+                                    style="font-size: 1.25rem;">account_balance_wallet</span>
+                                <span class="font-bold">{{ payment.memberId }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="font-bold text-accent">${{ payment.amount }}</div>
+                        </td>
+                        <td>
+                            <div class="text-xs uppercase tracking-wider text-muted">{{ payment.paymentMethod }}</div>
+                        </td>
+                        <td>
+                            <span class="badge" [ngClass]="{
+                                'badge-success': payment.status === 'completed' || payment.status === 'paid',
+                                'badge-warning': payment.status === 'pending',
+                                'badge-danger': payment.status === 'overdue'
+                            }">
+                                {{ payment.status | uppercase }}
+                            </span>
+                        </td>
+                        <td class="text-right">
+                            <a class="btn btn-secondary btn-sm" [routerLink]="['/payments/invoice', payment.id]">
+                                <span class="material-icons" style="font-size: 1.25rem;">visibility</span>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr *ngIf="(payments$ | async)?.length === 0 && !(isLoading$ | async)">
+                        <td colspan="6">
+                            <div class="flex flex-col items-center justify-center p-xl text-center">
+                                <span class="material-icons text-muted mb-md"
+                                    style="font-size: 3rem;">receipt_long</span>
+                                <h3 class="text-secondary">No transactions found</h3>
+                                <p class="text-muted text-sm">Financial records will appear here after invoicing.</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div *ngIf="isLoading$ | async" class="flex items-center justify-center p-xl">
+                <div class="animate-spin text-accent material-icons">refresh</div>
+            </div>
+        </div>
+    </div>
+</div>

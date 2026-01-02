@@ -1,0 +1,39 @@
+<div class="page-container">
+    <div class="page-header">
+        <h2>Salary Management</h2>
+    </div>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Staff Name</th>
+                    <th>Month</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let salary of salaries">
+                    <td class="font-bold text-primary">{{ salary.staffName }}</td>
+                    <td>{{ salary.month }}</td>
+                    <td>${{ salary.amount }}</td>
+                    <td>
+                        <span class="badge" [ngClass]="{
+                            'badge-success': salary.status === 'paid',
+                            'badge-warning': salary.status === 'pending'
+                        }">
+                            {{ salary.status | uppercase }}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-outline btn-sm" *ngIf="salary.status === 'pending'">
+                            Mark Paid
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

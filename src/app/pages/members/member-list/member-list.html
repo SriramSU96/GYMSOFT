@@ -1,0 +1,81 @@
+<div class="page-container fade-in">
+    <div class="page-header mb-lg">
+        <div>
+            <h2 class="mb-xs">Member Directory</h2>
+            <p class="text-secondary">Manage and track your active gym memberships.</p>
+        </div>
+        <a routerLink="add" class="btn btn-primary">
+            <span class="material-icons">add</span>
+            <span>Add New Member</span>
+        </a>
+    </div>
+
+    <div class="card p-0 overflow-hidden">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Member Details</th>
+                        <th>Mobile</th>
+                        <th>Membership Status</th>
+                        <th>Valid Until</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let member of members$ | async">
+                        <td>
+                            <div class="flex items-center gap-md">
+                                <div class="avatar-sm bg-secondary rounded-full flex items-center justify-center"
+                                    style="width: 40px; height: 40px;">
+                                    <span class="material-icons text-muted">person</span>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-primary">{{ member.name }}</div>
+                                    <div class="text-xs text-muted">{{ member.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="font-mono text-sm">{{ member.phone }}</div>
+                        </td>
+                        <td>
+                            <span class="badge" [ngClass]="{
+                                'badge-success': member.membershipStatus.toLowerCase() === 'active',
+                                'badge-danger': member.membershipStatus.toLowerCase() === 'expired',
+                                'badge-warning': member.membershipStatus.toLowerCase() === 'pending'
+                            }">
+                                {{ member.membershipStatus }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="text-sm">{{ member.membershipExpiry | date:'mediumDate' }}</div>
+                        </td>
+                        <td class="text-right">
+                            <a [routerLink]="[member.id]" class="btn btn-secondary btn-sm">
+                                <span class="material-icons" style="font-size: 1.25rem;">edit</span>
+                            </a>
+                            <button class="btn btn-ghost btn-sm text-danger">
+                                <span class="material-icons" style="font-size: 1.25rem;">delete</span>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="(members$ | async)?.length === 0 && !(isLoading$ | async)">
+                        <td colspan="5">
+                            <div class="flex flex-col items-center justify-center p-xl text-center">
+                                <span class="material-icons text-muted mb-md"
+                                    style="font-size: 4rem;">people_outline</span>
+                                <h3 class="text-secondary">No members found</h3>
+                                <p class="text-muted">Start by adding your first gym member.</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div *ngIf="isLoading$ | async" class="flex items-center justify-center p-xl">
+                <div class="animate-spin text-accent material-icons">refresh</div>
+            </div>
+        </div>
+    </div>
+</div>

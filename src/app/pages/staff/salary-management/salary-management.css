@@ -1,0 +1,4 @@
+/* Salary Management Styles - Handled by Global CSS */
+.page-container {
+    padding: var(--spacing-lg);
+}

@@ -1,0 +1,68 @@
+<div *ngIf="isLoading$ | async" class="loading-state">
+    <p>Loading staff data...</p>
+</div>
+
+<div class="staff-container" *ngIf="!(isLoading$ | async)">
+
+    <!-- Salary Summary Cards -->
+    <div class="grid grid-3 gap-md" *ngIf="salarySummary$ | async as summary">
+        <div class="card stat-card" style="border-left: 4px solid var(--accent-primary);">
+            <h3 class="stat-label">Total Salaries</h3>
+            <p class="stat-value text-accent">₹{{ summary.total | number }}</p>
+        </div>
+        <div class="card stat-card" style="border-left: 4px solid var(--success);">
+            <h3 class="stat-label">Paid</h3>
+            <p class="stat-value text-success">₹{{ summary.paid | number }}</p>
+        </div>
+        <div class="card stat-card" style="border-left: 4px solid var(--warning);">
+            <h3 class="stat-label">Pending</h3>
+            <p class="stat-value text-warning">₹{{ summary.pending | number }}</p>
+        </div>
+    </div>
+
+    <!-- Staff List Table -->
+    <div class="card" style="margin-top: var(--spacing-lg);">
+        <div class="flex justify-between items-center" style="margin-bottom: var(--spacing-md);">
+            <h3>Staff Management</h3>
+            <button class="btn btn-primary" routerLink="/staff/add">+ Add Staff</button>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Today's Status</th>
+                        <th>Base Salary</th>
+                        <th>Phone</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let staff of (staffWithAttendance$ | async)">
+                        <td class="font-bold">{{ staff.name }}</td>
+                        <td class="text-secondary">{{ staff.role }}</td>
+                        <td>
+                            <select [ngModel]="staff.status" (ngModelChange)="markAttendance(staff.id, $event)"
+                                class="badge border-none" [ngClass]="{
+                        'badge-success': staff.status === 'present',
+                        'badge-danger': staff.status === 'absent',
+                        'badge-warning': staff.status === 'leave'
+                      }" style="border:none; cursor: pointer;">
+                                <option value="present">Present</option>
+                                <option value="absent">Absent</option>
+                                <option value="leave">On Leave</option>
+                            </select>
+                        </td>
+                        <td>₹{{ staff.salary | number }}</td>
+                        <td class="text-sm text-secondary">{{ staff.phone }}</td>
+                        <td>
+                            <button class="btn btn-outline btn-sm" [routerLink]="['/staff', staff.id]">View</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

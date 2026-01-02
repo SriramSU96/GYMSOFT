@@ -1,0 +1,80 @@
+<div class="page-container fade-in">
+    <div class="page-header mb-lg">
+        <div>
+            <h2 class="mb-xs text-danger">Pending Dues</h2>
+            <p class="text-secondary">Outstanding balances requiring attention.</p>
+        </div>
+        <div class="flex gap-md" *ngIf="totalDues$ | async as total">
+            <div
+                class="card py-2 px-md flex items-center gap-sm bg-danger bg-opacity-10 border-danger border-opacity-20">
+                <span class="material-icons text-danger">warning</span>
+                <div>
+                    <div class="text-xs uppercase text-muted">Total Outstanding</div>
+                    <div class="font-bold text-danger text-lg">₹{{ total | number }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card p-0 overflow-hidden border-danger border-opacity-10">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Member Details</th>
+                        <th>Amount Due</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let due of dues$ | async">
+                        <td>
+                            <div class="flex items-center gap-md">
+                                <div class="avatar-sm bg-secondary rounded-full flex items-center justify-center"
+                                    style="width: 40px; height: 40px;">
+                                    <span class="material-icons text-danger">person_off</span>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-primary">{{ due.memberName || due.name }}</div>
+                                    <div class="text-xs text-muted">ID: {{ due.memberId }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="font-bold text-danger text-lg">₹{{ due.amount | number }}</div>
+                        </td>
+                        <td>
+                            <div class="text-sm font-mono">{{ due.dueDate | date }}</div>
+                        </td>
+                        <td>
+                            <span class="badge" [ngClass]="isOverdue(due.dueDate) ? 'badge-danger' : 'badge-warning'">
+                                {{ isOverdue(due.dueDate) ? 'Overdue' : 'Due Soon' }}
+                            </span>
+                        </td>
+                        <td class="text-right">
+                            <button class="btn btn-primary btn-sm" (click)="sendReminder(due)">
+                                <span class="material-icons" style="font-size: 1.25rem;">notifications</span>
+                                <span>Remind</span>
+                            </button>
+                            <button class="btn btn-secondary btn-sm p-2" title="View Member">
+                                <span class="material-icons" style="font-size: 1.25rem;">visibility</span>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="(dues$ | async)?.length === 0">
+                        <td colspan="5">
+                            <div class="flex flex-col items-center justify-center p-xl text-center">
+                                <span class="material-icons text-success mb-md"
+                                    style="font-size: 4rem;">check_circle_outline</span>
+                                <h3 class="text-secondary">No pending dues!</h3>
+                                <p class="text-muted">All members are up to date with their payments.</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

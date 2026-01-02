@@ -1,0 +1,49 @@
+<div class="app-container flex justify-center">
+    <div class="card" style="width: 100%; max-width: 600px;">
+        <div class="flex justify-between items-center" style="margin-bottom: var(--spacing-lg);">
+            <h2>Add New Member</h2>
+            <a routerLink="/members" class="btn btn-outline btn-sm">
+                <span class="material-icons" style="font-size: 18px;">arrow_back</span>
+                Back
+            </a>
+        </div>
+
+        <form [formGroup]="memberForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" formControlName="name" placeholder="Full Name">
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" formControlName="email" placeholder="Email Address">
+            </div>
+
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" formControlName="phone" placeholder="Phone Number">
+            </div>
+
+            <div class="grid grid-2 gap-md">
+                <div class="form-group">
+                    <label>Gender</label>
+                    <select formControlName="gender">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" formControlName="dob">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block mt-4"
+                [disabled]="memberForm.invalid || (isLoading$ | async)">
+                {{ (isLoading$ | async) ? 'Saving...' : 'Register Member' }}
+            </button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,71 @@
+<div class="page-container fade-in">
+    <div class="page-header mb-lg">
+        <div>
+            <h2 class="mb-xs">Staff Directory</h2>
+            <p class="text-secondary">Manage your trainers, managers, and support staff.</p>
+        </div>
+        <a routerLink="/staff/add" class="btn btn-primary">
+            <span class="material-icons">add</span>
+            <span>Add New Staff</span>
+        </a>
+    </div>
+
+    <div class="card p-0 overflow-hidden">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Staff Member</th>
+                        <th>Role</th>
+                        <th>Contact</th>
+                        <th>Monthly Salary</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let staff of staff$ | async">
+                        <td>
+                            <div class="flex items-center gap-md">
+                                <div class="avatar-sm bg-secondary rounded-full flex items-center justify-center"
+                                    style="width: 40px; height: 40px;">
+                                    <span class="material-icons text-muted">person</span>
+                                </div>
+                                <div class="font-bold text-primary">{{ staff.name }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge badge-info">{{ staff.role | uppercase }}</span>
+                        </td>
+                        <td>
+                            <div class="font-mono text-sm">{{ staff.phone }}</div>
+                        </td>
+                        <td>
+                            <div class="font-bold text-accent">${{ staff.salary }}</div>
+                        </td>
+                        <td class="text-right">
+                            <button class="btn btn-secondary btn-sm p-2">
+                                <span class="material-icons" style="font-size: 1.25rem;">visibility</span>
+                            </button>
+                            <button class="btn btn-ghost btn-sm p-2 text-danger">
+                                <span class="material-icons" style="font-size: 1.25rem;">delete</span>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="(staff$ | async)?.length === 0 && !(isLoading$ | async)">
+                        <td colspan="5">
+                            <div class="flex flex-col items-center justify-center p-xl text-center">
+                                <span class="material-icons text-muted mb-md" style="font-size: 3rem;">badge</span>
+                                <h3 class="text-secondary">No staff members found</h3>
+                                <p class="text-muted text-sm">Start by onboarding your first team member.</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div *ngIf="isLoading$ | async" class="flex items-center justify-center p-xl">
+                <div class="animate-spin text-accent material-icons">refresh</div>
+            </div>
+        </div>
+    </div>
+</div>

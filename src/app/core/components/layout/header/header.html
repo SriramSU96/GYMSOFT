@@ -1,0 +1,16 @@
+<header class="top-bar">
+    <div class="page-title">
+        <h2 class="mb-0">Dashboard</h2>
+    </div>
+
+    <div class="user-profile flex items-center gap-md">
+        <div class="user-info text-right">
+            <div class="name font-bold">{{ (currentUser$ | async)?.name || 'Admin User' }}</div>
+            <div class="text-muted text-xs capitalize">{{ (currentUser$ | async)?.role || 'System Administrator' }}
+            </div>
+        </div>
+        <div class="avatar">
+            <span class="material-icons text-accent" style="font-size: 2.5rem;">account_circle</span>
+        </div>
+    </div>
+</header>
