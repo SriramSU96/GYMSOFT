@@ -73,8 +73,8 @@ export class WorkoutBuilder implements OnInit {
 
     loadWorkout(id: string): void {
         this.isLoading = true;
-        this.workoutService.getWorkoutdById(id).subscribe({
-            next: (workout) => {
+        this.workoutService.getWorkoutById(id).subscribe({
+            next: (workout: any) => {
                 this.workoutForm.patchValue({
                     title: workout.title,
                     level: workout.level,
@@ -83,7 +83,7 @@ export class WorkoutBuilder implements OnInit {
 
                 // Clear default exercise and load existing ones
                 this.exercises.clear();
-                workout.exercises.forEach(ex => {
+                workout.exercises.forEach((ex: any) => {
                     this.exercises.push(this.fb.group({
                         name: [ex.name, Validators.required],
                         sets: [ex.sets, [Validators.required, Validators.min(1)]],
@@ -93,7 +93,7 @@ export class WorkoutBuilder implements OnInit {
                 });
                 this.isLoading = false;
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('Error loading workout', err);
                 this.isLoading = false;
             }

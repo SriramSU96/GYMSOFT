@@ -1,37 +1,70 @@
-<div>
-    <div>
-        <h2>Register</h2>
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-            <div>
-                <label>Name</label>
-                <input type="text" formControlName="name">
+<div class="flex items-center justify-center min-vh-100" style="background-color: var(--bg-main); min-height: 100vh;">
+    <div class="card" style="width: 100%; max-width: 450px;">
+        <div class="text-center mb-lg">
+            <div class="sidebar-logo justify-center mb-sm">
+                <span class="material-icons" style="font-size: 2.5rem;">fitness_center</span>
+                <span style="font-size: 2.5rem;">GYM<span>SOFT</span></span>
             </div>
-            <div>
-                <label>Email</label>
-                <input type="email" formControlName="email">
+            <h2 class="page-title">Create Account</h2>
+            <p class="text-muted">Join the most premium fitness community today.</p>
+        </div>
+
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-md">
+            <div class="form-group">
+                <label>Full Name</label>
+                <div class="relative">
+                    <span class="material-icons absolute"
+                        style="left: 12px; top: 10px; color: var(--text-muted); font-size: 1.2rem;">person</span>
+                    <input type="text" formControlName="name" placeholder="John Doe" style="padding-left: 2.5rem;">
+                </div>
             </div>
-            <div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <div class="relative">
+                    <span class="material-icons absolute"
+                        style="left: 12px; top: 10px; color: var(--text-muted); font-size: 1.2rem;">email</span>
+                    <input type="email" formControlName="email" placeholder="name@example.com"
+                        style="padding-left: 2.5rem;">
+                </div>
+            </div>
+
+            <div class="form-group">
                 <label>Password</label>
-                <input type="password" formControlName="password">
+                <div class="relative">
+                    <span class="material-icons absolute"
+                        style="left: 12px; top: 10px; color: var(--text-muted); font-size: 1.2rem;">lock</span>
+                    <input type="password" formControlName="password" placeholder="••••••••"
+                        style="padding-left: 2.5rem;">
+                </div>
             </div>
-            <div>
-                <label>Role</label>
+
+            <div class="form-group">
+                <label>Select Role</label>
                 <select formControlName="role">
                     <option value="member">Member</option>
                     <option value="staff">Staff</option>
                     <option value="admin">Admin</option>
                 </select>
             </div>
-            <button type="submit" [disabled]="(isLoading$ | async)">
-                {{ (isLoading$ | async) ? 'Registering...' : 'Register' }}
+
+            <button type="submit" class="btn btn-primary w-full mt-md" [disabled]="(isLoading$ | async)">
+                <span class="material-icons" *ngIf="!(isLoading$ | async)">how_to_reg</span>
+                <span class="material-icons animate-spin" *ngIf="(isLoading$ | async)">refresh</span>
+                {{ (isLoading$ | async) ? 'Processing...' : 'Complete Registration' }}
             </button>
-            <div *ngIf="error$ | async as error">
-                {{ error?.error?.message || 'Registration failed' }}
+
+            <div *ngIf="error$ | async as error" class="badge badge-danger w-full justify-center p-md mt-sm">
+                <span class="material-icons" style="font-size: 1rem; margin-right: 8px;">error</span>
+                {{ error?.error?.message || 'Registration failed. Please try again.' }}
             </div>
         </form>
-        <div>
-            <a routerLink="/login">Already have an account?
-                Login</a>
+
+        <div class="text-center mt-xl">
+            <p class="text-sm">
+                Already have an account?
+                <a routerLink="/login" class="text-accent font-semibold">Sign In</a>
+            </p>
         </div>
     </div>
 </div>

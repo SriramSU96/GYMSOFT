@@ -1,54 +1,30 @@
-<div class="sidebar">
-    <div class="brand">
-        <img src="assets/logo.png" alt="GYMSOFT" class="logo" onerror="this.style.display='none'">
-        <h2 class="text-accent">GYMSOFT</h2>
+<aside class="sidebar" [class.active]="isOpen">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <span class="material-icons">fitness_center</span>
+            GYM<span>SOFT</span>
+        </div>
     </div>
 
-    <nav class="nav-menu">
-        <ul>
-            <li *ngFor="let item of menuItems">
-                <a [routerLink]="item.route" routerLinkActive="active" class="nav-link">
-                    <span class="material-icons">{{ item.icon }}</span>
-                    <span class="label">{{ item.label }}</span>
-                </a>
-            </li>
-            <!-- Workout & Diet -->
-            <li>
-                <a routerLink="/plans/assign" routerLinkActive="active" class="nav-link">
-                    <span class="material-icons">fitness_center</span>
-                    <span>Plans</span>
-                </a>
-            </li>
-
-            <!-- Inventory -->
-            <li>
-                <a routerLink="/inventory/pos" routerLinkActive="active" class="nav-link">
-                    <span class="material-icons">shopping_cart</span>
-                    <span>POS & Shop</span>
-                </a>
-            </li>
-
-            <!-- Classes -->
-            <li>
-                <a routerLink="/classes/list" routerLinkActive="active" class="nav-link">
-                    <span class="material-icons">event</span>
-                    <span>Classes</span>
-                </a>
-            </li>
-
-            <li>
-                <a routerLink="/settings/security" routerLinkActive="active" class="nav-link">
-                    <span class="material-icons">settings</span>
-                    <span>Settings</span>
-                </a>
-            </li>
-        </ul>
+    <nav class="sidebar-menu" style="padding: var(--space-lg) var(--space-md);">
+        <a *ngFor="let item of menuItems" [routerLink]="item.route" routerLinkActive="active" class="sidebar-item"
+            style="border-radius: var(--radius-md); margin-bottom: var(--space-sm); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);">
+            <span class="material-icons" style="font-size: 1.25rem;">{{ item.icon }}</span>
+            <span style="letter-spacing: 0.02em;">{{ item.label }}</span>
+        </a>
     </nav>
 
-    <div class="sidebar-footer">
-        <button (click)="logout()" class="btn btn-ghost w-full">
-            <span class="material-icons">logout</span>
-            <span>Logout</span>
-        </button>
+    <!-- Sidebar Footer / Profile -->
+    <div *ngIf="currentUser$ | async as user"
+        style="padding: var(--space-md); border-top: 1px solid var(--border-subtle);">
+        <div class="flex items-center gap-md">
+            <div class="stat-icon" style="width: 40px; height: 40px; border-radius: var(--radius-full);">
+                <span class="material-icons">account_circle</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-sm font-semibold">{{ user.name }}</span>
+                <span class="text-xs text-muted">{{ user.role }}</span>
+            </div>
+        </div>
     </div>
-</div>
+</aside>

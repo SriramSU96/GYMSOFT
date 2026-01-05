@@ -1,124 +1,52 @@
-<div class="layout-wrapper flex h-screen bg-[var(--color-bg-primary)] text-[var(--color-text-primary)]">
+<div class="app-shell">
+    <!-- Sidebar Component -->
+    <app-sidebar [isOpen]="isSidebarOpen"></app-sidebar>
 
-    <!-- Sidebar -->
-    <aside
-        class="sidebar w-64 flex-shrink-0 border-r border-[var(--color-border)] bg-[var(--color-bg-secondary)] flex flex-col transition-all duration-300"
-        [class.hidden]="!isSidebarOpen">
-
-        <!-- Logo -->
-        <div class="p-6 border-b border-[var(--color-border)] flex items-center justify-center">
-            <h1 class="text-2xl font-bold text-[var(--color-accent-primary)] tracking-wider">GYM<span
-                    class="text-white">SOFT</span></h1>
-        </div>
-
-        <!-- Navigation -->
-        <nav class="flex-1 overflow-y-auto py-4">
-            <ul class="space-y-1 px-3">
-                <!-- Dashboard -->
-                <li>
-                    <a routerLink="/members" routerLinkActive="active"
-                        class="nav-item block px-4 py-3 rounded-md hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-accent-primary)] transition-colors">
-                        <span class="font-medium">Member Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a routerLink="/payments/profit-loss" routerLinkActive="active"
-                        class="nav-item block px-4 py-3 rounded-md hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-accent-primary)] transition-colors">
-                        <span class="font-medium">Profit & Loss</span>
-                    </a>
-                </li>
-                <li>
-                    <a routerLink="/payments/coupons" routerLinkActive="active"
-                        class="nav-item block px-4 py-3 rounded-md hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-accent-primary)] transition-colors">
-                        <span class="font-medium">Coupons & Discounts</span>
-                    </a>
-                </li>
-                <li>
-                    <a routerLink="/payments/invoice" routerLinkActive="active"
-                        class="nav-item block px-4 py-3 rounded-md hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-accent-primary)] transition-colors">
-                        <span class="font-medium">Invoices</span>
-                    </a>
-                </li>
-                <li>
-                    <a routerLink="/payments/pending-dues" routerLinkActive="active"
-                        class="nav-item block px-4 py-3 rounded-md hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-accent-primary)] transition-colors">
-                        <span class="font-medium">Pending Dues</span>
-                    </a>
-                </li>
-                <li>
-                    <a routerLink="/staff/dashboard" routerLinkActive="active"
-                        class="nav-item block px-4 py-3 rounded-md hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-accent-primary)] transition-colors">
-                        <span class="font-medium">Staff & Operations</span>
-                    </a>
-                </li>
-                <li>
-                    <a routerLink="/analytics/advanced" routerLinkActive="active"
-                        class="nav-item block px-4 py-3 rounded-md hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-accent-primary)] transition-colors">
-                        <span class="font-medium">Advanced Analytics</span>
-                    </a>
-                </li>
-                <li>
-                    <a routerLink="/community/feed" routerLinkActive="active"
-                        class="nav-item block px-4 py-3 rounded-md hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-accent-primary)] transition-colors">
-                        <span class="font-medium">Community & Challenges</span>
-                    </a>
-                </li>
-                <li>
-                    <a routerLink="/settings/security" routerLinkActive="active"
-                        class="nav-item block px-4 py-3 rounded-md hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-accent-primary)] transition-colors">
-                        <span class="font-medium">Settings & Security</span>
-                    </a>
-                </li>
-                <!-- Add more links here -->
-                <li>
-                    <a routerLink="/attendance/qr-checkin" routerLinkActive="active"
-                        class="nav-item block px-4 py-3 rounded-md hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-accent-primary)] transition-colors">
-                        <span class="font-medium">QR Check-in</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-
-        <!-- User Info -->
-        <div class="p-4 border-t border-[var(--color-border)]">
-            <div class="flex items-center gap-3">
-                <div
-                    class="w-10 h-10 rounded-full bg-[var(--color-accent-primary)] flex items-center justify-center text-white font-bold">
-                    AD
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-white">Admin User</p>
-                    <p class="text-xs text-[var(--color-text-secondary)]">Manager</p>
-                </div>
-            </div>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-[var(--color-bg-primary)]">
-        <!-- Header (Mobile Toggle) -->
-        <header
-            class="h-16 flex items-center justify-between px-6 border-b border-[var(--color-border)] bg-[var(--color-bg-secondary)]">
-            <button (click)="toggleSidebar()"
-                class="btn-icon hover:bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)]">
-                ☰
-            </button>
-            <div class="flex items-center gap-4">
-                <!-- Gym Selector -->
+    <main class="main-content">
+        <!-- Modern Glassmorphism Topbar -->
+        <header class="topbar glass shadow-glass" style="z-index: 100;">
+            <div class="flex items-center gap-md">
+                <button (click)="toggleSidebar()" class="btn btn-icon btn-secondary"
+                    style="border: none; background: rgba(255,255,255,0.05);">
+                    <span class="material-icons">menu</span>
+                </button>
+                <div class="h-8 w-[1px] bg-border-subtle mx-sm" style="background: var(--border-subtle);"></div>
                 <app-gym-selector></app-gym-selector>
-                <!-- Notification Center (Assuming popover behavior handled within or just placed here) -->
-                <div class="relative group">
-                    <button class="btn-icon">🔔</button>
-                    <!-- Simple hover drop for demo -->
-                    <div class="absolute right-0 top-full mt-2 w-80 hidden group-hover:block z-50">
-                        <app-notification-center></app-notification-center>
+            </div>
+
+            <div class="flex items-center gap-lg">
+                <!-- Notifications -->
+                <div class="relative">
+                    <button (click)="toggleNotifications()" class="btn btn-icon btn-secondary"
+                        style="border: none; background: rgba(255,255,255,0.05); position: relative;">
+                        <span class="material-icons">notifications</span>
+                        <span *ngIf="(unreadCount$ | async) ?? 0 > 0"
+                            class="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full"
+                            style="background: var(--danger); border-radius: 50%;"></span>
+                    </button>
+
+                    <!-- Floating Notification Card (Controlled) -->
+                    <div *ngIf="showNotifications" class="absolute right-[-10px] top-full mt-3 w-80 z-50 animate-fadeIn"
+                        (mouseleave)="showNotifications = false">
+                        <div class="card p-0 shadow-hover glass-dark"
+                            style="max-height: 450px; overflow: hidden; border: 1px solid var(--accent-soft); border-radius: var(--radius-lg);">
+                            <app-notification-center></app-notification-center>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Profile Action -->
+                <button (click)="onLogout()" class="btn btn-outline"
+                    style="border-radius: var(--radius-full); padding: 0.5rem 1.5rem; display: flex; align-items: center; gap: var(--space-sm);">
+                    <span class="material-icons" style="font-size: 1.2rem;">logout</span>
+                    <span>Sign Out</span>
+                </button>
             </div>
         </header>
 
-        <!-- Page Content -->
-        <div class="flex-1 overflow-auto p-6 scroll-smooth">
+        <!-- Main Page Container -->
+        <div class="page-container scroll-smooth"
+            style="background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.03), transparent 40%);">
             <router-outlet></router-outlet>
         </div>
     </main>

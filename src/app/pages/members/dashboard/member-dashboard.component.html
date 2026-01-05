@@ -1,92 +1,140 @@
-<div *ngIf="isLoading$ | async">
-    <p>Loading your dashboard...</p>
+<div *ngIf="isLoading$ | async" class="flex items-center justify-center p-2xl">
+    <div class="stat-icon animate-spin">
+        <span class="material-icons">refresh</span>
+    </div>
+    <p class="ml-md text-muted">Loading your dashboard...</p>
 </div>
 
 <ng-container *ngIf="member$ | async as member">
-    <div>
+    <div class="page-container">
 
-        <!-- Profile Card -->
-        <div>
+        <div class="page-header">
             <div>
-                <div>👤</div>
+                <h1 class="page-title">Welcome back, {{ member.name }}!</h1>
+                <p class="page-subtitle">Here is what's happening with your membership today.</p>
             </div>
-            <h2>{{ member.name }}</h2>
-            <p>{{ member.email }}</p>
-
-            <div>{{ member.membershipStatus | uppercase }}</div>
-
-            <div>
-                <div>
-                    <span>Phone</span>
-                    <span>{{ member.phone }}</span>
-                </div>
-                <div>
-                    <span>Expiry</span>
-                    <span>{{ member.membershipExpiry || 'N/A' }}</span>
-                </div>
-            </div>
-
-            <button (click)="onQrCheckIn()">
-                <span>qr_code_scanner</span> QR Check-in
+            <button class="btn btn-primary" (click)="onQrCheckIn()">
+                <span class="material-icons">qr_code_scanner</span>
+                <span>QR Check-in</span>
             </button>
         </div>
 
-        <!-- Stats & Progress -->
-        <div>
+        <div class="grid grid-cols-4 gap-lg mb-lg">
+            <!-- Profile Overview Card -->
+            <div class="card col-span-1 flex flex-col items-center text-center">
+                <div class="stat-icon"
+                    style="width: 80px; height: 80px; font-size: 2.5rem; border-radius: var(--radius-full); margin-bottom: var(--space-md);">
+                    <span class="material-icons">account_circle</span>
+                </div>
+                <h2 class="card-title">{{ member.name }}</h2>
+                <p class="text-sm text-muted mb-md">{{ member.email }}</p>
 
-            <!-- Progress Row -->
-            <div *ngIf="progress$ | async as progressRecords">
-                <div>
-                    <span>{{ progressRecords[0]?.weight || '--' }} kg</span>
-                    <span>Current Weight</span>
-                </div>
-                <div>
-                    <span>{{ progressRecords[0]?.bmi || '--' }}</span>
-                    <span>BMI</span>
-                </div>
-                <div>
-                    <span>{{ (attendance$ | async)?.length || 0 }} 🔥</span>
-                    <span>Total Check-ins</span>
-                </div>
-                <div *ngIf="achievements$ | async as achievementsList">
-                    <span>{{ achievementsList.length }}</span>
-                    <span>Achievements</span>
+                <span class="badge mb-lg" [ngClass]="{
+                    'badge-success': member.membershipStatus.toLowerCase() === 'active',
+                    'badge-danger': member.membershipStatus.toLowerCase() === 'expired',
+                    'badge-warning': member.membershipStatus.toLowerCase() === 'pending'
+                }">
+                    {{ member.membershipStatus }}
+                </span>
+
+                <div class="w-full text-left bg-hover p-md rounded-md">
+                    <div class="flex justify-between mb-xs">
+                        <span class="text-xs text-muted text-uppercase">Phone</span>
+                        <span class="text-sm">{{ member.phone }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-xs text-muted text-uppercase">Expiry</span>
+                        <span class="text-sm">{{ (member.membershipExpiry | date:'mediumDate') || 'N/A' }}</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Attendance & Achievements Row -->
-            <div>
-
-                <!-- Recent Attendance -->
-                <div>
-                    <h3>Recent Attendance</h3>
-                    <ul *ngIf="attendance$ | async as records; else noAttendance">
-                        <li *ngFor="let record of records.slice(0, 5)">
-                            <span>{{ record.date | date:'mediumDate' }}</span>
-                            <span>{{ record.checkInTime }}</span>
-                            <span>Present</span>
-                        </li>
-                        <li *ngIf="records.length === 0">No attendance records found.</li>
-                    </ul>
-                    <ng-template #noAttendance>
-                        <p>Loading logs...</p>
-                    </ng-template>
-                </div>
-
-                <!-- Achievements -->
-                <div>
-                    <h3>Achievements</h3>
-                    <div *ngIf="achievements$ | async as achievements">
-                        <div *ngFor="let badger of achievements">
-                            <span>🏆</span>
-                            <span>{{ badger.title }}</span>
+            <!-- Stats & Progress -->
+            <div class="col-span-3">
+                <div class="grid grid-3 mb-lg">
+                    <div class="card stat-card" *ngIf="progress$ | async as progressRecords">
+                        <div class="stat-icon">
+                            <span class="material-icons">monitor_weight</span>
                         </div>
-                        <div *ngIf="achievements.length === 0">
-                            No achievements yet. Keep grinding!
+                        <div>
+                            <div class="text-2xl font-bold">{{ progressRecords[0]?.weight || '--' }} <small
+                                    class="text-sm font-normal text-muted">kg</small></div>
+                            <div class="text-xs text-muted text-uppercase">Current Weight</div>
+                        </div>
+                    </div>
+
+                    <div class="card stat-card">
+                        <div class="stat-icon">
+                            <span class="material-icons">flash_on</span>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold">{{ (attendance$ | async)?.length || 0 }}</div>
+                            <div class="text-xs text-muted text-uppercase">Gym Sessions</div>
+                        </div>
+                    </div>
+
+                    <div class="card stat-card" *ngIf="achievements$ | async as achievementsList">
+                        <div class="stat-icon">
+                            <span class="material-icons">emoji_events</span>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold">{{ achievementsList.length }}</div>
+                            <div class="text-xs text-muted text-uppercase">Achievements</div>
                         </div>
                     </div>
                 </div>
 
+                <div class="grid grid-2">
+                    <!-- Recent Attendance -->
+                    <div class="card p-0">
+                        <div class="card-header" style="padding: var(--space-md);">
+                            <h3 class="card-title">Recent Activity</h3>
+                            <span class="material-icons text-muted">history</span>
+                        </div>
+                        <div class="p-md">
+                            <ul class="flex flex-col gap-sm" *ngIf="attendance$ | async as records; else noAttendance">
+                                <li *ngFor="let record of records.slice(0, 5)"
+                                    class="flex justify-between items-center bg-hover p-sm rounded-md">
+                                    <div class="flex items-center gap-sm">
+                                        <span class="material-icons text-success"
+                                            style="font-size: 1.2rem;">check_circle</span>
+                                        <span class="text-sm font-medium">{{ record.date | date:'mediumDate' }}</span>
+                                    </div>
+                                    <span class="text-xs text-muted">{{ record.checkInTime }}</span>
+                                </li>
+                                <li *ngIf="records.length === 0" class="text-center text-muted p-md">No sessions logged
+                                    yet.</li>
+                            </ul>
+                            <ng-template #noAttendance>
+                                <div class="text-center p-md">
+                                    <span class="material-icons animate-spin">sync</span>
+                                </div>
+                            </ng-template>
+                        </div>
+                    </div>
+
+                    <!-- Achievements -->
+                    <div class="card p-0">
+                        <div class="card-header" style="padding: var(--space-md);">
+                            <h3 class="card-title">Unlocked Rewards</h3>
+                            <span class="material-icons text-accent">stars</span>
+                        </div>
+                        <div class="p-md">
+                            <div class="flex flex-col gap-sm" *ngIf="achievements$ | async as achievements">
+                                <div *ngFor="let badger of achievements"
+                                    class="flex items-center gap-md bg-hover p-sm rounded-md border border-subtle">
+                                    <div class="stat-icon" style="width: 32px; height: 32px; font-size: 1rem;">
+                                        <span class="material-icons">military_tech</span>
+                                    </div>
+                                    <div class="text-sm font-semibold">{{ badger.title }}</div>
+                                </div>
+                                <div *ngIf="achievements.length === 0" class="text-center text-muted p-md">
+                                    No trophies yet. Keep training hard!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

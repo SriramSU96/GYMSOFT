@@ -1,34 +1,39 @@
-<div>
-    <div>
+<div class="page-container">
+    <div class="page-header">
         <div>
-            <h2>{{ isEditing ? 'Edit Workout' : 'Create New Workout' }}</h2>
-            <p>Design a workout plan by adding exercises and details.</p>
+            <h1 class="page-title">{{ isEditing ? 'Edit Workout Plan' : 'Create New Workout' }}</h1>
+            <p class="page-subtitle">Design a custom workout routine by adding exercises and specific targets.</p>
         </div>
-        <a routerLink="/workouts">Back to List</a>
+        <a routerLink="/workouts" class="btn btn-secondary">
+            <span class="material-icons">arrow_back</span>
+            <span>Back to List</span>
+        </a>
     </div>
 
-    <div>
+    <div class="grid grid-cols-4 gap-lg">
         <!-- Main Form -->
-        <div>
+        <div class="col-span-3">
             <form [formGroup]="workoutForm" (ngSubmit)="onSubmit()">
+                <div class="card mb-lg">
+                    <div class="card-header">
+                        <h3 class="card-title">Basic Details</h3>
+                        <span class="material-icons text-muted">info</span>
+                    </div>
 
-                <!-- Basic Details -->
-                <div>
-                    <h3>Workout Details</h3>
-                    <div>
-                        <div>
+                    <div class="grid grid-3">
+                        <div class="form-group">
                             <label for="title">Workout Title</label>
                             <input id="title" type="text" formControlName="title"
                                 placeholder="e.g. Full Body Destruction">
                         </div>
-                        <div>
-                            <label for="goal">Goal</label>
+                        <div class="form-group">
+                            <label for="goal">Training Goal</label>
                             <select id="goal" formControlName="goal">
                                 <option *ngFor="let g of goals" [value]="g">{{ g }}</option>
                             </select>
                         </div>
-                        <div>
-                            <label for="level">Difficulty Level</label>
+                        <div class="form-group">
+                            <label for="level">Experience Level</label>
                             <select id="level" formControlName="level">
                                 <option *ngFor="let l of levels" [value]="l">{{ l }}</option>
                             </select>
@@ -36,68 +41,97 @@
                     </div>
                 </div>
 
-                <!-- Exercises List -->
-                <div>
-                    <div>
-                        <h3>Exercises</h3>
-                        <button type="button" (click)="addExercise()">
-                            <span>add</span> Add Exercise
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Exercises</h3>
+                        <button type="button" class="btn btn-outline btn-sm" (click)="addExercise()">
+                            <span class="material-icons">add</span>
+                            <span>Add Exercise</span>
                         </button>
                     </div>
 
-                    <div formArrayName="exercises">
-                        <div *ngFor="let exercise of exercises.controls; let i=index" [formGroupName]="i">
+                    <div formArrayName="exercises" class="flex flex-col gap-md">
+                        <div *ngFor="let exercise of exercises.controls; let i=index" [formGroupName]="i"
+                            class="bg-hover p-md rounded-md border border-subtle relative group">
 
                             <!-- Remove Button -->
-                            <button type="button" (click)="removeExercise(i)">
-                                <span>close</span>
+                            <button type="button" class="btn btn-icon btn-danger btn-sm absolute"
+                                style="top: 8px; right: 8px;" (click)="removeExercise(i)" title="Remove Exercise">
+                                <span class="material-icons" style="font-size: 1.2rem;">close</span>
                             </button>
 
-                            <div>
-                                <div>
-                                    <label *ngIf="i===0">Exercise Name</label>
+                            <div class="grid grid-cols-4 gap-md items-end">
+                                <div class="col-span-1">
+                                    <label class="text-xs text-muted text-uppercase mb-xs block">Exercise Name</label>
                                     <input type="text" formControlName="name" placeholder="Name">
                                 </div>
                                 <div>
-                                    <label *ngIf="i===0">Sets</label>
+                                    <label class="text-xs text-muted text-uppercase mb-xs block">Sets</label>
                                     <input type="number" formControlName="sets" placeholder="3">
                                 </div>
                                 <div>
-                                    <label *ngIf="i===0">Reps</label>
-                                    <input type="text" formControlName="reps" placeholder="12 or 10-12">
+                                    <label class="text-xs text-muted text-uppercase mb-xs block">Reps</label>
+                                    <input type="text" formControlName="reps" placeholder="12">
                                 </div>
                                 <div>
-                                    <label *ngIf="i===0">Rest</label>
+                                    <label class="text-xs text-muted text-uppercase mb-xs block">Rest Time</label>
                                     <input type="text" formControlName="restTime" placeholder="60s">
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div *ngIf="exercises.length === 0">
-                        No exercises added yet. Click "Add Exercise" to start.
+                    <div *ngIf="exercises.length === 0"
+                        class="text-center p-xl bg-hover rounded-md border border-dashed border-subtle">
+                        <span class="material-icons text-muted"
+                            style="font-size: 3rem; margin-bottom: var(--space-sm);">fitness_center</span>
+                        <p class="text-muted">No exercises added yet. Click "Add Exercise" to start building.</p>
                     </div>
-                </div>
 
-                <!-- Actions -->
-                <div>
-                    <button type="button" routerLink="/workouts">Cancel</button>
-                    <button type="submit" [disabled]="workoutForm.invalid || isLoading">
-                        {{ isLoading ? 'Saving...' : (isEditing ? 'Update Workout' : 'Create Workout') }}
-                    </button>
+                    <div class="flex justify-end gap-md mt-xl">
+                        <button type="button" routerLink="/workouts" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary" [disabled]="workoutForm.invalid || isLoading">
+                            <span class="material-icons">{{ isEditing ? 'save' : 'add_task' }}</span>
+                            {{ isLoading ? 'Saving...' : (isEditing ? 'Update Workout' : 'Create Workout') }}
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
 
         <!-- Sidebar / Tips -->
-        <div>
-            <div>
-                <h4>Builder Tips</h4>
-                <ul>
-                    <li>Start with compound movements (Squats, Bench, Deadlift).</li>
-                    <li>Adjust sets and reps based on the goal (Strength: 1-5, Hypertrophy: 8-12).</li>
-                    <li>Ensure rest times are adequate for recovery.</li>
+        <div class="col-span-1">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Builder Tips</h3>
+                    <span class="material-icons text-accent">lightbulb</span>
+                </div>
+                <ul class="flex flex-col gap-md p-0 m-0" style="list-style: none;">
+                    <li class="flex gap-sm">
+                        <span class="material-icons text-accent"
+                            style="font-size: 1rem; margin-top: 3px;">check_circle</span>
+                        <span class="text-sm text-secondary">Start with compound movements like Squats or Bench
+                            Press.</span>
+                    </li>
+                    <li class="flex gap-sm">
+                        <span class="material-icons text-accent"
+                            style="font-size: 1rem; margin-top: 3px;">check_circle</span>
+                        <span class="text-sm text-secondary">Adjust reps for your goal (Strength: 1-5, Hypertrophy:
+                            8-12).</span>
+                    </li>
+                    <li class="flex gap-sm">
+                        <span class="material-icons text-accent"
+                            style="font-size: 1rem; margin-top: 3px;">check_circle</span>
+                        <span class="text-sm text-secondary">Consistent rest periods (60-90s) are key for
+                            performance.</span>
+                    </li>
                 </ul>
+            </div>
+
+            <div class="card mt-lg bg-soft-accent border-accent-soft">
+                <h4 class="text-sm font-semibold mb-xs">Need help?</h4>
+                <p class="text-xs text-muted">Contact our head trainer if you're unsure about the exercise selection.
+                </p>
             </div>
         </div>
     </div>

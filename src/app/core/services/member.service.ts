@@ -21,8 +21,9 @@ export class MemberService {
         return this.http.get<Member>(`${this.apiUrl}/${id}`);
     }
 
-    getMembers(keyword?: string, pageNumber: number = 1): Observable<Member[]> {
+    getMembers(gymId?: string, keyword?: string, pageNumber: number = 1): Observable<Member[]> {
         let params = new HttpParams();
+        if (gymId) params = params.set('gymId', gymId);
         if (keyword) params = params.set('keyword', keyword);
         params = params.set('pageNumber', pageNumber);
 

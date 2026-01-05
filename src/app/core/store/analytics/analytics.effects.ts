@@ -8,8 +8,18 @@ import * as AnalyticsActions from './analytics.actions';
 
 @Injectable()
 export class AnalyticsEffects {
-    private actions$ = inject(Actions);
     private analyticsService = inject(AnalyticsService);
+    private actions$ = inject(Actions);
+
+    loadAnalytics$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(AnalyticsActions.loadAnalytics),
+            mergeMap(() => [
+                AnalyticsActions.loadOverview(),
+                AnalyticsActions.loadFinancialReport({ month: new Date().toLocaleString('default', { month: 'long' }) })
+            ])
+        )
+    );
 
     loadOverview$ = createEffect(() =>
         this.actions$.pipe(

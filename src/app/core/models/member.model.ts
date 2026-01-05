@@ -6,9 +6,9 @@ export interface Member {
     name: string;
     email: string;
     phone: string;
-    gender: 'male' | 'female' | 'other';
+    gender: 'Male' | 'Female' | 'Other';
     age: number;
-    membershipStatus: 'active' | 'expired' | 'pending';
+    membershipStatus: 'Active' | 'Inactive' | 'Pending' | 'Expired';
     membershipExpiry: string;
     trainerId?: string;
     gymId: string;

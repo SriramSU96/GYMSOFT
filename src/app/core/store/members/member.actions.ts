@@ -7,7 +7,7 @@ export const loadMember = createAction('[Member] Load Member', props<{ id: strin
 export const loadMemberSuccess = createAction('[Member] Load Member Success', props<{ member: Member }>());
 export const loadMemberFailure = createAction('[Member] Load Member Failure', props<{ error: any }>());
 
-export const loadMembers = createAction('[Member] Load Members');
+export const loadMembers = createAction('[Member] Load Members', props<{ gymId: string }>());
 export const loadMembersSuccess = createAction('[Member] Load Members Success', props<{ members: Member[] }>());
 export const loadMembersFailure = createAction('[Member] Load Members Failure', props<{ error: any }>());
 

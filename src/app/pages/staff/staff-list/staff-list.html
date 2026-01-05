@@ -1,70 +1,79 @@
-<div>
+<div class="page-header">
     <div>
-        <div>
-            <h2>Staff Directory</h2>
-            <p>Manage your trainers, managers, and support staff.</p>
-        </div>
-        <a routerLink="/staff/add">
-            <span>add</span>
+        <h1 class="page-title">Staff Directory</h1>
+        <p class="page-subtitle">Manage your trainers, managers, and support staff.</p>
+    </div>
+    <div class="page-actions">
+        <a routerLink="/staff/add" class="btn btn-primary">
+            <span class="material-icons">add</span>
             <span>Add New Staff</span>
         </a>
     </div>
+</div>
 
-    <div>
-        <div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Staff Member</th>
-                        <th>Role</th>
-                        <th>Contact</th>
-                        <th>Monthly Salary</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let staff of staff$ | async">
-                        <td>
-                            <div>
-                                <div>
-                                    <span>person</span>
-                                </div>
-                                <div>{{ staff.name }}</div>
+<div class="card p-0 overflow-hidden">
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Staff Member</th>
+                    <th>Role</th>
+                    <th>Contact</th>
+                    <th>Monthly Salary</th>
+                    <th class="text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let staff of staff$ | async">
+                    <td>
+                        <div class="flex items-center gap-md">
+                            <div class="stat-icon"
+                                style="width: 36px; height: 36px; border-radius: var(--radius-full);">
+                                <span class="material-icons">person</span>
                             </div>
-                        </td>
-                        <td>
-                            <span>{{ staff.role | uppercase }}</span>
-                        </td>
-                        <td>
-                            <div>{{ staff.phone }}</div>
-                        </td>
-                        <td>
-                            <div>${{ staff.salary }}</div>
-                        </td>
-                        <td>
-                            <button>
-                                <span>visibility</span>
+                            <div class="font-semibold">{{ staff.name }}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge badge-accent">{{ staff.role | uppercase }}</span>
+                    </td>
+                    <td>
+                        <div class="text-sm">{{ staff.phone }}</div>
+                    </td>
+                    <td>
+                        <div class="font-mono text-accent">${{ staff.salary | number:'1.2-2' }}</div>
+                    </td>
+                    <td class="text-right">
+                        <div class="flex justify-end gap-sm">
+                            <button class="btn btn-icon btn-secondary" title="View Details">
+                                <span class="material-icons">visibility</span>
                             </button>
-                            <button>
-                                <span>delete</span>
+                            <button class="btn btn-icon btn-danger" title="Delete Staff">
+                                <span class="material-icons">delete</span>
                             </button>
-                        </td>
-                    </tr>
-                    <tr *ngIf="(staff$ | async)?.length === 0 && !(isLoading$ | async)">
-                        <td colspan="5">
-                            <div>
-                                <span>badge</span>
-                                <h3>No staff members found</h3>
-                                <p>Start by onboarding your first team member.</p>
+                        </div>
+                    </td>
+                </tr>
+                <tr *ngIf="(staff$ | async)?.length === 0 && !(isLoading$ | async)">
+                    <td colspan="5">
+                        <div class="flex flex-col items-center justify-center p-xl text-center">
+                            <div class="stat-icon mb-md"
+                                style="width: 64px; height: 64px; font-size: 2rem; background-color: var(--bg-hover); color: var(--text-muted);">
+                                <span class="material-icons" style="font-size: 2.5rem;">badge</span>
                             </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            <h3 class="page-title" style="font-size: var(--font-size-xl);">No staff members found</h3>
+                            <p class="text-muted m-0">Start by onboarding your first team member.</p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-            <div *ngIf="isLoading$ | async">
-                <div>refresh</div>
-            </div>
+        <!-- Loading State -->
+        <div *ngIf="isLoading$ | async" class="p-xl text-center">
+            <span class="material-icons animate-spin"
+                style="font-size: 2rem; color: var(--accent-primary);">refresh</span>
+            <p class="text-muted mt-sm">Loading staff members...</p>
         </div>
     </div>
 </div>

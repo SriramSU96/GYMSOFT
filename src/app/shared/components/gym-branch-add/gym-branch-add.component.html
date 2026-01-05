@@ -1,0 +1,67 @@
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-md animate-fadeIn">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="cancel()"></div>
+
+    <!-- Modal Content -->
+    <div class="relative w-full max-w-md card glass-dark border border-accent-soft p-2xl shadow-2xl animate-slideUp"
+        style="background: rgba(15, 15, 15, 0.95); border: 1px solid rgba(212, 175, 55, 0.2);">
+
+        <div class="flex items-center gap-md mb-xl">
+            <div class="stat-icon bg-accent-soft text-accent">
+                <span class="material-icons">add_business</span>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold m-0 text-gradient-gold">Add New Branch</h3>
+                <p class="text-xs text-muted m-0">Expanding the legacy of {{ parentGym.name }}</p>
+            </div>
+        </div>
+
+        <form [formGroup]="branchForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-lg">
+            <!-- Branch Name -->
+            <div class="flex flex-col gap-xs">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-muted px-xs">Branch Name</label>
+                <div class="relative">
+                    <span class="material-icons absolute left-md top-1/2 -translate-y-1/2 text-muted"
+                        style="font-size: 1rem;">business</span>
+                    <input type="text" formControlName="name" placeholder="e.g. Downtown Elite"
+                        class="w-full bg-white/5 border border-subtle rounded-lg px-xl py-md focus:border-accent outline-none transition-all pl-3xl text-sm"
+                        [class.border-danger]="branchForm.get('name')?.invalid && branchForm.get('name')?.touched"
+                        style="padding-left: 2.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: white;">
+                </div>
+            </div>
+
+            <!-- Address -->
+            <div class="flex flex-col gap-xs">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-muted px-xs">Physical Address</label>
+                <div class="relative">
+                    <span class="material-icons absolute left-md top-1/2 -translate-y-1/2 text-muted"
+                        style="font-size: 1rem;">place</span>
+                    <input type="text" formControlName="address" placeholder="e.g. North Square, NY"
+                        class="w-full bg-white/5 border border-subtle rounded-lg px-xl py-md focus:border-accent outline-none transition-all pl-3xl text-sm"
+                        [class.border-danger]="branchForm.get('address')?.invalid && branchForm.get('address')?.touched"
+                        style="padding-left: 2.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: white;">
+                </div>
+            </div>
+
+            <!-- Validation Feedback -->
+            <div *ngIf="branchForm.invalid && branchForm.touched"
+                class="p-sm bg-danger-soft rounded border border-danger/20 animate-pulse">
+                <p class="text-[11px] text-danger m-0 text-center">Please ensure all fields have at least 3 characters.
+                </p>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="flex items-center gap-md mt-md">
+                <button type="button" (click)="cancel()"
+                    class="btn btn-ghost flex-1 py-md text-muted hover:text-white transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary flex-1 py-md shadow-gold font-bold"
+                    [disabled]="branchForm.invalid"
+                    style="background: linear-gradient(to right, #D4AF37, #F2C94C); color: black; border: none; border-radius: 8px;">
+                    Establish Branch
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,26 +1,52 @@
-<div>
-    <div>
-        <h2>GYMAURA Login
-        </h2>
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <div>
-                <label>Email</label>
-                <input type="email" formControlName="email">
+<div class="flex items-center justify-center min-vh-100" style="background-color: var(--bg-main); min-height: 100vh;">
+    <div class="card" style="width: 100%; max-width: 400px;">
+        <div class="text-center mb-lg">
+            <div class="sidebar-logo justify-center mb-sm">
+                <span class="material-icons" style="font-size: 2.5rem;">fitness_center</span>
+                <span style="font-size: 2.5rem;">GYM<span>SOFT</span></span>
             </div>
-            <div>
+            <h2 class="page-title">Welcome Back</h2>
+            <p class="text-muted">Please enter your credentials to access your dashboard.</p>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-md">
+            <div class="form-group">
+                <label>Email Address</label>
+                <div class="relative">
+                    <span class="material-icons absolute"
+                        style="left: 12px; top: 10px; color: var(--text-muted); font-size: 1.2rem;">email</span>
+                    <input type="email" formControlName="email" placeholder="name@example.com"
+                        style="padding-left: 2.5rem;">
+                </div>
+            </div>
+
+            <div class="form-group">
                 <label>Password</label>
-                <input type="password" formControlName="password">
+                <div class="relative">
+                    <span class="material-icons absolute"
+                        style="left: 12px; top: 10px; color: var(--text-muted); font-size: 1.2rem;">lock</span>
+                    <input type="password" formControlName="password" placeholder="••••••••"
+                        style="padding-left: 2.5rem;">
+                </div>
             </div>
-            <button type="submit" [disabled]="(isLoading$ | async)">
-                {{ (isLoading$ | async) ? 'Logging in...' : 'Login' }}
+
+            <button type="submit" class="btn btn-primary w-full mt-md" [disabled]="(isLoading$ | async)">
+                <span class="material-icons" *ngIf="!(isLoading$ | async)">login</span>
+                <span class="material-icons animate-spin" *ngIf="(isLoading$ | async)">refresh</span>
+                {{ (isLoading$ | async) ? 'Authenticating...' : 'Sign In' }}
             </button>
-            <div *ngIf="error$ | async as error">
-                {{ error?.error?.message || 'Login failed' }}
+
+            <div *ngIf="error$ | async as error" class="badge badge-danger w-full justify-center p-md mt-sm">
+                <span class="material-icons" style="font-size: 1rem; margin-right: 8px;">error</span>
+                {{ error?.error?.message || 'Login failed. Please check your credentials.' }}
             </div>
         </form>
-        <div>
-            <a routerLink="/register">Don't have an account?
-                Register</a>
+
+        <div class="text-center mt-xl">
+            <p class="text-sm text-muted">
+                First time here?
+                <a routerLink="/register" class="text-accent font-semibold">Create an Account</a>
+            </p>
         </div>
     </div>
 </div>

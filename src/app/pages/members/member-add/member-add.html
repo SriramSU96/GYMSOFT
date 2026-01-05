@@ -1,48 +1,148 @@
-<div>
-    <div>
-        <div>
-            <h2>Add New Member</h2>
-            <a routerLink="/members">
-                <span>arrow_back</span>
-                Back
-            </a>
+<div class="p-xl animate-fadeIn">
+    <!-- Modern Header -->
+    <div class="flex items-center justify-between mb-2xl">
+        <div class="flex items-center gap-md">
+            <div class="stat-icon bg-accent-soft text-accent">
+                <span class="material-icons">person_add</span>
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold m-0 tracking-tight text-gradient-gold">Member Onboarding</h2>
+                <p class="text-sm text-muted m-0">Register a new member to the active branch</p>
+            </div>
         </div>
+        <a routerLink="/members" class="btn btn-ghost gap-xs text-muted hover:text-primary">
+            <span class="material-icons" style="font-size: 1.2rem;">arrow_back</span>
+            <span>Return to Directory</span>
+        </a>
+    </div>
 
-        <form [formGroup]="memberForm" (ngSubmit)="onSubmit()">
-            <div>
-                <label>Name</label>
-                <input type="text" formControlName="name" placeholder="Full Name">
-            </div>
+    <!-- Registration Card -->
+    <div class="max-w-3xl mx-auto">
+        <div class="card glass-dark border border-subtle p-2xl"
+            style="background: rgba(255,255,255,0.02); border: 1px solid rgba(212,175,55,0.1); border-radius: var(--radius-lg);">
+            <form [formGroup]="memberForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-xl">
 
-            <div>
-                <label>Email</label>
-                <input type="email" formControlName="email" placeholder="Email Address">
-            </div>
+                <!-- Form Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-xl">
+                    <!-- Name -->
+                    <div class="flex flex-col gap-xs">
+                        <label class="text-xs font-bold uppercase tracking-wider text-muted px-xs">Full Name</label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-md top-1/2 -translate-y-1/2 text-muted"
+                                style="font-size: 1.1rem;">badge</span>
+                            <input type="text" formControlName="name" placeholder="e.g. John Doe"
+                                class="w-full bg-white/5 border border-subtle rounded-lg px-xl py-md focus:border-accent outline-none transition-all"
+                                [class.border-danger]="memberForm.get('name')?.invalid && memberForm.get('name')?.touched"
+                                style="padding-left: 3rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; height: 48px;">
+                        </div>
+                        <span *ngIf="memberForm.get('name')?.invalid && memberForm.get('name')?.touched"
+                            class="text-[10px] text-danger px-xs">Name is too short</span>
+                    </div>
 
-            <div>
-                <label>Phone</label>
-                <input type="tel" formControlName="phone" placeholder="Phone Number">
-            </div>
+                    <!-- Email -->
+                    <div class="flex flex-col gap-xs">
+                        <label class="text-xs font-bold uppercase tracking-wider text-muted px-xs">Email Address</label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-md top-1/2 -translate-y-1/2 text-muted"
+                                style="font-size: 1.1rem;">mail</span>
+                            <input type="email" formControlName="email" placeholder="john@example.com"
+                                class="w-full bg-white/5 border border-subtle rounded-lg px-xl py-md focus:border-accent outline-none transition-all"
+                                [class.border-danger]="memberForm.get('email')?.invalid && memberForm.get('email')?.touched"
+                                style="padding-left: 3rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; height: 48px;">
+                        </div>
+                        <span *ngIf="memberForm.get('email')?.invalid && memberForm.get('email')?.touched"
+                            class="text-[10px] text-danger px-xs">Invalid email format</span>
+                    </div>
 
-            <div>
-                <div>
-                    <label>Gender</label>
-                    <select formControlName="gender">
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
+                    <!-- Phone -->
+                    <div class="flex flex-col gap-xs">
+                        <label class="text-xs font-bold uppercase tracking-wider text-muted px-xs">Phone Number</label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-md top-1/2 -translate-y-1/2 text-muted"
+                                style="font-size: 1.1rem;">phone</span>
+                            <input type="tel" formControlName="phone" placeholder="10-15 digits"
+                                class="w-full bg-white/5 border border-subtle rounded-lg px-xl py-md focus:border-accent outline-none transition-all"
+                                [class.border-danger]="memberForm.get('phone')?.invalid && memberForm.get('phone')?.touched"
+                                style="padding-left: 3rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; height: 48px;">
+                        </div>
+                        <span *ngIf="memberForm.get('phone')?.invalid && memberForm.get('phone')?.touched"
+                            class="text-[10px] text-danger px-xs">Enter a valid phone number</span>
+                    </div>
+
+                    <!-- Date of Birth -->
+                    <div class="flex flex-col gap-xs">
+                        <label class="text-xs font-bold uppercase tracking-wider text-muted px-xs">Date of Birth</label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-md top-1/2 -translate-y-1/2 text-muted"
+                                style="font-size: 1.1rem;">calendar_today</span>
+                            <input type="date" formControlName="dob"
+                                class="w-full bg-white/5 border border-subtle rounded-lg px-xl py-md focus:border-accent outline-none transition-all"
+                                [class.border-danger]="memberForm.get('dob')?.invalid && memberForm.get('dob')?.touched"
+                                style="padding-left: 3rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; height: 48px;">
+                        </div>
+                    </div>
+
+                    <!-- Gender Selection -->
+                    <div class="flex flex-col gap-xs">
+                        <label class="text-xs font-bold uppercase tracking-wider text-muted px-xs">Gender</label>
+                        <div class="flex gap-sm">
+                            <button type="button" class="btn flex-1 py-md gap-xs"
+                                [class.btn-primary]="memberForm.get('gender')?.value === 'male'"
+                                [class.btn-ghost]="memberForm.get('gender')?.value !== 'male'"
+                                (click)="memberForm.patchValue({gender: 'male'})"
+                                style="height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                <span class="material-icons" style="font-size: 1.1rem;">male</span>
+                                <span>Male</span>
+                            </button>
+                            <button type="button" class="btn flex-1 py-md gap-xs"
+                                [class.btn-primary]="memberForm.get('gender')?.value === 'female'"
+                                [class.btn-ghost]="memberForm.get('gender')?.value !== 'female'"
+                                (click)="memberForm.patchValue({gender: 'female'})"
+                                style="height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                <span class="material-icons" style="font-size: 1.1rem;">female</span>
+                                <span>Female</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Membership Status (Pre-set) -->
+                    <div class="flex flex-col gap-xs opacity-50 pointer-events-none">
+                        <label class="text-xs font-bold uppercase tracking-wider text-muted px-xs">Initial
+                            Status</label>
+                        <div class="bg-white/5 border border-subtle rounded-lg px-xl py-md flex items-center gap-sm"
+                            style="height: 48px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding-left: 1rem;">
+                            <span class="w-2 h-2 rounded-full bg-success"></span>
+                            <span class="text-sm font-bold text-success uppercase tracking-widest">Active Member</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <label>Date of Birth</label>
-                    <input type="date" formControlName="dob">
+                <!-- Active Branch Info -->
+                <div *ngIf="!memberForm.get('gymId')?.value"
+                    class="p-md bg-warning-soft text-warning rounded-lg flex items-center gap-sm mt-md">
+                    <span class="material-icons">warning</span>
+                    <span class="text-xs">No active branch selected. Please select a gym in the topbar.</span>
                 </div>
-            </div>
 
-            <button type="submit" [disabled]="memberForm.invalid || (isLoading$ | async)">
-                {{ (isLoading$ | async) ? 'Saving...' : 'Register Member' }}
-            </button>
-        </form>
+                <div class="h-[1px] bg-border-subtle my-md"
+                    style="background: rgba(255,255,255,0.05); height: 1px; margin: 1.5rem 0;"></div>
+
+                <!-- Submit Section -->
+                <div class="flex flex-col gap-md">
+                    <button type="submit" class="btn btn-primary btn-lg w-full py-xl gap-sm shadow-gold"
+                        [disabled]="memberForm.invalid || (isLoading$ | async)"
+                        style="height: 64px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: linear-gradient(to right, #D4AF37, #F2C94C); color: black; border: none; cursor: pointer;">
+                        <span class="material-icons">{{ (isLoading$ | async) ? 'sync' : 'how_to_reg' }}</span>
+                        <span>{{ (isLoading$ | async) ? 'Processing Application...' : 'Finalize Registration' }}</span>
+                    </button>
+
+                    <p *ngIf="memberForm.invalid && memberForm.touched"
+                        class="text-center text-xs text-danger m-0 animate-pulse"
+                        style="color: var(--danger); font-size: 0.8rem; text-align: center; margin-top: 0.5rem;">
+                        Please ensure all premium fields (including Active Branch) are correctly populated.
+                    </p>
+                </div>
+            </form>
+        </div>
     </div>
 </div>

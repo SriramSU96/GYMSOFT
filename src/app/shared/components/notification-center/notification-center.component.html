@@ -1,41 +1,88 @@
-<div>
-    <!-- Trigger Button (Bell) -->
-    <!-- Note: This component is intended to be used in the header -->
-</div>
-
-<!-- For demo/page view purposes, we display the list directly. 
-     In a real app, this might be a dropdown from the bell request. 
-     The instruction implies a page or component for it. -->
-
-<div>
-    <div>
-        <h3>Notifications</h3>
-        <div>
-            <button (click)="filter = 'all'" [class.text-white]="filter === 'all'">All</button>
-            <button (click)="filter = 'unread'" [class.text-white]="filter === 'unread'">Unread</button>
+<div class="card p-0 h-full flex flex-col glass-dark" style="border: none; background: transparent; overflow: hidden;">
+    <!-- Modern Header with Filters -->
+    <div class="flex items-center justify-between p-lg border-b border-subtle glass">
+        <div class="flex items-center gap-sm">
+            <span class="material-icons text-accent">notifications</span>
+            <h3 class="text-lg font-bold m-0 tracking-tight">Activity Center</h3>
+        </div>
+        <div class="flex gap-xs bg-bg-soft p-xs rounded-lg"
+            style="background: rgba(255,255,255,0.03); border-radius: var(--radius-md);">
+            <button class="btn btn-sm px-md" [class.btn-primary]="filter === 'all'" [class.btn-ghost]="filter !== 'all'"
+                (click)="setFilter('all')">All</button>
+            <button class="btn btn-sm px-md" [class.btn-primary]="filter === 'unread'"
+                [class.btn-ghost]="filter !== 'unread'" (click)="setFilter('unread')">Unread</button>
         </div>
     </div>
 
-    <div>
-        <div *ngFor="let n of filteredNotifications" [class.bg-black]="!n.read">
-            <div>
-                <span [ngClass]="{'text-[var(--color-success)]': n.type === 'info', 
-                           'text-[var(--color-danger)]': n.type === 'error',
-                           'text-[var(--color-warning)]': n.type === 'warning'}">
-                    {{ n.title }}
-                </span>
-                <span>{{ n.time }}</span>
-            </div>
-            <p>{{ n.message }}</p>
+    <!-- Scrollable Notification List -->
+    <div class="flex-1 overflow-y-auto custom-scrollbar" style="max-height: 400px;">
+        <div *ngIf="notifications$ | async as notifications; else loading">
+            <div *ngFor="let n of notifications"
+                class="p-lg border-b border-subtle transition-all hover:bg-white/5 cursor-default relative group"
+                [class.bg-white-5]="!n.isRead">
 
-            <div>
-                <button *ngIf="!n.read" (click)="markAsRead(n.id)">Mark as Read</button>
-                <button (click)="deleteNotification(n.id)">Dismiss</button>
+                <!-- Unread Indicator -->
+                <div *ngIf="!n.isRead" class="absolute left-1 top-1/2 -translate-y-1/2 w-1 h-8 bg-accent rounded-full">
+                </div>
+
+                <div class="flex items-start gap-lg">
+                    <!-- Dynamic Stat Icon based on Type -->
+                    <div class="stat-icon shrink-0" [class.bg-danger-soft]="n.type === 'error'"
+                        [class.bg-warning-soft]="n.type === 'warning'"
+                        [class.bg-success-soft]="n.type === 'info' || n.type === 'success'"
+                        [class.text-danger]="n.type === 'error'" [class.text-warning]="n.type === 'warning'"
+                        [class.text-success]="n.type === 'info' || n.type === 'success'">
+                        <span class="material-icons">
+                            {{ n.type === 'error' ? 'report_problem' : (n.type === 'warning' ? 'notifications_active' :
+                            'info') }}
+                        </span>
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-xs">
+                            <h4 class="font-bold text-sm m-0 text-primary truncate">{{ n.title }}</h4>
+                            <span class="text-xs text-muted whitespace-nowrap">{{ n.createdAt | date:'shortTime'
+                                }}</span>
+                        </div>
+                        <p class="text-sm text-secondary m-0 mb-lg line-clamp-2 leading-relaxed">{{ n.message }}</p>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button *ngIf="!n.isRead" class="btn btn-secondary btn-sm gap-xs"
+                                (click)="markAsRead(n.id)">
+                                <span class="material-icons" style="font-size: 0.9rem;">done_all</span>
+                                <span>Read</span>
+                            </button>
+                            <button class="btn btn-ghost btn-sm text-muted hover:text-danger gap-xs"
+                                (click)="dismiss(n.id)">
+                                <span class="material-icons" style="font-size: 0.9rem;">delete_outline</span>
+                                <span>Dismiss</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="notifications.length === 0" class="flex flex-col items-center justify-center p-2xl text-center"
+                style="min-height: 250px;">
+                <div class="stat-icon bg-bg-soft text-muted opacity-50 mb-lg"
+                    style="width: 64px; height: 64px; margin-inline: auto;">
+                    <span class="material-icons" style="font-size: 2rem;">notifications_off</span>
+                </div>
+                <h4 class="text-primary font-bold mb-xs w-full">All caught up!</h4>
+                <p class="text-muted text-sm m-0 w-full">No new notifications to display right now.</p>
             </div>
         </div>
 
-        <div *ngIf="filteredNotifications.length === 0">
-            No notifications to show.
-        </div>
+        <!-- Loading State -->
+        <ng-template #loading>
+            <div class="p-2xl text-center">
+                <div class="stat-icon m-auto mb-lg animate-spin bg-bg-soft border-accent-soft">
+                    <span class="material-icons">refresh</span>
+                </div>
+                <p class="text-muted text-sm m-0">Syncing updates...</p>
+            </div>
+        </ng-template>
     </div>
 </div>

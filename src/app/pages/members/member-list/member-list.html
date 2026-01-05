@@ -1,17 +1,17 @@
-<div>
-    <div>
+<div class="page-container">
+    <div class="page-header">
         <div>
-            <h2>Member Directory</h2>
-            <p>Manage and track your active gym memberships.</p>
+            <h1 class="page-title">Member Directory</h1>
+            <p class="page-subtitle">Manage and track your active gym memberships.</p>
         </div>
-        <a routerLink="add">
-            <span>add</span>
+        <a routerLink="add" class="btn btn-primary">
+            <span class="material-icons">add</span>
             <span>Add New Member</span>
         </a>
     </div>
 
-    <div>
-        <div>
+    <div class="card p-0 overflow-hidden">
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>
@@ -25,21 +25,21 @@
                 <tbody>
                     <tr *ngFor="let member of members$ | async">
                         <td>
-                            <div>
-                                <div>
-                                    <span>person</span>
+                            <div class="flex items-center gap-md">
+                                <div class="stat-icon" style="width: 40px; height: 40px; font-size: 1.2rem;">
+                                    <span class="material-icons">person</span>
                                 </div>
-                                <div>
-                                    <div>{{ member.name }}</div>
-                                    <div>{{ member.email }}</div>
+                                <div class="flex flex-col">
+                                    <div class="font-semibold text-primary">{{ member.name }}</div>
+                                    <div class="text-sm text-muted">{{ member.email }}</div>
                                 </div>
                             </div>
                         </td>
                         <td>
-                            <div>{{ member.phone }}</div>
+                            <div class="text-sm">{{ member.phone }}</div>
                         </td>
                         <td>
-                            <span [ngClass]="{
+                            <span class="badge" [ngClass]="{
                                 'badge-success': member.membershipStatus.toLowerCase() === 'active',
                                 'badge-danger': member.membershipStatus.toLowerCase() === 'expired',
                                 'badge-warning': member.membershipStatus.toLowerCase() === 'pending'
@@ -48,31 +48,35 @@
                             </span>
                         </td>
                         <td>
-                            <div>{{ member.membershipExpiry | date:'mediumDate' }}</div>
+                            <div class="text-sm">{{ member.membershipExpiry | date:'mediumDate' }}</div>
                         </td>
                         <td>
-                            <a [routerLink]="[member.id]">
-                                <span>edit</span>
-                            </a>
-                            <button>
-                                <span>delete</span>
-                            </button>
+                            <div class="flex gap-sm">
+                                <a [routerLink]="[member.id]" class="btn btn-icon btn-secondary" title="Edit Member">
+                                    <span class="material-icons">edit</span>
+                                </a>
+                                <button class="btn btn-icon btn-danger" title="Delete Member">
+                                    <span class="material-icons">delete</span>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                     <tr *ngIf="(members$ | async)?.length === 0 && !(isLoading$ | async)">
                         <td colspan="5">
-                            <div>
-                                <span>people_outline</span>
-                                <h3>No members found</h3>
-                                <p>Start by adding your first gym member.</p>
+                            <div class="text-center p-2xl">
+                                <span class="material-icons text-muted" style="font-size: 4rem;">people_outline</span>
+                                <h3 class="mt-md">No members found</h3>
+                                <p class="text-muted">Start by adding your first gym member.</p>
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
 
-            <div *ngIf="isLoading$ | async">
-                <div>refresh</div>
+            <div *ngIf="isLoading$ | async" class="flex justify-center p-xl">
+                <div class="stat-icon animate-spin">
+                    <span class="material-icons">refresh</span>
+                </div>
             </div>
         </div>
     </div>

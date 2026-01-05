@@ -55,10 +55,14 @@ export class PlanAssignment implements OnInit {
         this.dietService.getDietPlans(gymId).subscribe(d => this.diets = d);
 
         // Assuming MemberService has a method to get active members
-        this.memberService.getMembers({ gymId, status: 'Active' }).subscribe(res => {
+        // Assuming MemberService has a method to get active members
+        this.memberService.getMembers('').subscribe(res => {
             // Handle both paginated and array response
             const data = (res as any).data || res;
-            this.members = Array.isArray(data) ? data : [];
+            let allMembers = Array.isArray(data) ? data : [];
+
+            // Filter by status active since service doesn't support filter object yet
+            this.members = allMembers.filter((m: any) => m.status === 'Active');
             this.isLoading = false;
         });
     }

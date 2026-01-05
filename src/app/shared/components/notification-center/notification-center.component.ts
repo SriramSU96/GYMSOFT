@@ -1,5 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Store } from '@ngrx/store';
+import { map } from 'rxjs/operators';
+import { selectNotifications } from '../../../core/store/notifications/notification.selectors';
+import * as NotificationActions from '../../../core/store/notifications/notification.actions';
 
 @Component({
     selector: 'app-notification-center',
@@ -8,28 +12,49 @@ import { CommonModule } from '@angular/common';
     templateUrl: './notification-center.component.html',
     styleUrls: ['./notification-center.component.css']
 })
-export class NotificationCenterComponent {
-    notifications = [
-        { id: 1, title: 'New Member Joined', message: 'Sandeep just signed up for Gold Plan', type: 'info', time: '10 mins ago', read: false },
-        { id: 2, title: 'Payment Failed', message: 'Recurring payment for Amit failed', type: 'error', time: '1 hour ago', read: false },
-        { id: 3, title: 'Maintenance Alert', message: 'Treadmill #4 needs servicing', type: 'warning', time: '2 hours ago', read: true }
-    ];
+export class NotificationCenterComponent implements OnInit {
+    private store = inject(Store);
 
+    // Data Observables
+    allNotifications$ = this.store.select(selectNotifications);
     filter = 'all';
 
-    get filteredNotifications() {
-        if (this.filter === 'unread') {
-            return this.notifications.filter(n => !n.read);
-        }
-        return this.notifications;
+    // Filtered stream
+    notifications$ = this.allNotifications$.pipe(
+        map(notifications => {
+            if (this.filter === 'unread') {
+                return notifications.filter(n => !n.isRead);
+            }
+            return notifications;
+        })
+    );
+
+    ngOnInit() {
+        this.store.dispatch(NotificationActions.loadNotifications());
     }
 
-    markAsRead(id: number) {
-        const notif = this.notifications.find(n => n.id === id);
-        if (notif) notif.read = true;
+    setFilter(filter: string) {
+        this.filter = filter;
+        // Re-assign notifications$ to trigger steam update (simpler for this case)
+        this.notifications$ = this.allNotifications$.pipe(
+            map(notifications => {
+                if (this.filter === 'unread') {
+                    return notifications.filter(n => !n.isRead);
+                }
+                return notifications;
+            })
+        );
     }
 
-    deleteNotification(id: number) {
-        this.notifications = this.notifications.filter(n => n.id !== id);
+    markAsRead(id: string) {
+        this.store.dispatch(NotificationActions.markAsRead({ id }));
+    }
+
+    // Dismiss functionality (if supported by backend, otherwise local filter)
+    dismiss(id: string) {
+        // Local dismiss if backend doesn't support specific delete
+        this.notifications$ = this.notifications$.pipe(
+            map(list => list.filter(n => n.id !== id))
+        );
     }
 }

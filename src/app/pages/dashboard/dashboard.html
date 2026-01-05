@@ -1,52 +1,68 @@
-<div>
+<div class="page-header">
     <div>
-        <div>
-            <h1>Performance Overview</h1>
-            <p>Summary of your gym's key metrics and member activity.</p>
-        </div>
-        <div>
-            <button>
-                <span>download</span>
-                <span>Export Report</span>
-            </button>
-        </div>
+        <h1 class="page-title">Performance Overview</h1>
+        <p class="page-subtitle">Summary of your gym's key metrics and member activity.</p>
     </div>
+    <div class="page-actions">
+        <button class="btn btn-secondary" (click)="exportReport()">
+            <span class="material-icons">download</span>
+            <span>Export Report</span>
+        </button>
+    </div>
+</div>
 
-    <div *ngIf="analytics$ | async as stats">
+<div class="grid grid-cols-3 gap-lg mb-xl" *ngIf="analytics$ | async as stats">
+    <div class="card stat-card">
+        <div class="stat-icon">
+            <span class="material-icons">people</span>
+        </div>
         <div>
-            <span>Active Members</span>
-            <div>{{ stats.activeCount }}</div>
-            <div>
-                <span>trending_up</span>
+            <div class="text-sm text-muted">Active Members</div>
+            <div class="text-2xl font-bold">{{ stats.activeCount }}</div>
+            <div class="text-xs text-success flex items-center mt-xs">
+                <span class="material-icons" style="font-size: 1rem;">trending_up</span>
                 <span>+12% from last month</span>
             </div>
         </div>
-        <div>
-            <span>Daily Attendance</span>
-            <div>{{ stats.totalMembers }}</div>
-            <div>Based on current check-ins</div>
+    </div>
+
+    <div class="card stat-card">
+        <div class="stat-icon" style="background-color: rgba(52, 211, 153, 0.1); color: #34d399;">
+            <span class="material-icons">today</span>
         </div>
         <div>
-            <span>Monthly Revenue</span>
-            <div>${{ stats.netProfit }}</div>
-            <div>Projected current month</div>
+            <div class="text-sm text-muted">Daily Attendance</div>
+            <div class="text-2xl font-bold">{{ stats.totalMembers }}</div>
+            <div class="text-xs text-muted mt-xs">Based on current check-ins</div>
         </div>
     </div>
 
-    <div>
-        <div>
-            <div>
-                <h3>Analytics Trends</h3>
-                <div>
-                    <button>Day</button>
-                    <button>Week</button>
-                    <button>Month</button>
-                </div>
-            </div>
-            <div>
-                <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="barChartType">
-                </canvas>
-            </div>
+    <div class="card stat-card">
+        <div class="stat-icon" style="background-color: rgba(251, 191, 36, 0.1); color: #fbbf24;">
+            <span class="material-icons">payments</span>
         </div>
+        <div>
+            <div class="text-sm text-muted">Monthly Revenue</div>
+            <div class="text-2xl font-bold">${{ stats.netProfit | number:'1.2-2' }}</div>
+            <div class="text-xs text-muted mt-xs">Projected current month</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Analytics Trends</h3>
+        <div class="flex gap-sm">
+            <button class="btn btn-sm" [class.btn-primary]="activePeriod === 'Day'"
+                [class.btn-secondary]="activePeriod !== 'Day'" (click)="setPeriod('Day')">Day</button>
+            <button class="btn btn-sm" [class.btn-primary]="activePeriod === 'Week'"
+                [class.btn-secondary]="activePeriod !== 'Week'" (click)="setPeriod('Week')">Week</button>
+            <button class="btn btn-sm" [class.btn-primary]="activePeriod === 'Month'"
+                [class.btn-secondary]="activePeriod !== 'Month'" (click)="setPeriod('Month')">Month</button>
+        </div>
+    </div>
+    <div style="height: 380px; width: 100%; padding: var(--space-md);">
+        <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="barChartType">
+        </canvas>
     </div>
 </div>

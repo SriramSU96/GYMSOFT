@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { MainLayout } from './core/components/layout/main-layout/main-layout';
+import { MainLayoutComponent as MainLayout } from './layouts/main-layout/main-layout.component';
 import { LoginComponent } from './pages/auth/login/login.component';
 import { RegisterComponent } from './pages/auth/register/register.component';
 import { Dashboard } from './pages/dashboard/dashboard';
