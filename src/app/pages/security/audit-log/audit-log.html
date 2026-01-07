@@ -27,15 +27,15 @@
                 <tbody>
                     <tr *ngFor="let log of logs$ | async">
                         <td>
-                            <div>{{ log.timestamp | date:'mediumDate' }}</div>
-                            <div>{{ log.timestamp | date:'shortTime' }}</div>
+                            <div>{{ log.createdAt | date:'shortTime' }}</div>
+                            <span>{{ log.createdAt | date:'short' }}</span>
                         </td>
                         <td>
                             <div>
                                 <div>
                                     <span>person</span>
                                 </div>
-                                <span>{{ log.userId }}</span>
+                                <span>{{ log.details || '-' }}</span>
                             </div>
                         </td>
                         <td>
@@ -49,10 +49,10 @@
                             </span>
                         </td>
                         <td>
-                            <code>{{ log.resource }}</code>
+                            <code>{{ log.entity }}</code>
                         </td>
                         <td>
-                            <span>{{ log.ipAddress }}</span>
+                            <span>{{ log.details || '-' }}</span>
                         </td>
                     </tr>
                     <tr *ngIf="(logs$ | async)?.length === 0">

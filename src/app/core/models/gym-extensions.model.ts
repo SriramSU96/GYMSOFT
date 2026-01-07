@@ -3,12 +3,12 @@
 export interface Exercise {
     name: string;
     sets: number;
-    reps: string;
-    restTime: string;
+    reps: number; // Spec says Number
+    restTime: string; // Spec says String
 }
 
 export interface Workout {
-    _id: string;
+    _id?: string;
     title: string;
     level: 'Beginner' | 'Intermediate' | 'Advanced';
     goal: 'Weight Loss' | 'Muscle Gain' | 'Fitness';
@@ -28,17 +28,19 @@ export interface DietMeal {
 }
 
 export interface DietPlan {
-    _id: string;
+    _id?: string;
     title: string;
     calories: number;
     meals: DietMeal[];
+    createdBy: string; // Added field
     gymId: string;
 }
 
 export interface AssignedPlan {
+    _id?: string;
     memberId: string;
-    workoutId: Workout; // Populated
-    dietPlanId: DietPlan; // Populated
+    workoutId?: string; // Ref or Populated
+    dietPlanId?: string; // Ref or Populated
     startDate: string;
     endDate?: string;
     gymId: string;
@@ -46,7 +48,7 @@ export interface AssignedPlan {
 
 // --- INVENTORY & POS MODELS ---
 export interface Product {
-    _id: string;
+    _id?: string;
     name: string;
     category: 'Supplement' | 'Drink' | 'Gear' | 'Other';
     price: number;
@@ -56,37 +58,36 @@ export interface Product {
 
 export interface SaleItem {
     productId: string;
-    productName?: string; // For UI display
     quantity: number;
     price: number;
 }
 
 export interface Sale {
-    _id: string;
+    _id?: string;
     products: SaleItem[];
     totalAmount: number;
-    paymentMethod: 'Cash' | 'Card' | 'UPI';
+    paymentMethod: 'Cash' | 'Card' | 'UPI' | 'Other';
     soldBy: string; // User ID
-    date: string;
+    date?: string;
     gymId: string;
 }
 
 // --- CLASS & BOOKING MODELS ---
 export interface GymClass {
-    _id: string;
+    _id?: string;
     title: string;
     trainerId: string; // User ID
     scheduleDate: string; // ISO Date
     startTime: string; // "10:00 AM"
     duration: number; // minutes
     capacity: number;
-    bookingsCount: number;
+    bookingsCount?: number;
     gymId: string;
 }
 
 export interface Booking {
-    _id: string;
-    classId: GymClass; // Populated
+    _id?: string;
+    classId: string; // Spec says Ref
     memberId: string;
     status: 'Booked' | 'Cancelled' | 'Attended';
     gymId: string;

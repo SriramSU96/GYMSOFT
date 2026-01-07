@@ -53,12 +53,12 @@
             </div>
             <div>
                 <h2>Invoice</h2>
-                <div>#{{ invoice.id }}</div>
+                <div>#{{ invoice._id }}</div>
                 <div>
                     <div>Date: <span>{{ invoice.date | date:'mediumDate' }}</span></div>
                     <div>
-                        <span [ngClass]="invoice.status === 'paid' ? 'badge-success' : 'badge-warning'">
-                            {{ (invoice.status || 'PAID') | uppercase }}
+                        <span class="badge badge-success">
+                            PAID
                         </span>
                     </div>
                 </div>
@@ -69,10 +69,9 @@
         <div>
             <div>
                 <div>Client Details:</div>
-                <div>{{ invoice.member?.name }}</div>
+                <div>Member ID: {{ invoice.memberId }}</div>
                 <div>
-                    <p>{{ invoice.member?.email }}</p>
-                    <p>{{ invoice.member?.address }}</p>
+                    <p>Plan: {{ invoice.planId }}</p>
                     <p>ID: {{ invoice.memberId }}</p>
                 </div>
             </div>
@@ -98,24 +97,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let item of (invoice.items || [])">
-                        <td>
-                            <div>{{ item.description }}</div>
-                            <div>Gym Services Subscription</div>
-                        </td>
-                        <td>1</td>
-                        <td>₹{{ item.amount | number }}</td>
-                        <td>₹{{ item.amount | number }}</td>
-                    </tr>
-                    <!-- Default row if no items -->
-                    <tr *ngIf="!invoice.items || invoice.items.length === 0">
-                        <td>
-                            <div>Standard Membership Entry</div>
-                            <div>Access to all gym facilities and equipment</div>
-                        </td>
-                        <td>1</td>
-                        <td>₹{{ invoice.amount | number }}</td>
-                        <td>₹{{ invoice.amount | number }}</td>
+                    <tr>
+                        <td>{{ invoice.planId }}</td>
+                        <td class="text-right">1</td>
+                        <td class="text-right">₹{{ invoice.amount | number }}</td>
+                        <td class="text-right">₹{{ invoice.amount | number }}</td>
                     </tr>
                 </tbody>
             </table>

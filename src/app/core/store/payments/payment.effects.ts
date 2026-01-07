@@ -51,21 +51,9 @@ export class PaymentEffects {
         this.actions$.pipe(
             ofType(PaymentActions.loadInvoice),
             mergeMap(({ id }) =>
-                this.paymentService.getInvoice(id).pipe(
-                    map((invoice) => PaymentActions.loadInvoiceSuccess({ invoice })),
+                this.paymentService.getInvoiceDownload(id).pipe(
+                    map(() => PaymentActions.loadInvoiceSuccess({ invoice: {} as any })), // Placeholder if we just download
                     catchError((error) => of(PaymentActions.loadInvoiceFailure({ error })))
-                )
-            )
-        )
-    );
-
-    loadPendingDues$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(PaymentActions.loadPendingDues),
-            mergeMap(() =>
-                this.paymentService.getPendingDues().pipe(
-                    map((dues) => PaymentActions.loadPendingDuesSuccess({ dues })),
-                    catchError((error) => of(PaymentActions.loadPendingDuesFailure({ error })))
                 )
             )
         )

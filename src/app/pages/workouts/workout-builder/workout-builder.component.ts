@@ -73,7 +73,7 @@ export class WorkoutBuilder implements OnInit {
 
     loadWorkout(id: string): void {
         this.isLoading = true;
-        this.workoutService.getWorkoutById(id).subscribe({
+        this.workoutService.getWorkout(id).subscribe({
             next: (workout: any) => {
                 this.workoutForm.patchValue({
                     title: workout.title,
@@ -87,7 +87,7 @@ export class WorkoutBuilder implements OnInit {
                     this.exercises.push(this.fb.group({
                         name: [ex.name, Validators.required],
                         sets: [ex.sets, [Validators.required, Validators.min(1)]],
-                        reps: [ex.reps, Validators.required],
+                        reps: [Number(ex.reps), Validators.required],
                         restTime: [ex.restTime, Validators.required]
                     }));
                 });
@@ -104,9 +104,15 @@ export class WorkoutBuilder implements OnInit {
         if (this.workoutForm.invalid) return;
 
         this.isLoading = true;
+        const currentUser = this.authService.getCurrentUser();
         const workoutData = {
             ...this.workoutForm.value,
-            gymId: this.authService.getCurrentUser()?.gymId
+            exercises: this.workoutForm.value.exercises.map((ex: any) => ({
+                ...ex,
+                reps: Number(ex.reps)
+            })),
+            createdBy: currentUser?._id || '',
+            gymId: currentUser?.gymId || ''
         };
 
         if (this.isEditing && this.workoutId) {

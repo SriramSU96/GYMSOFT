@@ -14,42 +14,43 @@ export class BookingService {
 
     constructor(private http: HttpClient) { }
 
-    // Get all classes (can filter by date, gymId)
-    getClasses(gymId: string, date?: string): Observable<GymClass[]> {
-        let params = new HttpParams().set('gymId', gymId);
-        if (date) {
-            params = params.set('date', date);
-        }
-        return this.http.get<GymClass[]>(this.apiUrl, { params });
+    // Get all classes
+    getClasses(): Observable<GymClass[]> {
+        return this.http.get<GymClass[]>(this.apiUrl);
     }
 
     // Get single class details
-    getClassById(id: string): Observable<GymClass> {
+    getClass(id: string): Observable<GymClass> {
         return this.http.get<GymClass>(`${this.apiUrl}/${id}`);
     }
 
     // Create a new class (Trainer/Admin)
-    createClass(classData: Partial<GymClass>): Observable<GymClass> {
+    createClass(classData: GymClass): Observable<GymClass> {
         return this.http.post<GymClass>(this.apiUrl, classData);
     }
 
+    // Update class
+    updateClass(id: string, classData: Partial<GymClass>): Observable<GymClass> {
+        return this.http.put<GymClass>(`${this.apiUrl}/${id}`, classData);
+    }
+
+    // Delete class
+    deleteClass(id: string): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/${id}`);
+    }
+
     // Book a class
-    bookClass(bookingData: { classId: string, memberId: string, gymId: string }): Observable<Booking> {
-        return this.http.post<Booking>(`${this.apiUrl}/${bookingData.classId}/book`, {
-            memberId: bookingData.memberId,
-            gymId: bookingData.gymId
-        });
+    bookClass(classId: string, memberId: string, gymId: string): Observable<Booking> {
+        return this.http.post<Booking>(`${this.apiUrl}/${classId}/book`, { memberId, gymId });
+    }
+
+    // Cancel booking
+    cancelBooking(classId: string): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/${classId}/cancel`);
     }
 
     // Get bookings for a member
     getMemberBookings(memberId: string): Observable<Booking[]> {
         return this.http.get<Booking[]>(`${this.membersUrl}/${memberId}/bookings`);
-    }
-
-    // Cancel booking
-    cancelBooking(classId: string, memberId: string): Observable<any> {
-        return this.http.delete(`${this.apiUrl}/${classId}/cancel`, {
-            body: { memberId }
-        });
     }
 }

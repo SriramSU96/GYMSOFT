@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { loadPosts, loadChallenges } from '../../../core/store/community/community.actions';
+import * as CommunityActions from '../../../core/store/community/community.actions';
 import { selectPosts, selectChallenges } from '../../../core/store/community/community.selectors';
 
 @Component({
@@ -17,12 +17,11 @@ export class CommunityFeed implements OnInit {
   challenges$ = this.store.select(selectChallenges);
 
   ngOnInit() {
-    this.store.dispatch(loadPosts());
-    this.store.dispatch(loadChallenges());
+    this.store.dispatch(CommunityActions.loadPosts());
+    this.store.dispatch(CommunityActions.loadChallenges());
   }
 
   likePost(postId: string) {
-    // In a real app, we'd dispatch a likePost action
-    console.log('Liking post:', postId);
+    this.store.dispatch(CommunityActions.likePost({ postId }));
   }
 }

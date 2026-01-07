@@ -30,11 +30,11 @@ export class MyDiet implements OnInit {
 
     loadAssignedDiet(memberId: string): void {
         this.dietService.getMemberDiet(memberId).subscribe({
-            next: (data) => {
+            next: (data: DietPlan) => {
                 this.dietPlan = data;
                 this.isLoading = false;
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('No diet plan found or error', err);
                 this.isLoading = false;
             }

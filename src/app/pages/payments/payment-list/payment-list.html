@@ -43,15 +43,16 @@
                         </td>
                         <td>
                             <span [ngClass]="{
-                                'badge-success': payment.status === 'completed' || payment.status === 'paid',
-                                'badge-warning': payment.status === 'pending',
-                                'badge-danger': payment.status === 'overdue'
+                                'badge-success': payment.status === 'Paid',
+                                'badge-warning': payment.status === 'Pending',
+                                'badge-danger': payment.status === 'Failed',
+                                'badge-info': payment.status === 'Partial'
                             }">
                                 {{ payment.status | uppercase }}
                             </span>
                         </td>
                         <td>
-                            <a [routerLink]="['/payments/invoice', payment.id]">
+                            <a [routerLink]="['/payments/invoice', payment._id]">
                                 <span>visibility</span>
                             </a>
                         </td>

@@ -27,7 +27,7 @@ export class CommunityEffects {
         this.actions$.pipe(
             ofType(CommunityActions.createPost),
             mergeMap(({ post }) =>
-                this.communityService.createPost(post).pipe(
+                this.communityService.createPost(post as any).pipe(
                     map((newPost) => CommunityActions.createPostSuccess({ post: newPost })),
                     catchError((error) => of(CommunityActions.createPostFailure({ error })))
                 )

@@ -7,11 +7,11 @@ export const loadMember = createAction('[Member] Load Member', props<{ id: strin
 export const loadMemberSuccess = createAction('[Member] Load Member Success', props<{ member: Member }>());
 export const loadMemberFailure = createAction('[Member] Load Member Failure', props<{ error: any }>());
 
-export const loadMembers = createAction('[Member] Load Members', props<{ gymId: string }>());
+export const loadMembers = createAction('[Member] Load Members');
 export const loadMembersSuccess = createAction('[Member] Load Members Success', props<{ members: Member[] }>());
 export const loadMembersFailure = createAction('[Member] Load Members Failure', props<{ error: any }>());
 
-export const registerMember = createAction('[Member] Register Member', props<{ member: Partial<Member> }>());
+export const registerMember = createAction('[Member] Register Member', props<{ member: Member }>());
 export const registerMemberSuccess = createAction('[Member] Register Member Success', props<{ member: Member }>());
 export const registerMemberFailure = createAction('[Member] Register Member Failure', props<{ error: any }>());
 
@@ -20,7 +20,7 @@ export const updateMemberSuccess = createAction('[Member] Update Member Success'
 export const updateMemberFailure = createAction('[Member] Update Member Failure', props<{ error: any }>());
 
 // Progress
-export const addProgress = createAction('[Member] Add Progress', props<{ record: Partial<MemberProgress> }>());
+export const addProgress = createAction('[Member] Add Progress', props<{ record: MemberProgress }>());
 export const addProgressSuccess = createAction('[Member] Add Progress Success', props<{ record: MemberProgress }>());
 export const addProgressFailure = createAction('[Member] Add Progress Failure', props<{ error: any }>());
 
@@ -29,7 +29,7 @@ export const loadProgressSuccess = createAction('[Member] Load Progress Success'
 export const loadProgressFailure = createAction('[Member] Load Progress Failure', props<{ error: any }>());
 
 // Achievements
-export const assignAchievement = createAction('[Member] Assign Achievement', props<{ achievement: Partial<Achievement> }>());
+export const assignAchievement = createAction('[Member] Assign Achievement', props<{ achievement: Achievement }>());
 export const assignAchievementSuccess = createAction('[Member] Assign Achievement Success', props<{ achievement: Achievement }>());
 export const assignAchievementFailure = createAction('[Member] Assign Achievement Failure', props<{ error: any }>());
 

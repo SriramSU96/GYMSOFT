@@ -51,8 +51,8 @@ export class PlanAssignment implements OnInit {
 
         // Load available workouts, diets, and members in parallel
         // Note: In a real app, use forkJoin for cleaner loading
-        this.workoutService.getWorkouts(gymId).subscribe(w => this.workouts = w);
-        this.dietService.getDietPlans(gymId).subscribe(d => this.diets = d);
+        this.workoutService.getWorkouts().subscribe(w => this.workouts = w);
+        this.dietService.getDietPlans().subscribe(d => this.diets = d);
 
         // Assuming MemberService has a method to get active members
         // Assuming MemberService has a method to get active members
@@ -61,8 +61,8 @@ export class PlanAssignment implements OnInit {
             const data = (res as any).data || res;
             let allMembers = Array.isArray(data) ? data : [];
 
-            // Filter by status active since service doesn't support filter object yet
-            this.members = allMembers.filter((m: any) => m.status === 'Active');
+            // Filter by membershipStatus active since service doesn't support filter object yet
+            this.members = allMembers.filter((m: any) => m.membershipStatus === 'Active');
             this.isLoading = false;
         });
     }

@@ -13,7 +13,7 @@ export class MemberService {
     private http = inject(HttpClient);
     private apiUrl = `${environment.apiUrl}/members`;
 
-    registerMember(member: Partial<Member>): Observable<Member> {
+    registerMember(member: Member): Observable<Member> {
         return this.http.post<Member>(`${this.apiUrl}`, member);
     }
 
@@ -21,12 +21,13 @@ export class MemberService {
         return this.http.get<Member>(`${this.apiUrl}/${id}`);
     }
 
-    getMembers(gymId?: string, keyword?: string, pageNumber: number = 1): Observable<Member[]> {
+    getMembers(keyword?: string, pageNumber: number = 1): Observable<Member[]> {
         let params = new HttpParams();
-        if (gymId) params = params.set('gymId', gymId);
         if (keyword) params = params.set('keyword', keyword);
         params = params.set('pageNumber', pageNumber);
 
+        // Spec says GET /api/members (Search/Pagination)
+        // Backend filters by gymId automatically from token.
         return this.http.get<{ members: Member[], total: number }>(`${this.apiUrl}`, { params }).pipe(
             map(response => response.members)
         );
@@ -36,7 +37,7 @@ export class MemberService {
         return this.http.put<Member>(`${this.apiUrl}/${id}`, changes);
     }
 
-    addProgress(record: Partial<MemberProgress>): Observable<MemberProgress> {
+    addProgress(record: MemberProgress): Observable<MemberProgress> {
         return this.http.post<MemberProgress>(`${this.apiUrl}/progress`, record);
     }
 
@@ -44,11 +45,27 @@ export class MemberService {
         return this.http.get<MemberProgress[]>(`${this.apiUrl}/progress/${memberId}`);
     }
 
-    assignAchievement(achievement: Partial<Achievement>): Observable<Achievement> {
+    assignAchievement(achievement: Achievement): Observable<Achievement> {
         return this.http.post<Achievement>(`${this.apiUrl}/achievements`, achievement);
     }
 
     getAchievements(memberId: string): Observable<Achievement[]> {
         return this.http.get<Achievement[]>(`${this.apiUrl}/achievements/${memberId}`);
+    }
+
+    getMemberWorkout(memberId: string): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/${memberId}/workout`);
+    }
+
+    getMemberDiet(memberId: string): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/${memberId}/diet`);
+    }
+
+    getMemberBookings(memberId: string): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/${memberId}/bookings`);
+    }
+
+    deleteMember(id: string): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/${id}`);
     }
 }

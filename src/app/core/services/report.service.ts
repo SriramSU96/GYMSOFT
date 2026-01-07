@@ -20,7 +20,7 @@ export class ReportService {
         return this.http.get<YearlySummary>(`${this.apiUrl}/yearly`);
     }
 
-    addExpense(expense: Partial<Expense>): Observable<Expense> {
+    addExpense(expense: Expense): Observable<Expense> {
         return this.http.post<Expense>(`${this.apiUrl}/expenses`, expense);
     }
 }

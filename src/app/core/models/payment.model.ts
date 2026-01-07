@@ -1,48 +1,41 @@
 
 export interface Payment {
-    id: string;
+    _id?: string;
     memberId: string;
+    invoiceId?: string; // Linked for audit
+    source: 'Membership' | 'POS' | 'Class' | 'Other';
     amount: number;
-    totalAmount: number; // Backend field
-    paidAmount: number;  // Backend field
-    dueAmount: number;   // Backend field
-    planId?: string;
-    paymentDate: string; // Backend said 'date' in some, 'paymentDate' in others. Sticking to backend spec 'paymentDate'
+    totalAmount?: number;
+    paidAmount?: number;
+    dueAmount?: number;
+    planId: string;
+    paymentDate?: string;
     paymentMethod: string;
-    status: 'pending' | 'completed' | 'overdue' | 'paid'; // 'paid' or 'completed'? Backend says 'status'.
+    status: 'Paid' | 'Pending' | 'Failed' | 'Partial';
     gymId: string;
 }
 
 export interface Coupon {
-    id: string;
+    _id?: string;
     code: string;
-    discountType: 'percentage' | 'flat'; // Backend field
-    discountValue: number; // Backend field
+    discountType: 'percentage' | 'flat';
+    discountValue: number;
     expiryDate: string;
-    usageLimit: number;
-    usedCount: number; // Backend field 'usedCount'
+    usageLimit?: number;
+    usedCount?: number;
+    usedBy?: string[]; // Tracks personal usage limits: Ref Array: User
+    isActive?: boolean;
     gymId: string;
-}
-
-export interface InvoiceItem {
-    description: string;
-    amount: number;
 }
 
 export interface Invoice {
-    id: string;
+    _id?: string;
     memberId: string;
     planId: string;
     amount: number;
-    tax: number;
+    tax?: number;
     total: number;
-    date: string;
+    paymentId?: string; // Linked after transaction
+    date?: string;
     gymId: string;
-    member?: {
-        name: string;
-        address: string;
-        email: string;
-    };
-    items?: InvoiceItem[];
-    status?: string;
 }

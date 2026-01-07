@@ -29,7 +29,12 @@ export class AuthEffects {
         this.actions$.pipe(
             ofType(AuthActions.loginSuccess),
             tap(({ response }) => {
+                // Store token
                 localStorage.setItem('token', response.token);
+                // Store user object (excluding token)
+                const { token, ...user } = response;
+                localStorage.setItem('user', JSON.stringify(user));
+                // Navigate to dashboard
                 this.router.navigate(['/']);
             })
         ),

@@ -83,7 +83,7 @@ export class DietBuilder implements OnInit {
 
     loadDiet(id: string): void {
         this.isLoading = true;
-        this.dietService.getDietPlanById(id).subscribe({
+        this.dietService.getDietPlan(id).subscribe({
             next: (diet) => {
                 this.dietForm.patchValue({
                     title: diet.title,
@@ -125,11 +125,13 @@ export class DietBuilder implements OnInit {
             }
         }));
 
+        const currentUser = this.authService.getCurrentUser();
         const dietData = {
             title: formValue.title,
             calories: formValue.calories,
             meals: mealsData,
-            gymId: this.authService.getCurrentUser()?.gymId
+            createdBy: currentUser?._id || '',
+            gymId: currentUser?.gymId || ''
         };
 
         if (this.isEditing && this.dietId) {

@@ -12,7 +12,7 @@ export class NotificationService {
     private apiUrl = `${environment.apiUrl}/notifications`;
 
     getNotifications(): Observable<Notification[]> {
-        return this.http.get<Notification[]>(`${this.apiUrl}/`);
+        return this.http.get<Notification[]>(this.apiUrl);
     }
 
     markAsRead(id: string): Observable<any> {

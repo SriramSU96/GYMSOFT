@@ -13,18 +13,26 @@ export class StaffService {
     private apiUrl = `${environment.apiUrl}/staff`;
 
     getStaff(): Observable<Staff[]> {
-        return this.http.get<Staff[]>(`${this.apiUrl}/`);
+        return this.http.get<Staff[]>(this.apiUrl);
     }
 
-    addStaff(staff: Partial<Staff>): Observable<Staff> {
-        return this.http.post<Staff>(`${this.apiUrl}/`, staff);
+    addStaff(staff: Staff): Observable<Staff> {
+        return this.http.post<Staff>(this.apiUrl, staff);
+    }
+
+    updateStaff(id: string, staff: Partial<Staff>): Observable<Staff> {
+        return this.http.put<Staff>(`${this.apiUrl}/${id}`, staff);
+    }
+
+    deleteStaff(id: string): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/${id}`);
     }
 
     markAttendance(data: any): Observable<any> {
         return this.http.post(`${this.apiUrl}/attendance`, data);
     }
 
-    calculateSalary(data: any): Observable<Salary> {
+    paySalary(data: any): Observable<Salary> {
         return this.http.post<Salary>(`${this.apiUrl}/salary`, data);
     }
 }

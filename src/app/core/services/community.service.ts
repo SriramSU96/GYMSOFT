@@ -16,23 +16,35 @@ export class CommunityService {
         return this.http.get<Post[]>(`${this.apiUrl}/posts`);
     }
 
-    createPost(post: Partial<Post>): Observable<Post> {
+    getPost(id: string): Observable<Post> {
+        return this.http.get<Post>(`${this.apiUrl}/posts/${id}`);
+    }
+
+    createPost(post: Post): Observable<Post> {
         return this.http.post<Post>(`${this.apiUrl}/posts`, post);
+    }
+
+    updatePost(id: string, post: Partial<Post>): Observable<Post> {
+        return this.http.put<Post>(`${this.apiUrl}/posts/${id}`, post);
+    }
+
+    deletePost(id: string): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/posts/${id}`);
     }
 
     likePost(id: string): Observable<any> {
         return this.http.post(`${this.apiUrl}/posts/${id}/like`, {});
     }
 
-    commentPost(id: string, comment: string): Observable<any> {
-        return this.http.post(`${this.apiUrl}/posts/${id}/comment`, { comment });
+    commentPost(id: string, content: string): Observable<any> {
+        return this.http.post(`${this.apiUrl}/posts/${id}/comment`, { content });
     }
 
     getChallenges(): Observable<Challenge[]> {
         return this.http.get<Challenge[]>(`${this.apiUrl}/challenges`);
     }
 
-    createChallenge(challenge: Partial<Challenge>): Observable<Challenge> {
+    createChallenge(challenge: Challenge): Observable<Challenge> {
         return this.http.post<Challenge>(`${this.apiUrl}/challenges`, challenge);
     }
 

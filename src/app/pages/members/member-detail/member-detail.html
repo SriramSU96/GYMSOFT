@@ -13,25 +13,26 @@
                 👤</div>
             <h3>{{ member.name }}</h3>
             <p>{{ member.email }}</p>
+            <p class="text-sm text-muted">Member ID: {{ member.memberId }}</p>
             <div [ngClass]="{
-            'badge-success': member.membershipStatus === 'active',
-            'badge-danger': member.membershipStatus === 'expired',
-            'badge-warning': member.membershipStatus === 'pending'
-        }">{{ member.membershipStatus | uppercase }}</div>
+            'badge-success': member.membershipStatus === 'Active',
+            'badge-danger': member.membershipStatus === 'Expired',
+            'badge-warning': member.membershipStatus === 'Pending'
+        }">{{ member.membershipStatus }}</div>
         </div>
 
         <!-- Details Card -->
         <div>
             <h3>Information</h3>
-            <div>
+            <div class="grid grid-cols-2 gap-md">
                 <div>
                     <label>Phone</label>
                     <p>{{ member.phone }}</p>
                 </div>
-                <!-- <div>
-                    <label>Joined</label>
-                    <p>{{ member.joinedDate | date }}</p>
-                </div> -->
+                <div>
+                    <label>Gender / Age</label>
+                    <p>{{ member.gender }} / {{ member.age }} yrs</p>
+                </div>
                 <div>
                     <label>Expiry</label>
                     <p>{{ member.membershipExpiry | date }}</p>

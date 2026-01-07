@@ -13,3 +13,11 @@ export const createPostFailure = createAction('[Community] Create Post Failure',
 export const loadChallenges = createAction('[Community] Load Challenges');
 export const loadChallengesSuccess = createAction('[Community] Load Challenges Success', props<{ challenges: Challenge[] }>());
 export const loadChallengesFailure = createAction('[Community] Load Challenges Failure', props<{ error: any }>());
+
+export const likePost = createAction('[Community] Like Post', props<{ postId: string }>());
+export const likePostSuccess = createAction('[Community] Like Post Success', props<{ postId: string, userId: string }>());
+export const likePostFailure = createAction('[Community] Like Post Failure', props<{ error: any }>());
+
+export const commentPost = createAction('[Community] Comment Post', props<{ postId: string, content: string }>());
+export const commentPostSuccess = createAction('[Community] Comment Post Success', props<{ comment: any }>());
+export const commentPostFailure = createAction('[Community] Comment Post Failure', props<{ error: any }>());

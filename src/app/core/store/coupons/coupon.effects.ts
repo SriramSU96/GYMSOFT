@@ -27,7 +27,7 @@ export class CouponEffects {
         this.actions$.pipe(
             ofType(CouponActions.createCoupon),
             mergeMap(({ coupon }) =>
-                this.couponService.createCoupon(coupon).pipe(
+                this.couponService.createCoupon(coupon as any).pipe(
                     map((newCoupon) => CouponActions.createCouponSuccess({ coupon: newCoupon })),
                     catchError((error) => of(CouponActions.createCouponFailure({ error })))
                 )

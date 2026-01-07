@@ -1,30 +1,32 @@
 
 export interface Staff {
-    id: string;
+    _id?: string;
     name: string;
     role: string;
     salary: number;
-    phone: string;
+    phone?: string;
     userId?: string;
     gymId: string;
+    isActive: boolean;
 }
 
 export interface StaffAttendance {
-    id: string;
+    _id?: string;
     staffId: string;
-    date: string;
-    status: 'present' | 'absent' | 'leave';
+    date?: string;
+    status: 'Present' | 'Absent' | 'Leave' | 'Half-Day';
     checkInTime?: string;
+    checkOutTime?: string;
     gymId: string;
 }
 
 export interface Salary {
-    id: string;
+    _id?: string;
     staffId: string;
     amount: number;
-    paymentDate: string;
-    month: string;
+    paymentDate?: string;
+    month: number; // 1-12
     year: number;
-    status: 'paid' | 'pending';
+    status: 'Paid' | 'Pending';
     gymId: string;
 }

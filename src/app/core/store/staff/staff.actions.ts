@@ -15,7 +15,7 @@ export const loadStaffAttendance = createAction('[Staff] Load Staff Attendance')
 export const loadStaffAttendanceSuccess = createAction('[Staff] Load Staff Attendance Success', props<{ attendance: StaffAttendance[] }>());
 export const loadStaffAttendanceFailure = createAction('[Staff] Load Staff Attendance Failure', props<{ error: any }>());
 
-export const markStaffAttendance = createAction('[Staff] Mark Staff Attendance', props<{ staffId: string, status: 'present' | 'absent' | 'leave' }>());
+export const markStaffAttendance = createAction('[Staff] Mark Staff Attendance', props<{ staffId: string, status: 'Present' | 'Absent' | 'Leave' }>());
 export const markStaffAttendanceSuccess = createAction('[Staff] Mark Staff Attendance Success', props<{ attendance: StaffAttendance }>());
 export const markStaffAttendanceFailure = createAction('[Staff] Mark Staff Attendance Failure', props<{ error: any }>());
 

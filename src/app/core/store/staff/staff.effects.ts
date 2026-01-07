@@ -27,7 +27,7 @@ export class StaffEffects {
         this.actions$.pipe(
             ofType(StaffActions.addStaff),
             mergeMap(({ staff }) =>
-                this.staffService.addStaff(staff).pipe(
+                this.staffService.addStaff(staff as any).pipe(
                     map((newStaff) => StaffActions.addStaffSuccess({ staff: newStaff })),
                     catchError((error) => of(StaffActions.addStaffFailure({ error })))
                 )

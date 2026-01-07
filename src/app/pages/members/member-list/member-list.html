@@ -40,9 +40,9 @@
                         </td>
                         <td>
                             <span class="badge" [ngClass]="{
-                                'badge-success': member.membershipStatus.toLowerCase() === 'active',
-                                'badge-danger': member.membershipStatus.toLowerCase() === 'expired',
-                                'badge-warning': member.membershipStatus.toLowerCase() === 'pending'
+                                'badge-success': member.membershipStatus === 'Active',
+                                'badge-danger': member.membershipStatus === 'Expired',
+                                'badge-warning': member.membershipStatus === 'Pending'
                             }">
                                 {{ member.membershipStatus }}
                             </span>
@@ -52,7 +52,7 @@
                         </td>
                         <td>
                             <div class="flex gap-sm">
-                                <a [routerLink]="[member.id]" class="btn btn-icon btn-secondary" title="Edit Member">
+                                <a [routerLink]="[member._id]" class="btn btn-icon btn-secondary" title="Edit Member">
                                     <span class="material-icons">edit</span>
                                 </a>
                                 <button class="btn btn-icon btn-danger" title="Delete Member">

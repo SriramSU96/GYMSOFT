@@ -26,9 +26,10 @@ export const authReducer = createReducer(
     })),
     on(AuthActions.loginSuccess, (state, { response }) => {
         localStorage.setItem('token', response.token);
+        const { token, ...user } = response; // Extract user data from LoginResponse
         return {
             ...state,
-            user: response.user,
+            user: user as User,
             token: response.token,
             isLoading: false
         };

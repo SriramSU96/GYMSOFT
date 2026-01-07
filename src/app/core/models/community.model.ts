@@ -1,30 +1,34 @@
 
 export interface Post {
-    id: string;
+    _id?: string;
     authorId: string;
-    title: string;
     content: string;
-    likes: number;
-    comments: number;
     gymId: string;
-    createdAt: string;
+    createdAt?: string;
+}
+
+export interface PostLike {
+    _id?: string;
+    postId: string;
+    userId: string;
+    gymId: string;
 }
 
 export interface Comment {
-    id: string;
+    _id?: string;
     postId: string;
     authorId: string;
     content: string;
     gymId: string;
+    createdAt?: string;
 }
 
 export interface Challenge {
-    id: string;
+    _id?: string;
     title: string;
     description: string;
     startDate: string;
     endDate: string;
-    duration: number;
-    participants: number;
+    participants: string[]; // Ref Array: Member
     gymId: string;
 }

@@ -27,10 +27,10 @@ export class StaffDashboardComponent implements OnInit {
         map(([staff, attendance]: [Staff[], StaffAttendance[]]) => {
             const today = new Date().toISOString().split('T')[0];
             return staff.map(s => {
-                const dayAttendance = attendance.find((a: StaffAttendance) => a.staffId === s.id && a.date === today);
+                const dayAttendance = attendance.find((a: StaffAttendance) => a.staffId === s._id && a.date === today);
                 return {
                     ...s,
-                    status: dayAttendance ? dayAttendance.status : 'absent' // Default to absent if no record
+                    status: dayAttendance ? dayAttendance.status : 'Absent' // Default to Absent if no record
                 };
             });
         })
@@ -43,6 +43,6 @@ export class StaffDashboardComponent implements OnInit {
     }
 
     markAttendance(staffId: string, status: any) {
-        this.store.dispatch(markStaffAttendance({ staffId, status: status.toLowerCase() }));
+        this.store.dispatch(markStaffAttendance({ staffId, status }));
     }
 }

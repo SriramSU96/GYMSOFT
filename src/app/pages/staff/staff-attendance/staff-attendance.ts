@@ -20,7 +20,7 @@ export class StaffAttendance implements OnInit {
     this.store.dispatch(loadStaff());
   }
 
-  markAttendance(staffId: string, status: any) {
+  markAttendance(staffId: string, status: 'Present' | 'Absent' | 'Leave') {
     this.attendance[staffId] = status;
     this.store.dispatch(markStaffAttendance({ staffId, status }));
   }

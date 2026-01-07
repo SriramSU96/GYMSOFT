@@ -31,13 +31,13 @@ export class MemberDashboardComponent implements OnInit {
             filter(user => !!user),
             take(1)
         ).subscribe(user => {
-            if (user && user.id) {
+            if (user && user._id) {
                 // In a real app, the member ID might be user.id or a linked ID
                 // For now, assuming loadMember handles the mapping if needed or uses user.id
-                this.store.dispatch(loadMember({ id: user.id }));
-                this.store.dispatch(loadProgress({ memberId: user.id }));
-                this.store.dispatch(loadAchievements({ memberId: user.id }));
-                this.store.dispatch(loadMemberAttendance({ memberId: user.id }));
+                this.store.dispatch(loadMember({ id: user._id }));
+                this.store.dispatch(loadProgress({ memberId: user._id }));
+                this.store.dispatch(loadAchievements({ memberId: user._id }));
+                this.store.dispatch(loadMemberAttendance({ memberId: user._id }));
             }
         });
     }

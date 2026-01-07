@@ -50,7 +50,8 @@ export class MyBookings implements OnInit {
         if (!confirm('Are you sure you want to cancel this booking?')) return;
 
         // Use classId._id because classId is populated as GymClass
-        this.bookingService.cancelBooking(booking.classId._id, booking.memberId).subscribe({
+        const classId = (booking.classId as any)._id || booking.classId;
+        this.bookingService.cancelBooking(classId).subscribe({
             next: () => {
                 this.successMessage = 'Booking cancelled successfully.';
                 this.loadBookings(); // Refresh list

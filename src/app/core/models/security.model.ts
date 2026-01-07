@@ -1,19 +1,17 @@
 
 export interface AuditLog {
-    id: string;
+    _id?: string;
     userId: string;
-    action: string;
-    resource: string;
+    action: 'CREATE' | 'UPDATE' | 'DELETE' | 'LOGIN';
     entity: string;
-    details: string;
-    ipAddress: string;
+    details?: string;
     gymId: string;
-    timestamp?: string;
+    createdAt?: string;
 }
 
 export interface Role {
-    id: string;
-    name: string;
-    permissions: string[];
+    _id?: string;
+    name: 'admin' | 'manager' | 'trainer' | 'staff' | 'member';
     userCount?: number;
+    permissions?: string[];
 }

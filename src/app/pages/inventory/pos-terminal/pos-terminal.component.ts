@@ -6,6 +6,10 @@ import { PosService } from '../../../core/services/pos.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Product, Sale, SaleItem } from '../../../core/models/gym-extensions.model';
 
+interface CartItem extends SaleItem {
+    productName: string;
+}
+
 @Component({
     selector: 'app-pos-terminal',
     standalone: true,
@@ -15,7 +19,7 @@ import { Product, Sale, SaleItem } from '../../../core/models/gym-extensions.mod
 })
 export class PosTerminal implements OnInit {
     products: Product[] = [];
-    cart: SaleItem[] = [];
+    cart: CartItem[] = [];
     saleForm: FormGroup;
     isLoading = false;
     successMessage = '';
@@ -38,12 +42,9 @@ export class PosTerminal implements OnInit {
     }
 
     loadProducts(): void {
-        const user = this.authService.getCurrentUser();
-        if (user?.gymId) {
-            this.posService.getProducts(user.gymId).subscribe(data => {
-                this.products = data;
-            });
-        }
+        this.posService.getProducts().subscribe(data => {
+            this.products = data;
+        });
     }
 
     addToCart(product: Product): void {
@@ -92,16 +93,20 @@ export class PosTerminal implements OnInit {
         this.isLoading = true;
         const user = this.authService.getCurrentUser();
 
-        const saleData = {
-            gymId: user?.gymId,
-            items: this.cart,
+        const saleData: Sale = {
+            products: this.cart.map(item => ({
+                productId: item.productId,
+                quantity: item.quantity,
+                price: item.price
+            })),
             totalAmount: this.totalAmount,
-            paymentMethod: this.saleForm.get('paymentMethod')?.value,
-            customerName: this.saleForm.get('customerName')?.value,
-            date: new Date().toISOString()
+            paymentMethod: this.saleForm.get('paymentMethod')?.value as any,
+            soldBy: user?._id || '',
+            date: new Date().toISOString(),
+            gymId: user?.gymId || ''
         };
 
-        this.posService.processSale(saleData).subscribe({
+        this.posService.createSale(saleData).subscribe({
             next: (res) => {
                 this.successMessage = 'Sale processed successfully!';
                 this.cart = [];

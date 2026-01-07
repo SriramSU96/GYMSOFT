@@ -10,7 +10,7 @@ export const sendReminder = createAction('[Payment] Send Reminder', props<{ memb
 export const sendReminderSuccess = createAction('[Payment] Send Reminder Success');
 export const sendReminderFailure = createAction('[Payment] Send Reminder Failure', props<{ error: any }>());
 
-export const recordPartialPayment = createAction('[Payment] Record Partial Payment', props<{ payment: Partial<Payment> }>());
+export const recordPartialPayment = createAction('[Payment] Record Partial Payment', props<{ payment: Payment }>());
 export const recordPartialPaymentSuccess = createAction('[Payment] Record Partial Payment Success', props<{ payment: Payment }>());
 export const recordPartialPaymentFailure = createAction('[Payment] Record Partial Payment Failure', props<{ error: any }>());
 

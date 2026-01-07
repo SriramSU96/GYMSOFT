@@ -19,20 +19,20 @@
             </div>
 
             <div>
-                <button [class.btn-success]="attendance[staff.id] === 'present'"
-                    (click)="markAttendance(staff.id, 'present')">
+                <button [class.btn-success]="attendance[staff._id!] === 'Present'"
+                    (click)="markAttendance(staff._id!, 'Present')">
                     <span>Present</span>
-                    <span *ngIf="attendance[staff.id] === 'present'">check_circle</span>
+                    <span *ngIf="attendance[staff._id!] === 'Present'">check_circle</span>
                 </button>
-                <button [class.btn-danger]="attendance[staff.id] === 'absent'"
-                    (click)="markAttendance(staff.id, 'absent')">
+                <button [class.btn-danger]="attendance[staff._id!] === 'Absent'"
+                    (click)="markAttendance(staff._id!, 'Absent')">
                     <span>Absent</span>
-                    <span *ngIf="attendance[staff.id] === 'absent'">cancel</span>
+                    <span *ngIf="attendance[staff._id!] === 'Absent'">cancel</span>
                 </button>
-                <button [class.btn-warning]="attendance[staff.id] === 'leave'"
-                    (click)="markAttendance(staff.id, 'leave')">
+                <button [class.btn-warning]="attendance[staff._id!] === 'Leave'"
+                    (click)="markAttendance(staff._id!, 'Leave')">
                     <span>On Leave</span>
-                    <span *ngIf="attendance[staff.id] === 'leave'">history_toggle_off</span>
+                    <span *ngIf="attendance[staff._id!] === 'Leave'">history_toggle_off</span>
                 </button>
             </div>
         </div>

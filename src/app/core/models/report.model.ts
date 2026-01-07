@@ -15,11 +15,11 @@ export interface YearlySummary {
 }
 
 export interface Expense {
-    id: string;
+    _id?: string;
     title: string;
     amount: number;
-    category: string;
-    date: string;
-    description: string;
+    category: 'Rent' | 'Equipment' | 'Maintenance' | 'Salary' | 'Other';
+    date?: string;
+    description?: string;
     gymId: string;
 }

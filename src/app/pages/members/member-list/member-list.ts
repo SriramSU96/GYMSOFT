@@ -14,17 +14,14 @@ import { filter } from 'rxjs/operators';
   imports: [CommonModule, RouterModule],
   templateUrl: './member-list.html'
 })
-constructor() {
-  this.store.select(selectSelectedGym)
-    .pipe(
-      takeUntilDestroyed(),
-      filter(gym => !!gym)
-    )
-    .subscribe(gym => {
-      const gymId = (gym as any).id;
-      this.store.dispatch(loadMembers({ gymId }));
-    });
-}
+export class MemberList implements OnInit {
+  store = inject(Store);
+  members$ = this.store.select(selectMembers);
+  isLoading$ = this.store.select(selectMemberIsLoading);
 
-ngOnInit() { }
+  constructor() {
+    this.store.dispatch(loadMembers());
+  }
+
+  ngOnInit() { }
 }

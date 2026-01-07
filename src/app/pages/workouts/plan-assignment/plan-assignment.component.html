@@ -14,7 +14,7 @@
                 <label for="member">Select Member</label>
                 <select id="member" formControlName="memberId">
                     <option value="" disabled>-- Choose a Member --</option>
-                    <option *ngFor="let m of members" [value]="m._id || m.id">{{ m.name }} ({{ m.memberId || m.id }})
+                    <option *ngFor="let m of members" [value]="m._id">{{ m.name }} ({{ m.memberId }})
                     </option>
                 </select>
             </div>

@@ -27,7 +27,7 @@ export class AttendanceLog implements OnInit {
     map(([logs, members]: [Attendance[], Member[]]) => {
       return logs.map(log => ({
         ...log,
-        memberName: members.find(m => m.id === log.memberId)?.name || 'Unknown Member'
+        memberName: members.find(m => m._id === log.memberId)?.name || 'Unknown Member'
       }));
     })
   );

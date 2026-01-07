@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class SalaryManagement {
   salaries = [
-    { staffName: 'John Doe', month: 'December 2025', amount: 3000, status: 'paid' },
-    { staffName: 'Jane Smith', month: 'December 2025', amount: 3500, status: 'pending' }
+    { staffName: 'John Doe', month: 12, year: 2025, amount: 3000, status: 'Paid' },
+    { staffName: 'Jane Smith', month: 12, year: 2025, amount: 3500, status: 'Pending' }
   ];
 }

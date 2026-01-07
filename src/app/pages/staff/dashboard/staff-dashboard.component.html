@@ -44,21 +44,21 @@
                         <td>{{ staff.name }}</td>
                         <td>{{ staff.role }}</td>
                         <td>
-                            <select [ngModel]="staff.status" (ngModelChange)="markAttendance(staff.id, $event)"
+                            <select [ngModel]="staff.status" (ngModelChange)="markAttendance(staff._id || '', $event)"
                                 [ngClass]="{
-                        'badge-success': staff.status === 'present',
-                        'badge-danger': staff.status === 'absent',
-                        'badge-warning': staff.status === 'leave'
+                        'badge-success': staff.status === 'Present',
+                        'badge-danger': staff.status === 'Absent',
+                        'badge-warning': staff.status === 'Leave'
                       }">
-                                <option value="present">Present</option>
-                                <option value="absent">Absent</option>
-                                <option value="leave">On Leave</option>
+                                <option value="Present">Present</option>
+                                <option value="Absent">Absent</option>
+                                <option value="Leave">On Leave</option>
                             </select>
                         </td>
                         <td>₹{{ staff.salary | number }}</td>
                         <td>{{ staff.phone }}</td>
                         <td>
-                            <button [routerLink]="['/staff', staff.id]">View</button>
+                            <button [routerLink]="['/staff', staff._id]">View</button>
                         </td>
                     </tr>
                 </tbody>

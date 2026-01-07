@@ -35,7 +35,12 @@
                         </div>
                     </td>
                     <td>
-                        <span class="badge badge-accent">{{ staff.role | uppercase }}</span>
+                        <div class="flex items-center gap-sm">
+                            <span class="badge badge-accent">{{ staff.role | uppercase }}</span>
+                            <span class="badge" [ngClass]="staff.isActive ? 'badge-success' : 'badge-danger'">
+                                {{ staff.isActive ? 'ACTIVE' : 'INACTIVE' }}
+                            </span>
+                        </div>
                     </td>
                     <td>
                         <div class="text-sm">{{ staff.phone }}</div>
@@ -45,9 +50,10 @@
                     </td>
                     <td class="text-right">
                         <div class="flex justify-end gap-sm">
-                            <button class="btn btn-icon btn-secondary" title="View Details">
-                                <span class="material-icons">visibility</span>
-                            </button>
+                            <a [routerLink]="['/staff/edit', staff._id]" class="btn btn-icon btn-secondary"
+                                title="View Details">
+                                <span class="material-icons">edit</span>
+                            </a>
                             <button class="btn btn-icon btn-danger" title="Delete Staff">
                                 <span class="material-icons">delete</span>
                             </button>

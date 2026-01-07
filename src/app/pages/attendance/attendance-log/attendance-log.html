@@ -16,8 +16,8 @@
             <tbody>
                 <tr *ngFor="let log of enrichedLogs$ | async">
                     <td>{{ log.memberName }}</td>
-                    <td>{{ log.checkInTime | date:'short' }}</td>
-                    <td>{{ log.checkOutTime ? (log.checkOutTime | date:'short') : 'Still in gym' }}</td>
+                    <td>{{ log.checkInTime }}</td>
+                    <td>{{ log.checkOutTime || 'Still in gym' }}</td>
                     <td>
                         <span class="badge" [class]="log.source">{{ log.source }}</span>
                     </td>

@@ -39,7 +39,7 @@ export class SalesReport implements OnInit {
         this.isLoading = true;
         const date = this.filterForm.get('date')?.value;
 
-        this.posService.getSalesReport(user.gymId, date).subscribe({
+        this.posService.getSales().subscribe({
             next: (data) => {
                 this.salesData = data;
                 this.isLoading = false;

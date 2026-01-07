@@ -36,7 +36,7 @@ export const couponReducer = createReducer(
     })),
     on(CouponActions.deleteCouponSuccess, (state, { id }) => ({
         ...state,
-        coupons: state.coupons.filter(c => c.id !== id),
+        coupons: state.coupons.filter(c => c._id !== id),
         isLoading: false
     })),
     on(CouponActions.validateCouponSuccess, (state, { result }) => ({

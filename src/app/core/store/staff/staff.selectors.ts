@@ -15,8 +15,8 @@ export const selectSalarySummary = createSelector(
     selectSalaries,
     (salaries) => {
         const total = salaries.reduce((sum, s) => sum + s.amount, 0);
-        const paid = salaries.filter(s => s.status === 'paid').reduce((sum, s) => sum + s.amount, 0);
-        const pending = salaries.filter(s => s.status === 'pending').reduce((sum, s) => sum + s.amount, 0);
+        const paid = salaries.filter(s => s.status === 'Paid').reduce((sum, s) => sum + s.amount, 0);
+        const pending = salaries.filter(s => s.status === 'Pending').reduce((sum, s) => sum + s.amount, 0);
         return { total, paid, pending };
     }
 );

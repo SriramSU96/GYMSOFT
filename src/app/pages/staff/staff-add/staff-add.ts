@@ -18,10 +18,12 @@ export class StaffAdd {
 
   staffForm = this.fb.group({
     name: ['', Validators.required],
-    role: ['', Validators.required],
+    userId: ['', Validators.required], // Identity Linkage
+    role: ['staff', Validators.required],
     phone: ['', Validators.required],
     salary: [0, [Validators.required, Validators.min(0)]],
-    gymId: ['gym123', Validators.required]
+    isActive: [true],
+    gymId: ['', Validators.required]
   });
 
   onSubmit() {

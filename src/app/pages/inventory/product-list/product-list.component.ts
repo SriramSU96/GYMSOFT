@@ -45,7 +45,7 @@ export class ProductList implements OnInit {
         if (!user || !user.gymId) return;
 
         this.isLoading = true;
-        this.posService.getProducts(user.gymId).subscribe({
+        this.posService.getProducts().subscribe({
             next: (data) => {
                 this.products = data;
                 this.isLoading = false;
@@ -61,7 +61,7 @@ export class ProductList implements OnInit {
         this.showModal = true;
         if (product) {
             this.isEditing = true;
-            this.currentId = product._id;
+            this.currentId = product._id!;
             this.productForm.patchValue(product);
         } else {
             this.isEditing = false;

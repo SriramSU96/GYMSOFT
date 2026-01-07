@@ -14,6 +14,7 @@ export interface Gym {
     name: string;
     address?: string;
     ownerId: string;
+    isActive?: boolean;
     branches: GymBranch[];
     createdAt?: Date;
     updatedAt?: Date;

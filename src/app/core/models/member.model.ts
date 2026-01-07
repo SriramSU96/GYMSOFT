@@ -1,35 +1,34 @@
 
 export interface Member {
-    id: string;
-    _id?: string; // MongoDB alias
-    memberId?: string; // Custom ID alias
+    _id?: string;
     name: string;
+    memberId: string; // Required per spec
     email: string;
     phone: string;
     gender: 'Male' | 'Female' | 'Other';
     age: number;
     membershipStatus: 'Active' | 'Inactive' | 'Pending' | 'Expired';
-    membershipExpiry: string;
+    membershipExpiry?: string;
     trainerId?: string;
     gymId: string;
-    userId?: string; // Linked User account
+    userId?: string;
 }
 
 export interface MemberProgress {
-    id: string;
+    _id?: string;
     memberId: string;
     weight: number;
-    bmi: number;
+    bmi?: number;
     bodyFat?: number;
     date: string;
     gymId: string;
 }
 
 export interface Achievement {
-    id: string;
+    _id?: string;
     memberId: string;
     title: string;
-    description: string;
-    earnedDate: string; // Changed from dateEarned to match convention or keep if backend sends 'earnedDate'
+    description?: string;
+    earnedDate: string;
     gymId: string;
 }

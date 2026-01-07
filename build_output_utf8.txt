@@ -1,0 +1,4296 @@
+﻿
+> gymsoft@0.0.0 build
+> ng build
+
+[33mΓ¥»[39m Building...
+[32mΓ£ö[39m Building...
+Application bundle generation failed. [6.870 seconds] - 2026-01-05T17:49:07.778Z
+
+node.exe : 
+[1m[31m[31mX [4
+1;31m[[41;97mERROR
+[41;31m][0m 
+[1mTS2305: Module 
+'"./pages/members/m
+ember-list/member-l
+ist"' has no 
+exported member 
+'MemberList'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+At line:1 char:1
++ & "C:\Program Fil
+es\nodejs/node.exe"
+ "C:\Program Files\
+nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
+    + CategoryInfo 
+             : No  
+  tSpecified: (   
+ [1m[31m[31mX    
+...r-compiler]    
+[0m:String) [    
+], RemoteExcep    
+tion
+    + FullyQualifi 
+   edErrorId : Na  
+  tiveCommandErr   
+ or
+ 
+
+    src/app/app.rou
+tes.ts:7:9:
+[37m      7 Γöé 
+import { [32mMembe
+rList[37m } from '
+./pages/members/mem
+ber-list/member-lis
+t';
+        Γò╡        
+  
+[32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'user' 
+does not exist on 
+type 'LoginResponse
+'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/core/st
+ore/auth/auth.reduc
+er.ts:31:27:
+[37m      31 Γöé  
+           user: re
+sponse.[32muser[3
+7m,
+         Γò╡       
+                   
+  [32m~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2345: 
+Argument of type 
+'Partial<Post>' is 
+not assignable to 
+parameter of type 
+'Post'.
+  Types of 
+property 
+'authorId' are 
+incompatible.
+    Type 'string | 
+undefined' is not 
+assignable to type 
+'string'.
+      Type 
+'undefined' is not 
+assignable to type 
+'string'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/core/st
+ore/community/commu
+nity.effects.ts:30:
+49:
+[37m      30 Γöé  
+               this
+.communityService.c
+reatePost([32mpost
+[37m).pipe(
+         Γò╡       
+                   
+                   
+     [32m~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2345: 
+Argument of type 
+'Partial<Coupon>' 
+is not assignable 
+to parameter of 
+type 'Coupon'.
+  Types of 
+property 'code' 
+are incompatible.
+    Type 'string | 
+undefined' is not 
+assignable to type 
+'string'.
+      Type 
+'undefined' is not 
+assignable to type 
+'string'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/core/st
+ore/coupons/coupon.
+effects.ts:30:48:
+[37m      30 Γöé  
+               this
+.couponService.crea
+teCoupon([32mcoupo
+n[37m).pipe(
+         Γò╡       
+                   
+                   
+    [32m~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Coupon'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/core/st
+ore/coupons/coupon.
+reducer.ts:39:45:
+[37m      39 Γöé  
+       coupons: sta
+te.coupons.filter(c
+ => c.[32mid[37m 
+!== id),
+         Γò╡       
+                   
+                   
+ [32m~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2345: 
+Argument of type 
+'Partial<Member>' 
+is not assignable 
+to parameter of 
+type 'Member'.
+  Types of 
+property 'name' 
+are incompatible.
+    Type 'string | 
+undefined' is not 
+assignable to type 
+'string'.
+      Type 
+'undefined' is not 
+assignable to type 
+'string'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/core/st
+ore/members/member.
+effects.ts:30:50:
+[37m      30 Γöé  
+               this
+.memberService.regi
+sterMember([32mmem
+ber[37m).pipe(
+         Γò╡       
+                   
+                   
+      
+[32m~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2345: 
+Argument of type 'P
+artial<MemberProgre
+ss>' is not 
+assignable to 
+parameter of type 
+'MemberProgress'.
+  Types of 
+property 
+'memberId' are 
+incompatible.
+    Type 'string | 
+undefined' is not 
+assignable to type 
+'string'.
+      Type 
+'undefined' is not 
+assignable to type 
+'string'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/core/st
+ore/members/member.
+effects.ts:54:47:
+[37m      54 Γöé  
+               this
+.memberService.addP
+rogress([32mrecord
+[37m).pipe(
+         Γò╡       
+                   
+                   
+   [32m~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2345: 
+Argument of type 'P
+artial<Achievement>
+' is not 
+assignable to 
+parameter of type 
+'Achievement'.
+  Types of 
+property 
+'memberId' are 
+incompatible.
+    Type 'string | 
+undefined' is not 
+assignable to type 
+'string'.
+      Type 
+'undefined' is not 
+assignable to type 
+'string'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/core/st
+ore/members/member.
+effects.ts:78:53:
+[37m      78 Γöé 
+...           this.
+memberService.assig
+nAchievement([32ma
+chievement[37m).pi
+pe(
+         Γò╡       
+                   
+                   
+       [32m~~~~~~~
+~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2345: 
+Argument of type 
+'Partial<Payment>' 
+is not assignable 
+to parameter of 
+type 'Payment'.
+  Types of 
+property 
+'memberId' are 
+incompatible.
+    Type 'string | 
+undefined' is not 
+assignable to type 
+'string'.
+      Type 
+'undefined' is not 
+assignable to type 
+'string'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/core/st
+ore/payments/paymen
+t.effects.ts:42:57:
+[37m      42 Γöé 
+...           this.
+paymentService.reco
+rdPartialPayment([
+32mpayment[37m).pi
+pe(
+         Γò╡       
+                   
+                   
+           
+[32m~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'getInvoice' does 
+not exist on type '
+PaymentService'.[0
+m [1m[35m[plugin 
+angular-compiler][
+0m
+
+    src/app/core/st
+ore/payments/paymen
+t.effects.ts:54:36:
+[37m      54 Γöé  
+               this
+.paymentService.[3
+2mgetInvoice[37m(i
+d).pipe(
+         Γò╡       
+                   
+           
+[32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2322: 
+Type 'unknown' is 
+not assignable to 
+type 
+'Invoice'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/core/st
+ore/payments/paymen
+t.effects.ts:55:73:
+[37m      55 Γöé 
+... map((invoice) 
+=> PaymentActions.l
+oadInvoiceSuccess({
+ [32minvoice[37m 
+})),
+         Γò╡       
+                   
+                   
+             
+[32m~~~~~~~[0m
+
+  The expected 
+type comes from 
+property 'invoice' 
+which is declared 
+here on type '{ 
+invoice: Invoice; 
+}'
+
+    src/app/core/st
+ore/payments/paymen
+t.actions.ts:19:89:
+[37m      19 Γöé 
+...('[Payment] 
+Load Invoice 
+Success', props<{ 
+[32minvoice[37m: 
+Invoice }>());
+         Γò╡       
+                   
+                   
+  [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'getPendingDues' 
+does not exist on 
+type 'PaymentServic
+e'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/core/st
+ore/payments/paymen
+t.effects.ts:66:36:
+[37m      66 Γöé  
+               this
+.paymentService.[3
+2mgetPendingDues[3
+7m().pipe(
+         Γò╡       
+                   
+           [32m~~~
+~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2322: 
+Type 'unknown' is 
+not assignable to 
+type 'any[]'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/core/st
+ore/payments/paymen
+t.effects.ts:67:74:
+[37m      67 Γöé 
+...   map((dues) 
+=> PaymentActions.l
+oadPendingDuesSucce
+ss({ 
+[32mdues[37m })),
+         Γò╡       
+                   
+                   
+                
+[32m~~~~[0m
+
+  The expected 
+type comes from 
+property 'dues' 
+which is declared 
+here on type '{ 
+dues: any[]; }'
+
+    src/app/core/st
+ore/payments/paymen
+t.actions.ts:24:98:
+[37m      24 Γöé 
+...ending Dues 
+Success', props<{ 
+[32mdues[37m: 
+any[] }>()); // 
+Using any[]...
+         Γò╡       
+                   
+        
+[32m~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2345: 
+Argument of type 
+'Partial<Expense>' 
+is not assignable 
+to parameter of 
+type 'Expense'.
+  Types of 
+property 'title' 
+are incompatible.
+    Type 'string | 
+undefined' is not 
+assignable to type 
+'string'.
+      Type 
+'undefined' is not 
+assignable to type 
+'string'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/core/st
+ore/reports/report.
+effects.ts:42:46:
+[37m      42 Γöé  
+               this
+.reportService.addE
+xpense([32mexpense
+[37m).pipe(
+         Γò╡       
+                   
+                   
+  [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2345: 
+Argument of type 
+'Partial<Staff>' 
+is not assignable 
+to parameter of 
+type 'Staff'.
+  Types of 
+property 'name' 
+are incompatible.
+    Type 'string | 
+undefined' is not 
+assignable to type 
+'string'.
+      Type 
+'undefined' is not 
+assignable to type 
+'string'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/core/st
+ore/staff/staff.eff
+ects.ts:30:43:
+[37m      30 Γöé  
+               this
+.staffService.addSt
+aff([32mstaff[37m
+).pipe(
+         Γò╡       
+                   
+                  
+[32m~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2367: 
+This comparison 
+appears to be 
+unintentional 
+because the types 
+'"Paid" | 
+"Pending"' and 
+'"paid"' have no 
+overlap.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/core/st
+ore/staff/staff.sel
+ectors.ts:18:42:
+[37m      18 Γöé 
+... 
+salaries.filter(s 
+=> [32ms.status 
+=== 'paid'[37m).re
+duce((sum, s) => 
+s...
+         Γò╡       
+                   
+[32m~~~~~~~~~~~~~~
+~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2367: 
+This comparison 
+appears to be 
+unintentional 
+because the types 
+'"Paid" | 
+"Pending"' and 
+'"pending"' have 
+no overlap.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/core/st
+ore/staff/staff.sel
+ectors.ts:19:45:
+[37m      19 Γöé .
+..salaries.filter(s
+ => [32ms.status 
+=== 'pending'[37m)
+.reduce((sum, s) 
+=>...
+         Γò╡       
+                  
+[32m~~~~~~~~~~~~~~~
+~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Member'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/a
+ttendance/attendanc
+e-log/attendance-lo
+g.ts:30:40:
+[37m      30 Γöé 
+...emberName: 
+members.find(m => 
+m.[32mid[37m === 
+log.memberId)?.name
+ || 'U...
+         Γò╡       
+                   
+         
+[32m~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2554: 
+Expected 1 
+arguments, but got 
+0.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/a
+ttendance/attendanc
+e-log/attendance-lo
+g.ts:37:24:
+[37m      37 Γöé  
+   this.store.dispa
+tch([32mloadMember
+s[37m());
+         Γò╡       
+                  
+[32m~~~~~~~~~~~[0m
+
+  An argument for 
+'props' was not 
+provided.
+
+    node_modules/@n
+grx/store/types/ngr
+x-store.d.ts:188:14
+6:
+[37m      188 Γöé 
+...ctionCreator<T, 
+([32mprops: P & No
+tAllowedCheck<P>[3
+7m) => P & 
+Action<...
+          Γò╡      
+               [32
+m~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2532: 
+Object is possibly 
+'undefined'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/class-calend
+ar/class-calendar.c
+omponent.html:30:51
+:
+[37m      30 Γöé 
+...        <span [c
+lass.text-danger]="
+[32mc.bookingsCoun
+t >= 
+c.capacity[37m">
+         Γò╡       
+                   
+             [32m~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+ClassCalendar.
+
+    src/app/pages/c
+lasses/class-calend
+ar/class-calendar.c
+omponent.ts:12:17:
+[37m      12 Γöé  
+   templateUrl: [3
+2m'./class-calendar
+.component.html'[3
+7m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2554: 
+Expected 0 
+arguments, but got 
+1.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/class-calend
+ar/class-calendar.c
+omponent.ts:58:39:
+[37m      58 Γöé  
+       this.booking
+Service.getClasses(
+[32muser.gymId[37
+m).subscribe({
+         Γò╡       
+                   
+              
+[32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2532: 
+Object is possibly 
+'undefined'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/class-list/c
+lass-list.component
+.html:32:24:
+[37m      32 Γöé  
+           <div *ng
+If="[32mc.bookings
+Count >= 
+c.capacity[37m"
+         Γò╡       
+                  
+[32m~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+ClassList.
+
+    src/app/pages/c
+lasses/class-list/c
+lass-list.component
+.ts:12:17:
+[37m      12 Γöé  
+   templateUrl: [3
+2m'./class-list.com
+ponent.html'[37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2532: 
+Object is possibly 
+'undefined'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/class-list/c
+lass-list.component
+.html:50:74:
+[37m      50 Γöé 
+...font-bold" [clas
+s.text-danger]="[3
+2mc.capacity - c.bo
+okingsCount[37m < 
+5">
+         Γò╡       
+                   
+          [32m~~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+ClassList.
+
+    src/app/pages/c
+lasses/class-list/c
+lass-list.component
+.ts:12:17:
+[37m      12 Γöé  
+   templateUrl: [3
+2m'./class-list.com
+ponent.html'[37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2532: 
+Object is possibly 
+'undefined'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/class-list/c
+lass-list.component
+.html:51:27:
+[37m      51 Γöé  
+                   
+    {{ 
+[32mc.capacity - c
+.bookingsCount[37m
+ }}
+         Γò╡       
+                   
+  [32m~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~[0
+m
+
+  Error occurs in 
+the template of 
+component 
+ClassList.
+
+    src/app/pages/c
+lasses/class-list/c
+lass-list.component
+.ts:12:17:
+[37m      12 Γöé  
+   templateUrl: [3
+2m'./class-list.com
+ponent.html'[37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2532: 
+Object is possibly 
+'undefined'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/class-list/c
+lass-list.component
+.html:64:32:
+[37m      64 Γöé  
+                   
+[disabled]="[32mc.
+bookingsCount >= 
+c.capacity[37m">
+         Γò╡       
+                   
+       [32m~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+ClassList.
+
+    src/app/pages/c
+lasses/class-list/c
+lass-list.component
+.ts:12:17:
+[37m      12 Γöé  
+   templateUrl: [3
+2m'./class-list.com
+ponent.html'[37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2532: 
+Object is possibly 
+'undefined'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/class-list/c
+lass-list.component
+.html:65:23:
+[37m      65 Γöé 
+...              
+{{ [32mc.bookingsC
+ount >= 
+c.capacity[37m ? 
+'Class Full' :...
+         Γò╡       
+              [32m
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+ClassList.
+
+    src/app/pages/c
+lasses/class-list/c
+lass-list.component
+.ts:12:17:
+[37m      12 Γöé  
+   templateUrl: [3
+2m'./class-list.com
+ponent.html'[37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2554: 
+Expected 0 
+arguments, but got 
+1.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/class-list/c
+lass-list.component
+.ts:35:39:
+[37m      35 Γöé  
+       this.booking
+Service.getClasses(
+[32muser.gymId[37
+m).subscribe({
+         Γò╡       
+                   
+              
+[32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS18048: '
+gymClass.bookingsCo
+unt' is possibly 
+'undefined'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/class-list/c
+lass-list.component
+.ts:54:12:
+[37m      54 Γöé  
+       if ([32mgym
+Class.bookingsCount
+[37m >= 
+gymClass.capacity) 
+{
+         Γò╡       
+      [32m~~~~~~~~
+~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2554: 
+Expected 3 
+arguments, but got 
+1.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/class-list/c
+lass-list.component
+.ts:59:28:
+[37m      59 Γöé  
+       this.booking
+Service.[32mbookCl
+ass[37m({
+         Γò╡       
+                   
+   
+[32m~~~~~~~~~[0m
+
+  An argument for 
+'memberId' was not 
+provided.
+
+    src/app/core/se
+rvices/booking.serv
+ice.ts:43:31:
+[37m      43 Γöé 
+...kClass(classId: 
+string, 
+[32mmemberId: 
+string[37m, 
+gymId: string): 
+Obser...
+         Γò╡       
+                   
+  [32m~~~~~~~~~~~~
+~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS18048: '
+gymClass.bookingsCo
+unt' is possibly 
+'undefined'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/class-list/c
+lass-list.component
+.ts:67:16:
+[37m      67 Γöé  
+               [32
+mgymClass.bookingsC
+ount[37m++;
+         Γò╡       
+          [32m~~~~
+~~~~~~~~~~~~~~~~~~
+[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'scheduleDate' 
+does not exist on 
+type 'string'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/my-bookings/
+my-bookings.compone
+nt.html:29:95:
+[37m      29 Γöé 
+... uppercase 
+font-bold">{{ booki
+ng.classId.[32msch
+eduleDate[37m | 
+date:'MMM'
+         Γò╡       
+                   
+                   
+[32m~~~~~~~~~~~~[
+0m
+
+  Error occurs in 
+the template of 
+component 
+MyBookings.
+
+    src/app/pages/c
+lasses/my-bookings/
+my-bookings.compone
+nt.ts:12:17:
+[37m      12 Γöé  
+   templateUrl: [3
+2m'./my-bookings.co
+mponent.html'[37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'scheduleDate' 
+does not exist on 
+type 'string'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/my-bookings/
+my-bookings.compone
+nt.html:31:82:
+[37m      31 Γöé 
+...ld 
+text-white">{{ book
+ing.classId.[32msc
+heduleDate[37m | 
+date:'d' }}</div>
+         Γò╡       
+                   
+            [32m~~
+~~~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+MyBookings.
+
+    src/app/pages/c
+lasses/my-bookings/
+my-bookings.compone
+nt.ts:12:17:
+[37m      12 Γöé  
+   templateUrl: [3
+2m'./my-bookings.co
+mponent.html'[37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'title' 
+does not exist on 
+type 'string'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/my-bookings/
+my-bookings.compone
+nt.html:35:74:
+[37m      35 Γöé 
+...h4 
+class="text-lg 
+font-bold mb-1">{{ 
+booking.classId.[3
+2mtitle[37m 
+}}</h4>
+         Γò╡       
+                   
+                   
+            
+[32m~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+MyBookings.
+
+    src/app/pages/c
+lasses/my-bookings/
+my-bookings.compone
+nt.ts:12:17:
+[37m      12 Γöé  
+   templateUrl: [3
+2m'./my-bookings.co
+mponent.html'[37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'startTime' does 
+not exist on type 
+'string'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/my-bookings/
+my-bookings.compone
+nt.html:38:44:
+[37m      38 Γöé  
+                   
+        booking.cla
+ssId.[32mstartTime
+[37m }}</span>
+         Γò╡       
+                   
+                   
+[32m~~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+MyBookings.
+
+    src/app/pages/c
+lasses/my-bookings/
+my-bookings.compone
+nt.ts:12:17:
+[37m      12 Γöé  
+   templateUrl: [3
+2m'./my-bookings.co
+mponent.html'[37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'duration' does 
+not exist on type 
+'string'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/my-bookings/
+my-bookings.compone
+nt.html:40:49:
+[37m      40 Γöé 
+...                
+   <span>{{ booking
+.classId.[32mdurat
+ion[37m }} 
+min</span>
+         Γò╡       
+                   
+                   
+   
+[32m~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+MyBookings.
+
+    src/app/pages/c
+lasses/my-bookings/
+my-bookings.compone
+nt.ts:12:17:
+[37m      12 Γöé  
+   templateUrl: [3
+2m'./my-bookings.co
+mponent.html'[37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2345: 
+Argument of type 
+'string | 
+undefined' is not 
+assignable to 
+parameter of type 
+'string'.
+  Type 'undefined' 
+is not assignable 
+to type 
+'string'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/my-bookings/
+my-bookings.compone
+nt.html:55:51:
+[37m      55 Γöé  
+                   
+(click)="cancelBook
+ing(booking.[32m_i
+d[37m)">
+         Γò╡       
+                   
+                   
+       [32m~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+MyBookings.
+
+    src/app/pages/c
+lasses/my-bookings/
+my-bookings.compone
+nt.ts:12:17:
+[37m      12 Γöé  
+   templateUrl: [3
+2m'./my-bookings.co
+mponent.html'[37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property '_id' 
+does not exist on 
+type 'string'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/my-bookings/
+my-bookings.compone
+nt.ts:53:58:
+[37m      53 Γöé .
+..e.cancelBooking(b
+ooking.classId.[32
+m_id[37m, booking.
+memberId).subscribe
+({
+         Γò╡       
+                   
+          
+[32m~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2554: 
+Expected 1 
+arguments, but got 
+2.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+lasses/my-bookings/
+my-bookings.compone
+nt.ts:53:63:
+[37m      53 Γöé .
+..e.cancelBooking(b
+ooking.classId._id,
+ [32mbooking.membe
+rId[37m).subscribe
+({
+         Γò╡       
+                   
+               [32
+m~~~~~~~~~~~~~~~~[
+0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'duration' does 
+not exist on type 
+'Challenge'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+ommunity/challenge-
+list/challenge-list
+.html:16:35:
+[37m      16 Γöé  
+               
+<span>{{ challenge.
+[32mduration[37m 
+}} days</span>
+         Γò╡       
+                   
+          
+[32m~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+ChallengeList.
+
+    src/app/pages/c
+ommunity/challenge-
+list/challenge-list
+.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./challenge-list.h
+tml'[37m,
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~~
+[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'title' 
+does not exist on 
+type 'Post'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+ommunity/community-
+feed/community-feed
+.html:13:28:
+[37m      13 Γöé  
+               
+<h3>{{ post.[32mti
+tle[37m }}</h3>
+         Γò╡       
+                   
+   [32m~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+CommunityFeed.
+
+    src/app/pages/c
+ommunity/community-
+feed/community-feed
+.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./community-feed.h
+tml'[37m,
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~~
+[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Post'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+ommunity/community-
+feed/community-feed
+.html:18:47:
+[37m      18 Γöé  
+               
+<button (click)="li
+kePost(post.[32mid
+[37m)">
+         Γò╡       
+                   
+                   
+   [32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+CommunityFeed.
+
+    src/app/pages/c
+ommunity/community-
+feed/community-feed
+.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./community-feed.h
+tml'[37m,
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~~
+[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'comments' does 
+not exist on type 
+'Post'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/c
+ommunity/community-
+feed/community-feed
+.html:24:28:
+[37m      24 Γöé  
+                   
+{{ post.[32mcommen
+ts[37m }} Comments
+         Γò╡       
+                   
+   
+[32m~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+CommunityFeed.
+
+    src/app/pages/c
+ommunity/community-
+feed/community-feed
+.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./community-feed.h
+tml'[37m,
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~~
+[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'productName' does 
+not exist on type 
+'SaleItem'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/i
+nventory/pos-termin
+al/pos-terminal.com
+ponent.html:43:59:
+[37m      43 Γöé 
+...       <div 
+class="font-bold 
+text-sm">{{ item.[
+32mproductName[37m
+ }}</div>
+         Γò╡       
+                   
+                   
+     [32m~~~~~~~~~
+~~[0m
+
+  Error occurs in 
+the template of 
+component 
+PosTerminal.
+
+    src/app/pages/i
+nventory/pos-termin
+al/pos-terminal.com
+ponent.ts:13:17:
+[37m      13 Γöé  
+   templateUrl: [3
+2m'./pos-terminal.c
+omponent.html'[37m
+,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2554: 
+Expected 0 
+arguments, but got 
+1.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/i
+nventory/pos-termin
+al/pos-terminal.com
+ponent.ts:43:40:
+[37m      43 Γöé 
+...       this.posS
+ervice.getProducts(
+[32muser.gymId[37
+m).subscribe(data 
+=> {
+         Γò╡       
+                   
+             
+[32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2353: 
+Object literal may 
+only specify known 
+properties, and 
+'productName' does 
+not exist in type 
+'SaleItem'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/i
+nventory/pos-termin
+al/pos-terminal.com
+ponent.ts:58:16:
+[37m      58 Γöé  
+               [32
+mproductName[37m: 
+product.name,
+         Γò╡       
+          [32m~~~~
+~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'processSale' does 
+not exist on type 
+'PosService'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/i
+nventory/pos-termin
+al/pos-terminal.com
+ponent.ts:104:24:
+[37m      104 Γöé 
+        this.posSer
+vice.[32mprocessSa
+le[37m(saleData).s
+ubscribe({
+          Γò╡      
+                   
+[32m~~~~~~~~~~~[0
+m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS7006: 
+Parameter 'res' 
+implicitly has an 
+'any' type.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/i
+nventory/pos-termin
+al/pos-terminal.com
+ponent.ts:105:19:
+[37m      105 Γöé 
+            next: 
+([32mres[37m) => 
+{
+          Γò╡      
+              
+[32m~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS7006: 
+Parameter 'err' 
+implicitly has an 
+'any' type.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/i
+nventory/pos-termin
+al/pos-terminal.com
+ponent.ts:117:20:
+[37m      117 Γöé 
+            error: 
+([32merr[37m) => 
+{
+          Γò╡      
+               
+[32m~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2554: 
+Expected 0 
+arguments, but got 
+1.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/i
+nventory/product-li
+st/product-list.com
+ponent.ts:48:36:
+[37m      48 Γöé  
+       this.posServ
+ice.getProducts([3
+2muser.gymId[37m).
+subscribe({
+         Γò╡       
+                   
+           
+[32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2322: 
+Type 'string | 
+undefined' is not 
+assignable to type 
+'string | null'.
+  Type 'undefined' 
+is not assignable 
+to type 'string | 
+null'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/i
+nventory/product-li
+st/product-list.com
+ponent.ts:64:12:
+[37m      64 Γöé  
+           [32mthi
+s.currentId[37m = 
+product._id;
+         Γò╡       
+      [32m~~~~~~~~
+~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'getSalesReport' 
+does not exist on 
+type 
+'PosService'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/i
+nventory/sales-repo
+rt/sales-report.com
+ponent.ts:42:24:
+[37m      42 Γöé  
+       this.posServ
+ice.[32mgetSalesRe
+port[37m(user.gymI
+d, 
+date).subscribe({
+         Γò╡       
+                  
+[32m~~~~~~~~~~~~~~
+[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS7006: 
+Parameter 'data' 
+implicitly has an 
+'any' type.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/i
+nventory/sales-repo
+rt/sales-report.com
+ponent.ts:43:19:
+[37m      43 Γöé  
+           next: 
+([32mdata[37m) 
+=> {
+         Γò╡       
+             
+[32m~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS7006: 
+Parameter 'err' 
+implicitly has an 
+'any' type.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/i
+nventory/sales-repo
+rt/sales-report.com
+ponent.ts:47:20:
+[37m      47 Γöé  
+           error: 
+([32merr[37m) => 
+{
+         Γò╡       
+              
+[32m~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'User'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/dashboard/me
+mber-dashboard.comp
+onent.ts:34:29:
+[37m      34 Γöé  
+           if 
+(user && 
+user.[32mid[37m) 
+{
+         Γò╡       
+                   
+    [32m~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'User'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/dashboard/me
+mber-dashboard.comp
+onent.ts:37:58:
+[37m      37 Γöé  
+               this
+.store.dispatch(loa
+dMember({ id: 
+user.[32mid[37m 
+}));
+         Γò╡       
+                   
+                   
+              
+[32m~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'User'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/dashboard/me
+mber-dashboard.comp
+onent.ts:38:66:
+[37m      38 Γöé 
+...         this.st
+ore.dispatch(loadPr
+ogress({ memberId: 
+user.[32mid[37m 
+}));
+         Γò╡       
+                   
+                   
+                  
+[32m~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'User'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/dashboard/me
+mber-dashboard.comp
+onent.ts:39:70:
+[37m      39 Γöé 
+...     this.store.
+dispatch(loadAchiev
+ements({ memberId: 
+user.[32mid[37m 
+}));
+         Γò╡       
+                   
+                   
+                  
+[32m~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'User'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/dashboard/me
+mber-dashboard.comp
+onent.ts:40:74:
+[37m      40 Γöé 
+... this.store.disp
+atch(loadMemberAtte
+ndance({ memberId: 
+user.[32mid[37m 
+}));
+         Γò╡       
+                   
+                   
+                  
+[32m~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2367: 
+This comparison 
+appears to be 
+unintentional 
+because the types 
+'"Active" | 
+"Inactive" | 
+"Pending" | 
+"Expired"' and 
+'"active"' have no 
+overlap.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/member-detai
+l/member-detail.htm
+l:17:29:
+[37m      17 Γöé  
+           
+'badge-success': [
+32mmember.membershi
+pStatus === 
+'active'[37m,
+         Γò╡       
+                   
+    [32m~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+MemberDetail.
+
+    src/app/pages/m
+embers/member-detai
+l/member-detail.ts:
+14:15:
+[37m      14 Γöé  
+ templateUrl: [32m
+'./member-detail.ht
+ml'[37m,
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~[
+0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2367: 
+This comparison 
+appears to be 
+unintentional 
+because the types 
+'"Active" | 
+"Inactive" | 
+"Pending" | 
+"Expired"' and 
+'"expired"' have 
+no overlap.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/member-detai
+l/member-detail.htm
+l:18:28:
+[37m      18 Γöé  
+           
+'badge-danger': [3
+2mmember.membership
+Status === 
+'expired'[37m,
+         Γò╡       
+                   
+   [32m~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+MemberDetail.
+
+    src/app/pages/m
+embers/member-detai
+l/member-detail.ts:
+14:15:
+[37m      14 Γöé  
+ templateUrl: [32m
+'./member-detail.ht
+ml'[37m,
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~[
+0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2367: 
+This comparison 
+appears to be 
+unintentional 
+because the types 
+'"Active" | 
+"Inactive" | 
+"Pending" | 
+"Expired"' and 
+'"pending"' have 
+no overlap.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/member-detai
+l/member-detail.htm
+l:19:29:
+[37m      19 Γöé  
+           
+'badge-warning': [
+32mmember.membershi
+pStatus === 
+'pending'[37m
+         Γò╡       
+                   
+    [32m~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+MemberDetail.
+
+    src/app/pages/m
+embers/member-detai
+l/member-detail.ts:
+14:15:
+[37m      14 Γöé  
+ templateUrl: [32m
+'./member-detail.ht
+ml'[37m,
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~[
+0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS1146: 
+Declaration 
+expected.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/member-list/
+member-list.ts:16:2
+:
+[37m      16 Γöé 
+})[32m[37m
+         Γò╡   
+[32m^[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2304: 
+Cannot find name 
+'constructor'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/member-list/
+member-list.ts:17:0
+:
+[37m      17 Γöé 
+[32mconstructor[37
+m() {
+         Γò╡ [32m~
+~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS1005: 
+';' expected.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/member-list/
+member-list.ts:17:1
+4:
+[37m      17 Γöé 
+constructor() 
+[32m{[37m
+         Γò╡       
+        [32m^[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2532: 
+Object is possibly 
+'undefined'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/member-list/
+member-list.ts:18:2
+:
+[37m      18 Γöé  
+ [32mthis[37m.sto
+re.select(selectSel
+ectedGym)
+         Γò╡   
+[32m~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS7006: 
+Parameter 'gym' 
+implicitly has an 
+'any' type.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/member-list/
+member-list.ts:23:1
+5:
+[37m      23 Γöé  
+   .subscribe([32m
+gym[37m => {
+         Γò╡       
+         
+[32m~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2532: 
+Object is possibly 
+'undefined'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/member-list/
+member-list.ts:25:6
+:
+[37m      25 Γöé  
+     [32mthis[37m
+.store.dispatch(loa
+dMembers({ gymId 
+}));
+         Γò╡       
+[32m~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2304: 
+Cannot find name 
+'ngOnInit'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/member-list/
+member-list.ts:29:0
+:
+[37m      29 Γöé 
+[32mngOnInit[37m()
+ { }
+         Γò╡ 
+[32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS1005: 
+';' expected.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/member-list/
+member-list.ts:29:1
+1:
+[37m      29 Γöé 
+ngOnInit() 
+[32m{[37m }
+         Γò╡       
+     [32m^[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS1128: 
+Declaration or 
+statement 
+expected.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/member-list/
+member-list.ts:30:0
+:
+[37m      30 Γöé 
+[32m}[37m
+         Γò╡ 
+[32m^[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'getMemberDiet' 
+does not exist on 
+type 
+'DietService'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/my-diet/my-d
+iet.component.ts:32
+:25:
+[37m      32 Γöé  
+       this.dietSer
+vice.[32mgetMember
+Diet[37m(memberId)
+.subscribe({
+         Γò╡       
+                   
+[32m~~~~~~~~~~~~~
+[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS7006: 
+Parameter 'data' 
+implicitly has an 
+'any' type.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/my-diet/my-d
+iet.component.ts:33
+:19:
+[37m      33 Γöé  
+           next: 
+([32mdata[37m) 
+=> {
+         Γò╡       
+             
+[32m~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS7006: 
+Parameter 'err' 
+implicitly has an 
+'any' type.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/my-diet/my-d
+iet.component.ts:37
+:20:
+[37m      37 Γöé  
+           error: 
+([32merr[37m) => 
+{
+         Γò╡       
+              
+[32m~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'getMemberWorkout' 
+does not exist on 
+type 'WorkoutServic
+e'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/my-workout/m
+y-workout.component
+.ts:36:28:
+[37m      36 Γöé  
+       this.workout
+Service.[32mgetMem
+berWorkout[37m(mem
+berId).subscribe({
+         Γò╡       
+                   
+   [32m~~~~~~~~~~~
+~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS7006: 
+Parameter 'data' 
+implicitly has an 
+'any' type.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/my-workout/m
+y-workout.component
+.ts:37:19:
+[37m      37 Γöé  
+           next: 
+([32mdata[37m) 
+=> {
+         Γò╡       
+             
+[32m~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS7006: 
+Parameter 'err' 
+implicitly has an 
+'any' type.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/m
+embers/my-workout/m
+y-workout.component
+.ts:42:20:
+[37m      42 Γöé  
+           error: 
+([32merr[37m) => 
+{
+         Γò╡       
+              
+[32m~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Coupon'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/p
+ayments/coupons/cou
+pon.component.html:
+55:57:
+[37m      55 Γöé  
+                   
+<button (click)="de
+leteCoupon(coupon.
+[32mid[37m)">
+         Γò╡       
+                   
+                   
+             
+[32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+CouponComponent.
+
+    src/app/pages/p
+ayments/coupons/cou
+pon.component.ts:14
+:17:
+[37m      14 Γöé  
+   templateUrl: [3
+2m'./coupon.compone
+nt.html'[37m
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Invoice'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.html
+:56:33:
+[37m      56 Γöé  
+               
+<div>#{{ invoice.[
+32mid[37m }}</div>
+         Γò╡       
+                   
+        [32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+InvoiceComponent.
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.ts:1
+5:17:
+[37m      15 Γöé  
+   templateUrl: [3
+2m'./invoice.compon
+ent.html'[37m
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'status' 
+does not exist on 
+type 
+'Invoice'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.html
+:60:49:
+[37m      60 Γöé 
+...    <span [ngCla
+ss]="invoice.[32ms
+tatus[37m === 
+'paid' ? 
+'badge-success...
+         Γò╡       
+                   
+       
+[32m~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+InvoiceComponent.
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.ts:1
+5:17:
+[37m      15 Γöé  
+   templateUrl: [3
+2m'./invoice.compon
+ent.html'[37m
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'status' 
+does not exist on 
+type 
+'Invoice'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.html
+:61:40:
+[37m      61 Γöé 
+...                
+      {{ (invoice.
+[32mstatus[37m || 
+'PAID') | 
+uppercase }}
+         Γò╡       
+                   
+            
+[32m~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+InvoiceComponent.
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.ts:1
+5:17:
+[37m      15 Γöé  
+   templateUrl: [3
+2m'./invoice.compon
+ent.html'[37m
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2551: 
+Property 'member' 
+does not exist on 
+type 'Invoice'. 
+Did you mean 
+'memberId'?[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.html
+:72:32:
+[37m      72 Γöé  
+               
+<div>{{ invoice.[3
+2mmember[37m?.name
+ }}</div>
+         Γò╡       
+                   
+       
+[32m~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+InvoiceComponent.
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.ts:1
+5:17:
+[37m      15 Γöé  
+   templateUrl: [3
+2m'./invoice.compon
+ent.html'[37m
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2551: 
+Property 'member' 
+does not exist on 
+type 'Invoice'. 
+Did you mean 
+'memberId'?[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.html
+:74:34:
+[37m      74 Γöé  
+                   
+<p>{{ invoice.[32m
+member[37m?.email 
+}}</p>
+         Γò╡       
+                   
+         
+[32m~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+InvoiceComponent.
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.ts:1
+5:17:
+[37m      15 Γöé  
+   templateUrl: [3
+2m'./invoice.compon
+ent.html'[37m
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2551: 
+Property 'member' 
+does not exist on 
+type 'Invoice'. 
+Did you mean 
+'memberId'?[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.html
+:75:34:
+[37m      75 Γöé  
+                   
+<p>{{ invoice.[32m
+member[37m?.addres
+s }}</p>
+         Γò╡       
+                   
+         
+[32m~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+InvoiceComponent.
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.ts:1
+5:17:
+[37m      15 Γöé  
+   templateUrl: [3
+2m'./invoice.compon
+ent.html'[37m
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'items' 
+does not exist on 
+type 
+'Invoice'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.html
+:101:53:
+[37m      101 Γöé 
+                   
+ <tr *ngFor="let 
+item of (invoice.[
+32mitems[37m || 
+[])">
+          Γò╡      
+                   
+                   
+          
+[32m~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+InvoiceComponent.
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.ts:1
+5:17:
+[37m      15 Γöé  
+   templateUrl: [3
+2m'./invoice.compon
+ent.html'[37m
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'items' 
+does not exist on 
+type 
+'Invoice'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.html
+:111:40:
+[37m      111 Γöé 
+...         <tr *ng
+If="!invoice.[32mi
+tems[37m || invoic
+e.items.length 
+===...
+          Γò╡      
+                   
+        
+[32m~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+InvoiceComponent.
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.ts:1
+5:17:
+[37m      15 Γöé  
+   templateUrl: [3
+2m'./invoice.compon
+ent.html'[37m
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'items' 
+does not exist on 
+type 
+'Invoice'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.html
+:111:57:
+[37m      111 Γöé 
+...        <tr *ngI
+f="!invoice.items 
+|| invoice.[32mite
+ms[37m.length === 
+0">
+          Γò╡      
+                   
+                   
+     [32m~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+InvoiceComponent.
+
+    src/app/pages/p
+ayments/invoice/inv
+oice.component.ts:1
+5:17:
+[37m      15 Γöé  
+   templateUrl: [3
+2m'./invoice.compon
+ent.html'[37m
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2367: 
+This comparison 
+appears to be 
+unintentional 
+because the types 
+'"Pending" | 
+"Paid" | "Failed" 
+| "Partial"' and 
+'"completed"' have 
+no overlap.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/p
+ayments/payment-lis
+t/payment-list.html
+:46:49:
+[37m      46 Γöé .
+..'badge-success': 
+[32mpayment.status
+ === 
+'completed'[37m 
+|| payment.stat...
+         Γò╡       
+              [32m
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+PaymentList.
+
+    src/app/pages/p
+ayments/payment-lis
+t/payment-list.ts:1
+2:15:
+[37m      12 Γöé  
+ templateUrl: [32m
+'./payment-list.htm
+l'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~[0
+m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2367: 
+This comparison 
+appears to be 
+unintentional 
+because the types 
+'"Pending" | 
+"Paid" | "Failed" 
+| "Partial"' and 
+'"paid"' have no 
+overlap.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/p
+ayments/payment-lis
+t/payment-list.html
+:46:83:
+[37m      46 Γöé 
+...ess': 
+payment.status === 
+'completed' || [32
+mpayment.status 
+=== 'paid'[37m,
+         Γò╡       
+                   
+                  
+[32m~~~~~~~~~~~~~~~
+~~~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+PaymentList.
+
+    src/app/pages/p
+ayments/payment-lis
+t/payment-list.ts:1
+2:15:
+[37m      12 Γöé  
+ templateUrl: [32m
+'./payment-list.htm
+l'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~[0
+m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2367: 
+This comparison 
+appears to be 
+unintentional 
+because the types 
+'"Pending" | 
+"Paid" | "Failed" 
+| "Partial"' and 
+'"pending"' have 
+no overlap.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/p
+ayments/payment-lis
+t/payment-list.html
+:47:49:
+[37m      47 Γöé 
+...                
+    
+'badge-warning': [
+32mpayment.status 
+=== 'pending'[37m,
+         Γò╡       
+                   
+               [32
+m~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+PaymentList.
+
+    src/app/pages/p
+ayments/payment-lis
+t/payment-list.ts:1
+2:15:
+[37m      12 Γöé  
+ templateUrl: [32m
+'./payment-list.htm
+l'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~[0
+m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2367: 
+This comparison 
+appears to be 
+unintentional 
+because the types 
+'"Pending" | 
+"Paid" | "Failed" 
+| "Partial"' and 
+'"overdue"' have 
+no overlap.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/p
+ayments/payment-lis
+t/payment-list.html
+:48:48:
+[37m      48 Γöé 
+...                
+      
+'badge-danger': [3
+2mpayment.status 
+=== 'overdue'[37m
+         Γò╡       
+                   
+                [3
+2m~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+PaymentList.
+
+    src/app/pages/p
+ayments/payment-lis
+t/payment-list.ts:1
+2:15:
+[37m      12 Γöé  
+ templateUrl: [32m
+'./payment-list.htm
+l'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~[0
+m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Payment'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/p
+ayments/payment-lis
+t/payment-list.html
+:54:75:
+[37m      54 Γöé 
+...              
+<a [routerLink]="['
+/payments/invoice',
+ payment.[32mid[3
+7m]">
+         Γò╡       
+                   
+                   
+                   
+ [32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+PaymentList.
+
+    src/app/pages/p
+ayments/payment-lis
+t/payment-list.ts:1
+2:15:
+[37m      12 Γöé  
+ templateUrl: [32m
+'./payment-list.htm
+l'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~[0
+m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'timestamp' does 
+not exist on type 
+'AuditLog'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+ecurity/audit-log/a
+udit-log.html:30:40
+:
+[37m      30 Γöé 
+...                
+<div>{{ log.[32mti
+mestamp[37m | 
+date:'mediumDate' 
+}}</div>
+         Γò╡       
+                   
+      
+[32m~~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component AuditLog.
+
+    src/app/pages/s
+ecurity/audit-log/a
+udit-log.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./audit-log.html'
+[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'timestamp' does 
+not exist on type 
+'AuditLog'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+ecurity/audit-log/a
+udit-log.html:31:40
+:
+[37m      31 Γöé 
+...                
+ <div>{{ log.[32mt
+imestamp[37m | 
+date:'shortTime' 
+}}</div>
+         Γò╡       
+                   
+       
+[32m~~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component AuditLog.
+
+    src/app/pages/s
+ecurity/audit-log/a
+udit-log.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./audit-log.html'
+[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'resource' does 
+not exist on type 
+'AuditLog'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+ecurity/audit-log/a
+udit-log.html:52:41
+:
+[37m      52 Γöé  
+                   
+        <code>{{ lo
+g.[32mresource[37
+m }}</code>
+         Γò╡       
+                   
+                
+[32m~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component AuditLog.
+
+    src/app/pages/s
+ecurity/audit-log/a
+udit-log.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./audit-log.html'
+[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'ipAddress' does 
+not exist on type 
+'AuditLog'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+ecurity/audit-log/a
+udit-log.html:55:41
+:
+[37m      55 Γöé  
+                   
+        <span>{{ lo
+g.[32mipAddress[3
+7m }}</span>
+         Γò╡       
+                   
+                
+[32m~~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component AuditLog.
+
+    src/app/pages/s
+ecurity/audit-log/a
+udit-log.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./audit-log.html'
+[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'userCount' does 
+not exist on type 
+'Role'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+ecurity/role-manage
+ment/role-managemen
+t.html:17:30:
+[37m      17 Γöé  
+               
+<span>{{ role.[32m
+userCount[37m }} 
+Users</span>
+         Γò╡       
+                   
+     
+[32m~~~~~~~~~[0m
+
+  Error occurs in 
+the template of 
+component 
+RoleManagement.
+
+    src/app/pages/s
+ecurity/role-manage
+ment/role-managemen
+t.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./role-management.
+html'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~~~
+[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 
+'permissions' does 
+not exist on type 
+'Role'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+ecurity/role-manage
+ment/role-managemen
+t.html:21:47:
+[37m      21 Γöé  
+               
+<span *ngFor="let 
+perm of role.[32mp
+ermissions[37m">
+         Γò╡       
+                   
+                   
+   [32m~~~~~~~~~~~
+[0m
+
+  Error occurs in 
+the template of 
+component 
+RoleManagement.
+
+    src/app/pages/s
+ecurity/role-manage
+ment/role-managemen
+t.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./role-management.
+html'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~~~
+[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'{ status: string; 
+_id?: string | 
+undefined; name: 
+string; role: 
+string; salary: 
+number; phone?: 
+string | 
+undefined; 
+userId?: string | 
+undefined; gymId: 
+string; isActive: 
+boolean; }'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+taff/dashboard/staf
+f-dashboard.compone
+nt.html:47:99:
+[37m      47 Γöé 
+...="staff.status" 
+(ngModelChange)="ma
+rkAttendance(staff.
+[32mid[37m, 
+$event)"
+         Γò╡       
+                   
+                   
+             
+[32m~~[0m
+
+  Error occurs in 
+the template of 
+component StaffDash
+boardComponent.
+
+    src/app/pages/s
+taff/dashboard/staf
+f-dashboard.compone
+nt.ts:15:17:
+[37m      15 Γöé  
+   templateUrl: [3
+2m'./staff-dashboar
+d.component.html'[
+37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'{ status: string; 
+_id?: string | 
+undefined; name: 
+string; role: 
+string; salary: 
+number; phone?: 
+string | 
+undefined; 
+userId?: string | 
+undefined; gymId: 
+string; isActive: 
+boolean; }'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+taff/dashboard/staf
+f-dashboard.compone
+nt.html:61:67:
+[37m      61 Γöé 
+...         
+<button [routerLink
+]="['/staff', staff
+.[32mid[37m]">Vie
+w</button>
+         Γò╡       
+                   
+                   
+       [32m~~[0m
+
+  Error occurs in 
+the template of 
+component StaffDash
+boardComponent.
+
+    src/app/pages/s
+taff/dashboard/staf
+f-dashboard.compone
+nt.ts:15:17:
+[37m      15 Γöé  
+   templateUrl: [3
+2m'./staff-dashboar
+d.component.html'[
+37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Staff'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+taff/dashboard/staf
+f-dashboard.compone
+nt.ts:30:94:
+[37m      30 Γöé 
+...d((a: 
+StaffAttendance) 
+=> a.staffId === 
+s.[32mid[37m && 
+a.date === today);
+         Γò╡       
+                   
+                   
+ [32m~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Staff'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.html:22:62:
+[37m      22 Γöé 
+...  <button [class
+.btn-success]="atte
+ndance[staff.[32mi
+d[37m] === 
+'present'"
+         Γò╡       
+                   
+                   
+       [32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+StaffAttendance.
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./staff-attendance
+.html'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~~~
+~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Staff'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.html:23:50:
+[37m      23 Γöé  
+                   
+(click)="markAttend
+ance(staff.[32mid
+[37m, 'present')">
+         Γò╡       
+                   
+                   
+      [32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+StaffAttendance.
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./staff-attendance
+.html'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~~~
+~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Staff'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.html:25:50:
+[37m      25 Γöé 
+... <span *ngIf="at
+tendance[staff.[32
+mid[37m] === 'pres
+ent'">check_circle<
+...
+         Γò╡       
+                   
+         
+[32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+StaffAttendance.
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./staff-attendance
+.html'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~~~
+~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Staff'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.html:27:61:
+[37m      27 Γöé 
+...    <button [cla
+ss.btn-danger]="att
+endance[staff.[32m
+id[37m] === 
+'absent'"
+         Γò╡       
+                   
+                   
+        [32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+StaffAttendance.
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./staff-attendance
+.html'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~~~
+~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Staff'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.html:28:50:
+[37m      28 Γöé  
+                   
+(click)="markAttend
+ance(staff.[32mid
+[37m, 'absent')">
+         Γò╡       
+                   
+                   
+      [32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+StaffAttendance.
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./staff-attendance
+.html'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~~~
+~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Staff'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.html:30:50:
+[37m      30 Γöé 
+...     <span *ngIf
+="attendance[staff.
+[32mid[37m] === '
+absent'">cancel</sp
+an>
+         Γò╡       
+                   
+             
+[32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+StaffAttendance.
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./staff-attendance
+.html'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~~~
+~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Staff'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.html:32:62:
+[37m      32 Γöé 
+...    <button [cla
+ss.btn-warning]="at
+tendance[staff.[32
+mid[37m] === 
+'leave'"
+         Γò╡       
+                   
+                   
+         
+[32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+StaffAttendance.
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./staff-attendance
+.html'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~~~
+~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Staff'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.html:33:50:
+[37m      33 Γöé  
+                   
+(click)="markAttend
+ance(staff.[32mid
+[37m, 'leave')">
+         Γò╡       
+                   
+                   
+      [32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+StaffAttendance.
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./staff-attendance
+.html'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~~~
+~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Staff'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.html:35:50:
+[37m      35 Γöé 
+... <span *ngIf="at
+tendance[staff.[32
+mid[37m] === 'leav
+e'">history_toggle_
+...
+         Γò╡       
+                   
+         
+[32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+StaffAttendance.
+
+    src/app/pages/s
+taff/staff-attendan
+ce/staff-attendance
+.ts:11:15:
+[37m      11 Γöé  
+ templateUrl: [32m
+'./staff-attendance
+.html'[37m
+         Γò╡       
+         [32m~~~~~
+~~~~~~~~~~~~~~~~~~~
+~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2551: 
+Property 
+'getDietPlanById' 
+does not exist on 
+type 
+'DietService'. Did 
+you mean 
+'getDietPlan'?[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/w
+orkouts/diet-builde
+r/diet-builder.comp
+onent.ts:86:25:
+[37m      86 Γöé  
+       this.dietSer
+vice.[32mgetDietPl
+anById[37m(id).sub
+scribe({
+         Γò╡       
+                   
+[32m~~~~~~~~~~~~~~
+~[0m
+
+  'getDietPlan' is 
+declared here.
+
+    src/app/core/se
+rvices/diet.service
+.ts:22:4:
+[37m      22 Γöé  
+   [32mgetDietPlan
+[37m(id: string): 
+Observable<DietPlan
+> {
+         Γò╡     [
+32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS7006: 
+Parameter 'diet' 
+implicitly has an 
+'any' type.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/w
+orkouts/diet-builde
+r/diet-builder.comp
+onent.ts:87:19:
+[37m      87 Γöé  
+           next: 
+([32mdiet[37m) 
+=> {
+         Γò╡       
+             
+[32m~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS7006: 
+Parameter 'meal' 
+implicitly has an 
+'any' type.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/w
+orkouts/diet-builde
+r/diet-builder.comp
+onent.ts:94:35:
+[37m      94 Γöé  
+               diet
+.meals.forEach([32
+mmeal[37m => {
+         Γò╡       
+                   
+          
+[32m~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS7006: 
+Parameter 'err' 
+implicitly has an 
+'any' type.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/w
+orkouts/diet-builde
+r/diet-builder.comp
+onent.ts:105:20:
+[37m      105 Γöé 
+            error: 
+([32merr[37m) => 
+{
+          Γò╡      
+               
+[32m~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2345: 
+Argument of type 
+'{ title: any; 
+calories: any; 
+meals: any; gymId: 
+string | 
+undefined; }' is 
+not assignable to 
+parameter of type 
+'DietPlan'.
+  Property 
+'createdBy' is 
+missing in type '{ 
+title: any; 
+calories: any; 
+meals: any; gymId: 
+string | 
+undefined; }' but 
+required in type 
+'DietPlan'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/w
+orkouts/diet-builde
+r/diet-builder.comp
+onent.ts:148:44:
+[37m      148 Γöé 
+            this.di
+etService.createDie
+tPlan([32mdietData
+[37m).subscribe({
+          Γò╡      
+                   
+                   
+ [32m~~~~~~~~[0m
+
+  'createdBy' is 
+declared here.
+
+    src/app/core/mo
+dels/gym-extensions
+.model.ts:35:4:
+[37m      35 Γöé  
+   [32mcreatedBy[
+37m: string; // 
+Added field
+         Γò╡     
+[32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Member'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/w
+orkouts/plan-assign
+ment/plan-assignmen
+t.component.html:17
+:74:
+[37m      17 Γöé 
+...f members" 
+[value]="m._id || 
+m.[32mid[37m">{{ 
+m.name }} ({{ 
+m.memberId ...
+         Γò╡       
+                   
+         
+[32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+PlanAssignment.
+
+    src/app/pages/w
+orkouts/plan-assign
+ment/plan-assignmen
+t.component.ts:16:1
+7:
+[37m      16 Γöé  
+   templateUrl: [3
+2m'./plan-assignmen
+t.component.html'[
+37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Member'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/w
+orkouts/plan-assign
+ment/plan-assignmen
+t.component.html:17
+:74:
+[37m      17 Γöé 
+...f members" 
+[value]="m._id || 
+m.[32mid[37m">{{ 
+m.name }} ({{ 
+m.memberId ...
+         Γò╡       
+                   
+         
+[32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+PlanAssignment.
+
+    src/app/pages/w
+orkouts/plan-assign
+ment/plan-assignmen
+t.component.ts:16:1
+7:
+[37m      16 Γöé  
+   templateUrl: [3
+2m'./plan-assignmen
+t.component.html'[
+37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2339: 
+Property 'id' does 
+not exist on type 
+'Member'.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/w
+orkouts/plan-assign
+ment/plan-assignmen
+t.component.html:17
+:111:
+[37m      17 Γöé 
+...s" 
+[value]="m._id || 
+m.id">{{ m.name }} 
+({{ m.memberId || 
+m.[32mid[37m }})
+         Γò╡       
+                   
+                   
+                   
+[32m~~[0m
+
+  Error occurs in 
+the template of 
+component 
+PlanAssignment.
+
+    src/app/pages/w
+orkouts/plan-assign
+ment/plan-assignmen
+t.component.ts:16:1
+7:
+[37m      16 Γöé  
+   templateUrl: [3
+2m'./plan-assignmen
+t.component.html'[
+37m,
+         Γò╡       
+           [32m~~~
+~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2554: 
+Expected 0 
+arguments, but got 
+1.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/w
+orkouts/plan-assign
+ment/plan-assignmen
+t.component.ts:54:4
+0:
+[37m      54 Γöé .
+..s.workoutService.
+getWorkouts([32mgy
+mId[37m).subscribe
+(w => 
+this.workout...
+         Γò╡       
+                   
+       
+[32m~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2554: 
+Expected 0 
+arguments, but got 
+1.[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/w
+orkouts/plan-assign
+ment/plan-assignmen
+t.component.ts:55:3
+8:
+[37m      55 Γöé .
+..his.dietService.g
+etDietPlans([32mgy
+mId[37m).subscribe
+(d => this.diets 
+=...
+         Γò╡       
+                   
+       
+[32m~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mTS2551: 
+Property 
+'getWorkoutById' 
+does not exist on 
+type 
+'WorkoutService'. 
+Did you mean 
+'getWorkout'?[0m 
+[1m[35m[plugin an
+gular-compiler][0m
+
+    src/app/pages/w
+orkouts/workout-bui
+lder/workout-builde
+r.component.ts:76:2
+8:
+[37m      76 Γöé  
+       this.workout
+Service.[32mgetWor
+koutById[37m(id).s
+ubscribe({
+         Γò╡       
+                   
+   [32m~~~~~~~~~~~
+~~~[0m
+
+  'getWorkout' is 
+declared here.
+
+    src/app/core/se
+rvices/workout.serv
+ice.ts:23:4:
+[37m      23 Γöé  
+   [32mgetWorkout
+[37m(id: string): O
+bservable<Workout> 
+{
+         Γò╡     
+[32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[4
+1;97mERROR[41;31m]
+[0m [1mExpected 
+";" but found 
+"{"[0m
+
+    src/app/pages/m
+embers/member-list/
+member-list.ts:17:1
+4:
+[37m      17 Γöé 
+constructor() 
+[32m{[37m
+         Γöé       
+        [32m^[37m
+         Γò╡       
+        [32m;[0m
+
+[39m[22m

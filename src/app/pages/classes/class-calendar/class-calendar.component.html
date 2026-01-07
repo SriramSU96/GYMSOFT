@@ -27,7 +27,7 @@
                     <div class="font-bold text-sm mb-1 truncate">{{ c.title }}</div>
                     <div class="text-xs text-muted flex justify-between">
                         <span>{{ c.duration }} min</span>
-                        <span [class.text-danger]="c.bookingsCount >= c.capacity">
+                        <span [class.text-danger]="(c.bookingsCount || 0) >= c.capacity">
                             {{ c.bookingsCount }}/{{ c.capacity }}
                         </span>
                     </div>

@@ -32,7 +32,7 @@ export class ClassList implements OnInit {
         if (!user?.gymId) return;
 
         this.isLoading = true;
-        this.bookingService.getClasses(user.gymId).subscribe({
+        this.bookingService.getClasses().subscribe({
             next: (data) => {
                 this.classes = data;
                 this.isLoading = false;
@@ -51,20 +51,17 @@ export class ClassList implements OnInit {
             return;
         }
 
-        if (gymClass.bookingsCount >= gymClass.capacity) {
+        const currentBookings = gymClass.bookingsCount || 0;
+        if (currentBookings >= gymClass.capacity) {
             this.errorMessage = 'Class is full.';
             return;
         }
 
-        this.bookingService.bookClass({
-            classId: gymClass._id,
-            memberId: user._id,
-            gymId: user.gymId
-        }).subscribe({
+        this.bookingService.bookClass(gymClass._id || '', user._id, user.gymId).subscribe({
             next: () => {
                 this.successMessage = `Successfully booked ${gymClass.title}!`;
                 // Optimistic update
-                gymClass.bookingsCount++;
+                gymClass.bookingsCount = currentBookings + 1;
                 setTimeout(() => this.successMessage = '', 3000);
             },
             error: (err) => {

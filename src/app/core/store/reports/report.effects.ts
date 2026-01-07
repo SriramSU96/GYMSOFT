@@ -39,7 +39,7 @@ export class ReportEffects {
         this.actions$.pipe(
             ofType(ReportActions.addExpense),
             mergeMap(({ expense }) =>
-                this.reportService.addExpense(expense).pipe(
+                this.reportService.addExpense(expense as any).pipe(
                     map((newExpense) => ReportActions.addExpenseSuccess({ expense: newExpense })),
                     catchError((error) => of(ReportActions.addExpenseFailure({ error })))
                 )

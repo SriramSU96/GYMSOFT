@@ -14,22 +14,18 @@ export class WorkoutService {
 
     constructor(private http: HttpClient) { }
 
-    // Get all workouts (optionally filter by gymId)
-    getWorkouts(gymId?: string): Observable<Workout[]> {
-        let params = new HttpParams();
-        if (gymId) {
-            params = params.set('gymId', gymId);
-        }
-        return this.http.get<Workout[]>(this.apiUrl, { params });
+    // Get all workouts
+    getWorkouts(): Observable<Workout[]> {
+        return this.http.get<Workout[]>(this.apiUrl);
     }
 
     // Get a single workout by ID
-    getWorkoutById(id: string): Observable<Workout> {
+    getWorkout(id: string): Observable<Workout> {
         return this.http.get<Workout>(`${this.apiUrl}/${id}`);
     }
 
     // Create a new workout
-    createWorkout(workout: Partial<Workout>): Observable<Workout> {
+    createWorkout(workout: Workout): Observable<Workout> {
         return this.http.post<Workout>(this.apiUrl, workout);
     }
 
@@ -48,7 +44,7 @@ export class WorkoutService {
         return this.http.post<AssignedPlan>(`${this.plansUrl}/assign`, assignment);
     }
 
-    // Get assigned workout for a specific member
+    // Get member's assigned workout
     getMemberWorkout(memberId: string): Observable<Workout> {
         return this.http.get<Workout>(`${environment.apiUrl}/members/${memberId}/workout`);
     }

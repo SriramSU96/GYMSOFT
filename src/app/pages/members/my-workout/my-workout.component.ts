@@ -34,12 +34,12 @@ export class MyWorkout implements OnInit {
 
     loadAssignedWorkout(memberId: string): void {
         this.workoutService.getMemberWorkout(memberId).subscribe({
-            next: (data) => {
+            next: (data: Workout) => {
                 this.workout = data;
                 this.isLoading = false;
                 this.initializeProgress();
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('No workout found or error', err);
                 this.isLoading = false;
             }

@@ -13,8 +13,7 @@
             <p>{{ challenge.description }}</p>
 
             <div>
-                <span>{{ challenge.duration }} days</span>
-                <span>{{ challenge.participants }} participants</span>
+                <span>{{ challenge.participants.length || 0 }} participants</span>
             </div>
 
             <button>Join Challenge</button>

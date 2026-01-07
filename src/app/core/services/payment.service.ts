@@ -20,15 +20,15 @@ export class PaymentService {
         return this.http.post(`${this.apiUrl}/reminder`, { memberId });
     }
 
-    recordPartialPayment(payment: Partial<Payment>): Observable<Payment> {
+    recordPartialPayment(payment: Payment): Observable<Payment> {
         return this.http.post<Payment>(`${this.apiUrl}/partial`, payment);
     }
 
-    getInvoice(id: string): Observable<Invoice> {
-        return this.http.get<Invoice>(`${this.apiUrl}/invoice/${id}`);
+    getInvoiceDownload(id: string): Observable<Blob> {
+        return this.http.get(`${environment.apiUrl}/invoices/${id}/download`, { responseType: 'blob' });
     }
 
-    getPendingDues(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/pending-dues`);
+    createInvoice(planId: string): Observable<Invoice> {
+        return this.http.post<Invoice>(`${environment.apiUrl}/invoices`, { planId });
     }
 }

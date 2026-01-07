@@ -98,8 +98,8 @@ export class MemberEffects {
     loadMembers$ = createEffect(() =>
         this.actions$.pipe(
             ofType(MemberActions.loadMembers),
-            mergeMap(({ gymId }) =>
-                this.memberService.getMembers(gymId).pipe(
+            mergeMap(() =>
+                this.memberService.getMembers().pipe(
                     map((members) => MemberActions.loadMembersSuccess({ members })),
                     catchError((error) => of(MemberActions.loadMembersFailure({ error })))
                 )

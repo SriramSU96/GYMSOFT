@@ -1,10 +1,10 @@
 
 export interface Attendance {
-    id: string;
+    _id?: string;
     memberId: string;
     date: string;
     checkInTime: string;
     checkOutTime?: string;
-    source: string; // e.g., 'qr', 'manual'
+    source: 'QR' | 'Offline' | 'Manual';
     gymId: string;
 }

@@ -55,7 +55,7 @@ export class ClassCalendar implements OnInit {
         const user = this.authService.getCurrentUser();
         if (!user?.gymId) return;
 
-        this.bookingService.getClasses(user.gymId).subscribe({
+        this.bookingService.getClasses().subscribe({
             next: (data) => {
                 this.classes = data;
                 this.organizeClassesByDate();
