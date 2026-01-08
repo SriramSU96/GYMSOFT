@@ -1,0 +1,124 @@
+<div class="page-header">
+    <div class="header-content">
+        <div>
+            <h1 class="page-title">
+                <span class="material-icons">fitness_center</span>
+                Workout Library
+            </h1>
+            <p class="page-subtitle">Manage and assign workout plans</p>
+        </div>
+        <button (click)="createWorkout()" class="btn btn-primary">
+            <span class="material-icons">add</span>
+            Create Workout
+        </button>
+    </div>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading workouts...</p>
+</div>
+
+<!-- Filter & Search Bar -->
+<div class="filter-bar" *ngIf="!loading">
+    <div class="search-box">
+        <span class="material-icons">search</span>
+        <input type="text" [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search workouts..."
+            class="search-input">
+    </div>
+
+    <div class="filter-group">
+        <div class="filter-item">
+            <label class="filter-label">Level</label>
+            <select [(ngModel)]="selectedLevel" (change)="applyFilters()" class="filter-select">
+                <option *ngFor="let level of levels" [value]="level">
+                    {{ level === 'all' ? 'All Levels' : level }}
+                </option>
+            </select>
+        </div>
+
+        <div class="filter-item">
+            <label class="filter-label">Goal</label>
+            <select [(ngModel)]="selectedGoal" (change)="applyFilters()" class="filter-select">
+                <option *ngFor="let goal of goals" [value]="goal">
+                    {{ goal === 'all' ? 'All Goals' : goal }}
+                </option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- Workout Grid -->
+<div class="workout-grid" *ngIf="!loading && filteredWorkouts.length > 0">
+    <div *ngFor="let workout of filteredWorkouts" class="workout-card">
+        <div class="card-header">
+            <h3 class="workout-title">{{ workout.title }}</h3>
+            <div class="badges">
+                <span class="badge" [ngClass]="getLevelBadgeClass(workout.level)">
+                    {{ workout.level }}
+                </span>
+                <span class="badge" [ngClass]="getGoalBadgeClass(workout.goal)">
+                    {{ workout.goal }}
+                </span>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="workout-info">
+                <div class="info-item">
+                    <span class="material-icons">format_list_numbered</span>
+                    <span>{{ workout.exercises.length }} Exercises</span>
+                </div>
+                <div class="info-item" *ngIf="workout.createdBy">
+                    <span class="material-icons">person</span>
+                    <span>{{ workout.createdBy }}</span>
+                </div>
+            </div>
+
+            <!-- Exercise Preview -->
+            <div class="exercise-preview">
+                <p class="preview-label">Exercises:</p>
+                <ul class="exercise-list">
+                    <li *ngFor="let exercise of workout.exercises.slice(0, 3)">
+                        {{ exercise.name }}
+                    </li>
+                    <li *ngIf="workout.exercises.length > 3" class="more-exercises">
+                        +{{ workout.exercises.length - 3 }} more
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card-actions">
+            <button (click)="viewWorkout(workout._id || '')" class="action-btn btn-view" title="View Details">
+                <span class="material-icons">visibility</span>
+            </button>
+            <button (click)="editWorkout(workout._id || '')" class="action-btn btn-edit" title="Edit Workout">
+                <span class="material-icons">edit</span>
+            </button>
+            <button (click)="assignWorkout(workout._id || '')" class="action-btn btn-assign" title="Assign to Member">
+                <span class="material-icons">person_add</span>
+            </button>
+            <button  class="action-btn btn-delete" title="Delete Workout">
+                <span class="material-icons">delete</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Empty State -->
+<div *ngIf="!loading && filteredWorkouts.length === 0" class="empty-state">
+    <span class="material-icons">fitness_center</span>
+    <h3>No workouts found</h3>
+    <p *ngIf="searchTerm || selectedLevel !== 'all' || selectedGoal !== 'all'">
+        Try adjusting your filters
+    </p>
+    <p *ngIf="!searchTerm && selectedLevel === 'all' && selectedGoal === 'all'">
+        No workouts created yet
+    </p>
+    <button (click)="createWorkout()" class="btn btn-primary">
+        <span class="material-icons">add</span>
+        Create First Workout
+    </button>
+</div>

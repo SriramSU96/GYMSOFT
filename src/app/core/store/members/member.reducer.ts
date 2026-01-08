@@ -39,6 +39,17 @@ export const memberReducer = createReducer(
         members,
         isLoading: false
     })),
+    // Delete Member
+    on(MemberActions.deleteMember, (state) => ({
+        ...state,
+        isLoading: true,
+        error: null
+    })),
+    on(MemberActions.deleteMemberSuccess, (state, { id }) => ({
+        ...state,
+        members: state.members.filter(m => m._id !== id),
+        isLoading: false
+    })),
     // Progress
     on(MemberActions.addProgress, MemberActions.loadProgress, (state) => ({
         ...state,
@@ -73,6 +84,7 @@ export const memberReducer = createReducer(
     })),
     // Failures
     on(MemberActions.loadMemberFailure, MemberActions.registerMemberFailure, MemberActions.updateMemberFailure,
+        MemberActions.deleteMemberFailure,
         MemberActions.addProgressFailure, MemberActions.loadProgressFailure,
         MemberActions.assignAchievementFailure, MemberActions.loadAchievementsFailure, (state, { error }) => ({
             ...state,

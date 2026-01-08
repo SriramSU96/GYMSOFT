@@ -47,6 +47,18 @@ export class MemberEffects {
         )
     );
 
+    deleteMember$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(MemberActions.deleteMember),
+            mergeMap(({ id }) =>
+                this.memberService.deleteMember(id).pipe(
+                    map(() => MemberActions.deleteMemberSuccess({ id })),
+                    catchError((error) => of(MemberActions.deleteMemberFailure({ error })))
+                )
+            )
+        )
+    );
+
     addProgress$ = createEffect(() =>
         this.actions$.pipe(
             ofType(MemberActions.addProgress),

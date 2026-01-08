@@ -4,6 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Member, MemberProgress, Achievement } from '../models/member.model';
+import { Workout, DietPlan } from '../models/gym-extensions.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -53,12 +54,12 @@ export class MemberService {
         return this.http.get<Achievement[]>(`${this.apiUrl}/achievements/${memberId}`);
     }
 
-    getMemberWorkout(memberId: string): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/${memberId}/workout`);
+    getMemberWorkout(memberId: string): Observable<Workout> {
+        return this.http.get<Workout>(`${this.apiUrl}/${memberId}/workout`);
     }
 
-    getMemberDiet(memberId: string): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/${memberId}/diet`);
+    getMemberDiet(memberId: string): Observable<DietPlan> {
+        return this.http.get<DietPlan>(`${this.apiUrl}/${memberId}/diet`);
     }
 
     getMemberBookings(memberId: string): Observable<any> {

@@ -5,7 +5,10 @@ import { Store } from '@ngrx/store';
 import * as AuthActions from '../../core/store/auth/auth.actions';
 import { GymSelectorComponent } from '../../shared/components/gym-selector/gym-selector.component';
 import { NotificationCenterComponent } from '../../shared/components/notification-center/notification-center.component';
-import { Sidebar } from '../../core/components/layout/sidebar/sidebar';
+import { SidebarComponent } from '../../core/components/layout/sidebar/sidebar.component';
+import { ToastComponent } from '../../core/components/toast/toast.component';
+import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
+import { MemberInfoModalComponent } from '../../core/components/member-info-modal/member-info-modal.component';
 import { selectNotifications, selectUnreadCount } from '../../core/store/notifications/notification.selectors';
 import { filter, skip, take } from 'rxjs';
 import { Subscription } from 'rxjs';
@@ -13,7 +16,7 @@ import { Subscription } from 'rxjs';
 @Component({
     selector: 'app-main-layout',
     standalone: true,
-    imports: [CommonModule, RouterModule, GymSelectorComponent, NotificationCenterComponent, Sidebar],
+    imports: [CommonModule, RouterModule, GymSelectorComponent, NotificationCenterComponent, SidebarComponent, ToastComponent, ConfirmDialogComponent, MemberInfoModalComponent],
     templateUrl: './main-layout.component.html',
     styleUrls: ['./main-layout.component.css']
 })

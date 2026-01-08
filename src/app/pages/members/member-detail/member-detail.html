@@ -1,59 +1,203 @@
-<div *ngIf="member$ | async as member">
-    <div>
-        <h2>Member Details</h2>
-        <a routerLink="/members">
-            <span>arrow_back</span> Back
+<div class="p-xl animate-fadeIn">
+    <!-- Modern Header -->
+    <div class="flex items-center justify-between mb-2xl">
+        <div class="flex items-center gap-md">
+            <div class="stat-icon bg-accent-soft text-accent">
+                <span class="material-icons">edit</span>
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold m-0 tracking-tight text-gradient-gold">Edit Member Profile</h2>
+                <p class="text-sm text-muted m-0">Update member information and settings</p>
+            </div>
+        </div>
+        <a routerLink="/members" class="btn btn-ghost gap-xs text-muted hover:text-primary">
+            <span class="material-icons" style="font-size: 1.2rem;">arrow_back</span>
+            <span>Return to Directory</span>
         </a>
     </div>
 
-    <div>
-        <!-- Profile Card -->
-        <div>
-            <div>
-                👤</div>
-            <h3>{{ member.name }}</h3>
-            <p>{{ member.email }}</p>
-            <p class="text-sm text-muted">Member ID: {{ member.memberId }}</p>
-            <div [ngClass]="{
-            'badge-success': member.membershipStatus === 'Active',
-            'badge-danger': member.membershipStatus === 'Expired',
-            'badge-warning': member.membershipStatus === 'Pending'
-        }">{{ member.membershipStatus }}</div>
-        </div>
-
-        <!-- Details Card -->
-        <div>
-            <h3>Information</h3>
-            <div class="grid grid-cols-2 gap-md">
-                <div>
-                    <label>Phone</label>
-                    <p>{{ member.phone }}</p>
-                </div>
-                <div>
-                    <label>Gender / Age</label>
-                    <p>{{ member.gender }} / {{ member.age }} yrs</p>
-                </div>
-                <div>
-                    <label>Expiry</label>
-                    <p>{{ member.membershipExpiry | date }}</p>
-                </div>
-            </div>
-
-            <div>
-                <button>Edit Profile</button>
-                <button>Delete Member</button>
-            </div>
-        </div>
-
-        <!-- Additional sections like Attendance/Payments placeholders -->
-        <div>
-            <h3>History</h3>
-            <p>Attendance & Payment history coming soon.</p>
+    <!-- Loading State -->
+    <div *ngIf="isLoading$ | async" class="flex items-center justify-center py-4xl">
+        <div class="flex flex-col items-center gap-md">
+            <span class="material-icons animate-spin text-accent" style="font-size: 3rem;">refresh</span>
+            <p class="text-muted">Loading member data...</p>
         </div>
     </div>
 
-    <ng-template #loading>
-        <div>
-            Loading Member Details...
+    <!-- Edit Form -->
+    <div *ngIf="member$ | async as member" class="max-w-3xl mx-auto">
+        <div class="card glass-dark border border-subtle p-2xl"
+            style="background: rgba(255,255,255,0.02); border: 1px solid rgba(212,175,55,0.1); border-radius: var(--radius-lg);">
+
+            <!-- Member Status Badge -->
+            <div class="flex items-center justify-between mb-xl pb-xl border-b border-subtle">
+                <div class="flex items-center gap-md">
+                    <div class="w-16 h-16 rounded-full bg-accent-soft flex items-center justify-center">
+                        <span class="material-icons text-accent" style="font-size: 2rem;">person</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold m-0">{{ member.name }}</h3>
+                        <p class="text-sm text-muted m-0">Member ID: {{ member.memberId }}</p>
+                    </div>
+                </div>
+                <div [ngClass]="{
+                    'badge-success': member.membershipStatus === 'Active',
+                    'badge-danger': member.membershipStatus === 'Expired',
+                    'badge-warning': member.membershipStatus === 'Pending',
+                    'badge-secondary': member.membershipStatus === 'Inactive'
+                }" class="badge">{{ member.membershipStatus }}</div>
+            </div>
+
+            <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-xl">
+                <!-- Form Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-xl">
+                    <!-- Name -->
+                    <div class="flex flex-col gap-xs">
+                        <label class="text-xs font-bold uppercase tracking-wider text-muted px-xs">Full Name</label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-md top-1/2 -translate-y-1/2 text-muted"
+                                style="font-size: 1.1rem;">badge</span>
+                            <input type="text" formControlName="name" placeholder="e.g. John Doe"
+                                class="w-full bg-white/5 border border-subtle rounded-lg px-xl py-md focus:border-accent outline-none transition-all"
+                                [class.border-danger]="editForm.get('name')?.invalid && editForm.get('name')?.touched"
+                                style="padding-left: 3rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; height: 48px;">
+                        </div>
+                    </div>
+
+                    <!-- Member ID (Read-only) -->
+                    <div class="flex flex-col gap-xs opacity-50 pointer-events-none">
+                        <label class="text-xs font-bold uppercase tracking-wider text-muted px-xs">Member ID</label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-md top-1/2 -translate-y-1/2 text-muted"
+                                style="font-size: 1.1rem;">tag</span>
+                            <input type="text" [value]="member.memberId" readonly
+                                class="w-full bg-white/5 border border-subtle rounded-lg px-xl py-md"
+                                style="padding-left: 3rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; height: 48px;">
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="flex flex-col gap-xs">
+                        <label class="text-xs font-bold uppercase tracking-wider text-muted px-xs">Email Address</label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-md top-1/2 -translate-y-1/2 text-muted"
+                                style="font-size: 1.1rem;">mail</span>
+                            <input type="email" formControlName="email" placeholder="john@example.com"
+                                class="w-full bg-white/5 border border-subtle rounded-lg px-xl py-md focus:border-accent outline-none transition-all"
+                                [class.border-danger]="editForm.get('email')?.invalid && editForm.get('email')?.touched"
+                                style="padding-left: 3rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; height: 48px;">
+                        </div>
+                        <span *ngIf="editForm.get('email')?.invalid && editForm.get('email')?.touched"
+                            class="text-[10px] text-danger px-xs">Invalid email format</span>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="flex flex-col gap-xs">
+                        <label class="text-xs font-bold uppercase tracking-wider text-muted px-xs">Phone Number</label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-md top-1/2 -translate-y-1/2 text-muted"
+                                style="font-size: 1.1rem;">phone</span>
+                            <input type="tel" formControlName="phone" placeholder="10-15 digits"
+                                class="w-full bg-white/5 border border-subtle rounded-lg px-xl py-md focus:border-accent outline-none transition-all"
+                                [class.border-danger]="editForm.get('phone')?.invalid && editForm.get('phone')?.touched"
+                                style="padding-left: 3rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; height: 48px;">
+                        </div>
+                    </div>
+
+                    <!-- Age -->
+                    <div class="flex flex-col gap-xs">
+                        <label class="text-xs font-bold uppercase tracking-wider text-muted px-xs">Age</label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-md top-1/2 -translate-y-1/2 text-muted"
+                                style="font-size: 1.1rem;">cake</span>
+                            <input type="number" formControlName="age"
+                                class="w-full bg-white/5 border border-subtle rounded-lg px-xl py-md focus:border-accent outline-none transition-all"
+                                [class.border-danger]="editForm.get('age')?.invalid && editForm.get('age')?.touched"
+                                style="padding-left: 3rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; height: 48px;">
+                        </div>
+                    </div>
+
+                    <!-- Gender Selection -->
+                    <div class="flex flex-col gap-xs">
+                        <label class="text-xs font-bold uppercase tracking-wider text-muted px-xs">Gender</label>
+                        <div class="flex gap-sm">
+                            <button type="button" class="btn flex-1 py-md gap-xs"
+                                [class.btn-primary]="editForm.get('gender')?.value === 'Male'"
+                                [class.btn-ghost]="editForm.get('gender')?.value !== 'Male'"
+                                (click)="editForm.patchValue({gender: 'Male'})"
+                                style="height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                <span class="material-icons" style="font-size: 1.1rem;">male</span>
+                                <span>Male</span>
+                            </button>
+                            <button type="button" class="btn flex-1 py-md gap-xs"
+                                [class.btn-primary]="editForm.get('gender')?.value === 'Female'"
+                                [class.btn-ghost]="editForm.get('gender')?.value !== 'Female'"
+                                (click)="editForm.patchValue({gender: 'Female'})"
+                                style="height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                <span class="material-icons" style="font-size: 1.1rem;">female</span>
+                                <span>Female</span>
+                            </button>
+                            <button type="button" class="btn flex-1 py-md gap-xs"
+                                [class.btn-primary]="editForm.get('gender')?.value === 'Other'"
+                                [class.btn-ghost]="editForm.get('gender')?.value !== 'Other'"
+                                (click)="editForm.patchValue({gender: 'Other'})"
+                                style="height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                <span class="material-icons" style="font-size: 1.1rem;">wc</span>
+                                <span>Other</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Membership Status -->
+                    <div class="flex flex-col gap-xs">
+                        <label class="text-xs font-bold uppercase tracking-wider text-muted px-xs">Membership
+                            Status</label>
+                        <select formControlName="membershipStatus"
+                            class="w-full bg-white/5 border border-subtle rounded-lg px-md py-md focus:border-accent outline-none transition-all"
+                            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; height: 48px;">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Expired">Expired</option>
+                        </select>
+                    </div>
+
+                    <!-- Membership Expiry -->
+                    <div class="flex flex-col gap-xs">
+                        <label class="text-xs font-bold uppercase tracking-wider text-muted px-xs">Membership
+                            Expiry</label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-md top-1/2 -translate-y-1/2 text-muted"
+                                style="font-size: 1.1rem;">event</span>
+                            <input type="date" formControlName="membershipExpiry"
+                                class="w-full bg-white/5 border border-subtle rounded-lg px-xl py-md focus:border-accent outline-none transition-all"
+                                style="padding-left: 3rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; height: 48px;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="h-[1px] bg-border-subtle my-md"
+                    style="background: rgba(255,255,255,0.05); height: 1px; margin: 1.5rem 0;"></div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-md">
+                    <button type="submit" class="btn btn-primary flex-1 py-xl gap-sm shadow-gold"
+                        [disabled]="editForm.invalid || editForm.pristine"
+                        style="height: 56px; border-radius: 12px; font-weight: bold; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: linear-gradient(to right, #D4AF37, #F2C94C); color: black; border: none; cursor: pointer;">
+                        <span class="material-icons">save</span>
+                        <span>Save Changes</span>
+                    </button>
+                    <button type="button" (click)="onDelete()" class="btn btn-danger py-xl gap-sm"
+                        style="height: 56px; border-radius: 12px; font-weight: bold; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                        <span class="material-icons">delete</span>
+                        <span>Delete Member</span>
+                    </button>
+                </div>
+
+                <p *ngIf="editForm.pristine" class="text-center text-xs text-muted m-0">
+                    Make changes to the form to enable saving
+                </p>
+            </form>
         </div>
-    </ng-template>
+    </div>
+</div>

@@ -1,0 +1,287 @@
+<div *ngIf="member" class="modal-overlay" (click)="close()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+
+        <!-- Header -->
+        <div class="modal-header">
+            <div class="member-profile">
+                <div class="member-avatar">
+                    <span class="material-icons">person</span>
+                </div>
+                <div class="member-info">
+                    <h2 class="member-name">{{ member.name }}</h2>
+                    <p class="member-id">ID: {{ member.memberId }}</p>
+                    <div class="status-badges">
+                        <span class="badge" [ngClass]="{
+              'badge-success': member.membershipStatus === 'Active',
+              'badge-danger': member.membershipStatus === 'Expired',
+              'badge-warning': member.membershipStatus === 'Pending',
+              'badge-secondary': member.membershipStatus === 'Inactive'
+            }">{{ member.membershipStatus }}</span>
+                        <span class="badge badge-expiry" [ngClass]="{
+              'badge-success': getExpiryStatus() === 'active',
+              'badge-warning': getExpiryStatus() === 'warning',
+              'badge-danger': getExpiryStatus() === 'expired'
+            }">
+                            <span class="material-icons">event</span>
+                            {{ getDaysUntilExpiry() }} days
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <button (click)="close()" class="btn-close">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-button" [class.active]="activeTab === 'basic'" (click)="setActiveTab('basic')">
+                <span class="material-icons">person</span>
+                <span>Basic Info</span>
+            </button>
+            <button class="tab-button" [class.active]="activeTab === 'workout'" (click)="setActiveTab('workout')">
+                <span class="material-icons">fitness_center</span>
+                <span>Workout</span>
+            </button>
+            <button class="tab-button" [class.active]="activeTab === 'diet'" (click)="setActiveTab('diet')">
+                <span class="material-icons">restaurant</span>
+                <span>Diet Plan</span>
+            </button>
+            <button class="tab-button" [class.active]="activeTab === 'plans'" (click)="setActiveTab('plans')">
+                <span class="material-icons">assignment</span>
+                <span>Assigned Plans</span>
+            </button>
+            <button class="tab-button" [class.active]="activeTab === 'payments'" (click)="setActiveTab('payments')">
+                <span class="material-icons">payment</span>
+                <span>Payments</span>
+            </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="modal-body">
+
+            <!-- Basic Info Tab -->
+            <div *ngIf="activeTab === 'basic'" class="tab-content">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <span class="material-icons">badge</span>
+                        <div class="info-details">
+                            <label>Full Name</label>
+                            <p>{{ member.name }}</p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <span class="material-icons">tag</span>
+                        <div class="info-details">
+                            <label>Member ID</label>
+                            <p>{{ member.memberId }}</p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <span class="material-icons">mail</span>
+                        <div class="info-details">
+                            <label>Email</label>
+                            <p>{{ member.email }}</p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <span class="material-icons">phone</span>
+                        <div class="info-details">
+                            <label>Phone</label>
+                            <p>{{ member.phone }}</p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <span class="material-icons">wc</span>
+                        <div class="info-details">
+                            <label>Gender</label>
+                            <p>{{ member.gender }}</p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <span class="material-icons">cake</span>
+                        <div class="info-details">
+                            <label>Age</label>
+                            <p>{{ member.age }} years</p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <span class="material-icons">event</span>
+                        <div class="info-details">
+                            <label>Membership Expiry</label>
+                            <p>{{ member.membershipExpiry | date:'fullDate' }}</p>
+                        </div>
+                    </div>
+
+                    <div class="info-card" *ngIf="member.trainerId">
+                        <span class="material-icons">sports</span>
+                        <div class="info-details">
+                            <label>Trainer ID</label>
+                            <p>{{ member.trainerId }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workout Tab -->
+            <div *ngIf="activeTab === 'workout'" class="tab-content">
+                <!-- Loading State -->
+                <div *ngIf="loadingWorkout" class="empty-state">
+                    <span class="material-icons animate-spin">refresh</span>
+                    <h3>Loading Workout...</h3>
+                </div>
+
+                <!-- No Workout State -->
+                <div *ngIf="!loadingWorkout && !memberWorkout" class="empty-state">
+                    <span class="material-icons">fitness_center</span>
+                    <h3>No Custom Workout Assigned</h3>
+                    <p>This member doesn't have a custom workout plan yet.</p>
+                    <button (click)="createCustomWorkout()" class="btn btn-primary" style="margin-top: 20px;">
+                        <span class="material-icons">add</span>
+                        Create Custom Workout
+                    </button>
+                </div>
+
+                <!-- Workout Display -->
+                <div *ngIf="!loadingWorkout && memberWorkout" class="workout-card">
+                    <div class="workout-header">
+                        <h4>{{ memberWorkout.title }}</h4>
+                        <div style="display: flex; gap: 8px;">
+                            <span class="badge badge-primary">{{ memberWorkout.level }}</span>
+                            <span class="badge badge-secondary">{{ memberWorkout.goal }}</span>
+                        </div>
+                    </div>
+                    <div class="workout-exercises">
+                        <h5 style="margin: 16px 0 12px 0; color: rgba(255,255,255,0.8);">Exercises</h5>
+                        <div *ngFor="let exercise of memberWorkout.exercises" class="exercise-item">
+                            <span class="material-icons">check_circle</span>
+                            <div>
+                                <strong>{{ exercise.name }}</strong>
+                                <span class="exercise-details">
+                                    {{ exercise.sets }} sets × {{ exercise.reps }} reps
+                                    <span *ngIf="exercise.restTime"> • Rest: {{ exercise.restTime }}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diet Tab -->
+            <div *ngIf="activeTab === 'diet'" class="tab-content">
+                <!-- Loading State -->
+                <div *ngIf="loadingDiet" class="empty-state">
+                    <span class="material-icons animate-spin">refresh</span>
+                    <h3>Loading Diet Plan...</h3>
+                </div>
+
+                <!-- No Diet State -->
+                <div *ngIf="!loadingDiet && !memberDiet" class="empty-state">
+                    <span class="material-icons">restaurant</span>
+                    <h3>No Custom Diet Plan</h3>
+                    <p>This member doesn't have a custom diet plan yet.</p>
+                    <button (click)="createCustomDiet()" class="btn btn-primary" style="margin-top: 20px;">
+                        <span class="material-icons">add</span>
+                        Create Custom Diet Plan
+                    </button>
+                </div>
+
+                <!-- Diet Display -->
+                <div *ngIf="!loadingDiet && memberDiet" class="diet-card">
+                    <div class="diet-header">
+                        <h4>{{ memberDiet.title }}</h4>
+                        <div class="diet-stats">
+                            <span class="stat">
+                                <span class="material-icons">local_fire_department</span>
+                                {{ memberDiet.calories }} cal
+                            </span>
+                        </div>
+                    </div>
+                    <div class="meals-grid">
+                        <div *ngFor="let meal of memberDiet.meals" class="meal-card">
+                            <div class="meal-time">
+                                <span class="material-icons">schedule</span>
+                                {{ meal.time }}
+                            </div>
+                            <div class="meal-macros">
+                                <span>P: {{ meal.macros.protein }}g</span>
+                                <span>C: {{ meal.macros.carbs }}g</span>
+                                <span>F: {{ meal.macros.fats }}g</span>
+                            </div>
+                            <p style="margin: 8px 0; color: rgba(255,255,255,0.9);">{{ meal.foodItems }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assigned Plans Tab -->
+            <div *ngIf="activeTab === 'plans'" class="tab-content">
+                <div *ngIf="assignedPlans.length === 0" class="empty-state">
+                    <span class="material-icons">assignment</span>
+                    <h3>No Plans Assigned</h3>
+                    <p>This member doesn't have any assigned plans yet.</p>
+                </div>
+
+                <div *ngIf="assignedPlans.length > 0" class="plans-list">
+                    <div *ngFor="let plan of assignedPlans" class="plan-card">
+                        <div class="plan-header">
+                            <div>
+                                <h4>Assigned Plan</h4>
+                                <p class="plan-dates">
+                                    {{ plan.startDate | date:'mediumDate' }}
+                                    <span *ngIf="plan.endDate"> - {{ plan.endDate | date:'mediumDate' }}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payments Tab -->
+            <div *ngIf="activeTab === 'payments'" class="tab-content">
+                <div *ngIf="payments.length === 0" class="empty-state">
+                    <span class="material-icons">payment</span>
+                    <h3>No Payment History</h3>
+                    <p>No payment records found for this member.</p>
+                </div>
+
+                <div *ngIf="payments.length > 0" class="payments-list">
+                    <div *ngFor="let payment of payments" class="payment-card">
+                        <div class="payment-header">
+                            <div>
+                                <h4>{{ payment.source }} Payment</h4>
+                                <p class="payment-date">{{ payment.paymentDate | date:'fullDate' }}</p>
+                            </div>
+                            <div class="payment-amount">₹{{ payment.amount }}</div>
+                        </div>
+                        <div class="payment-details">
+                            <span class="payment-method">
+                                <span class="material-icons">credit_card</span>
+                                {{ payment.paymentMethod }}
+                            </span>
+                            <span class="badge" [ngClass]="{
+                'badge-success': payment.status === 'Paid',
+                'badge-warning': payment.status === 'Pending',
+                'badge-danger': payment.status === 'Failed',
+                'badge-secondary': payment.status === 'Partial'
+              }">{{ payment.status }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+            <button (click)="close()" class="btn btn-ghost">Close</button>
+        </div>
+
+    </div>
+</div>

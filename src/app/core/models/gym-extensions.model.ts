@@ -14,6 +14,7 @@ export interface Workout {
     goal: 'Weight Loss' | 'Muscle Gain' | 'Fitness';
     exercises: Exercise[];
     createdBy: string; // User ID
+    memberId?: string; // NEW: Optional field for member-specific workouts
     gymId: string;
 }
 
@@ -33,6 +34,7 @@ export interface DietPlan {
     calories: number;
     meals: DietMeal[];
     createdBy: string; // Added field
+    memberId?: string; // NEW: Optional field for member-specific diet plans
     gymId: string;
 }
 

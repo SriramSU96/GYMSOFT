@@ -20,6 +20,7 @@
                         <th>Membership Status</th>
                         <th>Valid Until</th>
                         <th>Actions</th>
+                        <th>Member Info</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,11 +52,18 @@
                             <div class="text-sm">{{ member.membershipExpiry | date:'mediumDate' }}</div>
                         </td>
                         <td>
+                            <button (click)="showMemberInfo(member)" class="btn btn-icon btn-primary"
+                                title="View Member Info">
+                                <span class="material-icons">info</span>
+                            </button>
+                        </td>
+                        <td>
                             <div class="flex gap-sm">
                                 <a [routerLink]="[member._id]" class="btn btn-icon btn-secondary" title="Edit Member">
                                     <span class="material-icons">edit</span>
                                 </a>
-                                <button class="btn btn-icon btn-danger" title="Delete Member">
+                                <button (click)="deleteMember(member._id || '')" class="btn btn-icon btn-danger"
+                                    title="Delete Member">
                                     <span class="material-icons">delete</span>
                                 </button>
                             </div>

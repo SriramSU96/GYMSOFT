@@ -19,6 +19,11 @@ export const updateMember = createAction('[Member] Update Member', props<{ id: s
 export const updateMemberSuccess = createAction('[Member] Update Member Success', props<{ member: Member }>());
 export const updateMemberFailure = createAction('[Member] Update Member Failure', props<{ error: any }>());
 
+export const deleteMember = createAction('[Member] Delete Member', props<{ id: string }>());
+export const deleteMemberSuccess = createAction('[Member] Delete Member Success', props<{ id: string }>());
+export const deleteMemberFailure = createAction('[Member] Delete Member Failure', props<{ error: any }>());
+
+
 // Progress
 export const addProgress = createAction('[Member] Add Progress', props<{ record: MemberProgress }>());
 export const addProgressSuccess = createAction('[Member] Add Progress Success', props<{ record: MemberProgress }>());

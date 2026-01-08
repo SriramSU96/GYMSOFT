@@ -1,0 +1,50 @@
+<aside class="sidebar" [class.collapsed]="!isOpen">
+    <!-- Sidebar Header -->
+    <div class="sidebar-header">
+        <div class="logo-container">
+            <span class="material-icons logo-icon">fitness_center</span>
+            <span class="logo-text" *ngIf="isOpen">GYMAURA</span>
+        </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="sidebar-nav">
+        <ul class="menu-list">
+            <li *ngFor="let item of menuItems" class="menu-item">
+
+                <!-- Parent Menu Item (with or without children) -->
+                <div class="menu-link" [class.active]="isActive(item.route) || isParentActive(item)"
+                    [class.has-children]="item.children" (click)="item.children ? toggleSubmenu(item) : null"
+                    [routerLink]="item.route || null" [routerLinkActive]="item.route ? 'active' : ''">
+                    <div class="menu-content">
+                        <span class="material-icons menu-icon">{{ item.icon }}</span>
+                        <span class="menu-label" *ngIf="isOpen">{{ item.label }}</span>
+                    </div>
+                    <span *ngIf="item.children && isOpen" class="material-icons expand-icon"
+                        [class.expanded]="item.expanded">
+                        chevron_right
+                    </span>
+                </div>
+
+                <!-- Submenu -->
+                <ul *ngIf="item.children && item.expanded && isOpen" class="submenu" [@slideDown]>
+                    <li *ngFor="let child of item.children" class="submenu-item">
+                        <a [routerLink]="child.route" routerLinkActive="active" class="submenu-link">
+                            <span class="material-icons submenu-icon">{{ child.icon }}</span>
+                            <span class="submenu-label">{{ child.label }}</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Sidebar Footer (Optional) -->
+    <div class="sidebar-footer" *ngIf="isOpen">
+        <div class="footer-content">
+            <span class="material-icons">help_outline</span>
+            <span class="footer-text">Help & Support</span>
+        </div>
+    </div>
+</aside>
