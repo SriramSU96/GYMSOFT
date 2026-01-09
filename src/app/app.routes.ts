@@ -8,6 +8,8 @@ import { MemberList } from './pages/members/member-list/member-list';
 import { MemberAdd } from './pages/members/member-add/member-add';
 import { MemberDetail } from './pages/members/member-detail/member-detail';
 import { AssignedWorkoutsComponent } from './pages/members/assigned-workouts/assigned-workouts.component';
+import { MemberDietPlansComponent } from './pages/members/member-diet-plans/member-diet-plans.component';
+import { MemberProgressComponent } from './pages/members/member-progress/member-progress.component';
 import { StaffList } from './pages/staff/staff-list/staff-list';
 import { StaffAdd } from './pages/staff/staff-add/staff-add';
 import { StaffAttendance } from './pages/staff/staff-attendance/staff-attendance';
@@ -69,6 +71,8 @@ export const routes: Routes = [
             { path: 'members', component: MemberList },
             { path: 'members/add', component: MemberAdd },
             { path: 'members/workouts', component: AssignedWorkoutsComponent },
+            { path: 'members/diet-plans', component: MemberDietPlansComponent },
+            { path: 'members/progress', component: MemberProgressComponent },
             { path: 'members/:id', component: MemberDetail },
             { path: 'my-dashboard', component: MemberDashboardComponent },
 

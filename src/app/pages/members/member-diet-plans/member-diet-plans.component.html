@@ -1,0 +1,144 @@
+<div class="page-header">
+    <div class="header-content">
+        <div>
+            <h1 class="page-title">
+                <span class="material-icons">restaurant_menu</span>
+                Assigned Diet Plans
+            </h1>
+            <p class="page-subtitle">Manage member diet plan assignments</p>
+        </div>
+        <button (click)="assignDietPlan()" class="btn btn-primary">
+            <span class="material-icons">add</span>
+            Assign Diet Plan
+        </button>
+    </div>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading diet plan assignments...</p>
+</div>
+
+<!-- Search & Filter Bar -->
+<div class="filter-bar" *ngIf="!loading">
+    <div class="search-box">
+        <span class="material-icons">search</span>
+        <input type="text" [(ngModel)]="searchTerm" (input)="applyFilters()"
+            placeholder="Search by member name, phone, or diet plan" class="search-input">
+    </div>
+
+    <div class="filter-group">
+        <label class="filter-label">Status</label>
+        <select [(ngModel)]="statusFilter" (change)="applyFilters()" class="filter-select">
+            <option value="all">All</option>
+            <option value="active">Active</option>
+            <option value="expired">Expired</option>
+            <option value="upcoming">Upcoming</option>
+        </select>
+    </div>
+</div>
+
+<!-- Assignment Cards Grid -->
+<div class="assignments-grid" *ngIf="!loading && filteredAssignments.length > 0">
+    <div *ngFor="let assignment of filteredAssignments" class="assignment-card">
+        <!-- Card Header -->
+        <div class="card-header">
+            <div class="member-info">
+                <div class="member-avatar">
+                    <span class="material-icons">person</span>
+                </div>
+                <div class="member-details">
+                    <h3 class="member-name">{{ assignment.member?.name || 'Unknown Member' }}</h3>
+                    <p class="member-phone">{{ assignment.member?.phone || 'No phone' }}</p>
+                </div>
+            </div>
+            <span class="status-badge" [ngClass]="getStatusClass(assignment.status)">
+                {{ assignment.status }}
+            </span>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+            <div class="plan-info">
+                <div class="info-row">
+                    <span class="info-label">
+                        <span class="material-icons">restaurant</span>
+                        Diet Plan
+                    </span>
+                    <span class="info-value plan-name">{{ assignment.dietPlan?.title || 'N/A' }}</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">
+                        <span class="material-icons">local_fire_department</span>
+                        Daily Calories
+                    </span>
+                    <span class="info-value calories">{{ assignment.dietPlan?.calories || 0 }} kcal</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">
+                        <span class="material-icons">calendar_today</span>
+                        Duration
+                    </span>
+                    <span class="info-value">
+                        {{ assignment.startDate | date:'mediumDate' }}
+                        <span *ngIf="assignment.endDate"> - {{ assignment.endDate | date:'mediumDate' }}</span>
+                    </span>
+                </div>
+
+                <div class="info-row" *ngIf="assignment.status === 'Active' && assignment.endDate">
+                    <span class="info-label">
+                        <span class="material-icons">timer</span>
+                        Days Remaining
+                    </span>
+                    <span class="info-value days-remaining">
+                        {{ getDaysRemaining(assignment.endDate) }} days
+                    </span>
+                </div>
+
+                <div class="info-row" *ngIf="assignment.notes">
+                    <span class="info-label">
+                        <span class="material-icons">notes</span>
+                        Notes
+                    </span>
+                    <span class="info-value notes">{{ assignment.notes }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Actions -->
+        <div class="card-actions">
+            <button (click)="viewPlan(assignment._id || '')" class="action-btn btn-view" title="View Diet Plan">
+                <span class="material-icons">visibility</span>
+                View Plan
+            </button>
+            <button (click)="changePlan(assignment._id || '')" class="action-btn btn-change" title="Change Diet Plan">
+                <span class="material-icons">swap_horiz</span>
+                Change
+            </button>
+            <button (click)="deleteAssignment(assignment._id || '')" class="action-btn btn-delete"
+                title="Remove Assignment">
+                <span class="material-icons">delete</span>
+                Remove
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Empty State -->
+<div *ngIf="!loading && filteredAssignments.length === 0" class="empty-state">
+    <span class="material-icons">restaurant_menu</span>
+    <h3>No diet plan assignments found</h3>
+    <p *ngIf="searchTerm || statusFilter !== 'all'">
+        Try adjusting your filters
+    </p>
+    <p *ngIf="!searchTerm && statusFilter === 'all'">
+        No diet plans have been assigned to members yet
+    </p>
+    <button (click)="assignDietPlan()" class="btn btn-primary">
+        <span class="material-icons">add</span>
+        Assign First Diet Plan
+    </button>
+</div>

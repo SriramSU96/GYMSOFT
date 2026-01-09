@@ -1,6 +1,6 @@
 /* ========================================
-   WORKOUT LIBRARY - ENTERPRISE UI
-   Dark Premium Theme (Black + Gold/Red)
+   ASSIGNED DIET PLANS - CARD-BASED UI
+   Dark Premium SaaS Theme
 ======================================== */
 
 /* Page Header */
@@ -83,13 +83,13 @@
     margin-bottom: 32px;
     display: flex;
     gap: 20px;
-    flex-wrap: wrap;
     align-items: flex-end;
+    flex-wrap: wrap;
 }
 
 .search-box {
     flex: 1;
-    min-width: 280px;
+    min-width: 300px;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -125,12 +125,6 @@
 
 .filter-group {
     display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-}
-
-.filter-item {
-    display: flex;
     flex-direction: column;
     gap: 8px;
 }
@@ -150,7 +144,7 @@
     padding: 10px 16px;
     color: #ffffff;
     font-size: 0.95rem;
-    min-width: 160px;
+    min-width: 140px;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -163,7 +157,6 @@
 .filter-select:focus {
     outline: none;
     border-color: rgba(212, 175, 55, 0.5);
-    background: rgba(255, 255, 255, 0.08);
 }
 
 .filter-select option {
@@ -172,16 +165,16 @@
 }
 
 /* ========================================
-   WORKOUT GRID
+   ASSIGNMENTS GRID
 ======================================== */
 
-.workout-grid {
+.assignments-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
     gap: 24px;
 }
 
-.workout-card {
+.assignment-card {
     background: linear-gradient(135deg, rgba(26, 26, 26, 0.95), rgba(20, 20, 20, 0.95));
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
@@ -192,7 +185,7 @@
     gap: 20px;
 }
 
-.workout-card:hover {
+.assignment-card:hover {
     transform: translateY(-4px);
     border-color: rgba(212, 175, 55, 0.3);
     box-shadow: 0 8px 32px rgba(212, 175, 55, 0.15);
@@ -201,61 +194,87 @@
 /* Card Header */
 .card-header {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.workout-title {
-    font-size: 1.25rem;
+.member-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.member-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(242, 201, 76, 0.2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.member-avatar .material-icons {
+    font-size: 28px;
+    color: #D4AF37;
+}
+
+.member-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.member-name {
+    font-size: 1.1rem;
     font-weight: 600;
     color: #ffffff;
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.member-phone {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
     margin: 0;
-    line-height: 1.4;
+    font-family: 'Courier New', monospace;
 }
 
-.badges {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.badge {
+/* Status Badges */
+.status-badge {
     display: inline-flex;
     align-items: center;
     padding: 6px 12px;
     border-radius: 8px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    flex-shrink: 0;
 }
 
-.badge-success {
+.status-active {
     background: rgba(34, 197, 94, 0.15);
     color: #22c55e;
 }
 
-.badge-warning {
-    background: rgba(251, 146, 60, 0.15);
-    color: #fb923c;
-}
-
-.badge-danger {
+.status-expired {
     background: rgba(239, 68, 68, 0.15);
     color: #ef4444;
 }
 
-.badge-primary {
-    background: rgba(212, 175, 55, 0.15);
-    color: #D4AF37;
-}
-
-.badge-info {
+.status-upcoming {
     background: rgba(59, 130, 246, 0.15);
     color: #3b82f6;
 }
 
-.badge-secondary {
+.status-default {
     background: rgba(255, 255, 255, 0.1);
     color: rgba(255, 255, 255, 0.7);
 }
@@ -263,72 +282,61 @@
 /* Card Body */
 .card-body {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
 }
 
-.workout-info {
+.plan-info {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
-.info-item {
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.info-label {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
-}
-
-.info-item .material-icons {
-    font-size: 18px;
-    color: rgba(212, 175, 55, 0.8);
-}
-
-/* Exercise Preview */
-.exercise-preview {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    padding: 12px;
-}
-
-.preview-label {
     font-size: 0.85rem;
-    font-weight: 600;
     color: rgba(255, 255, 255, 0.6);
-    margin: 0 0 8px 0;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.exercise-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.exercise-list li {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
-    padding-left: 16px;
-    position: relative;
-}
-
-.exercise-list li::before {
-    content: '•';
-    position: absolute;
-    left: 0;
-    color: #D4AF37;
-}
-
-.more-exercises {
-    color: rgba(212, 175, 55, 0.9) !important;
     font-weight: 500;
+}
+
+.info-label .material-icons {
+    font-size: 18px;
+    color: rgba(212, 175, 55, 0.7);
+}
+
+.info-value {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    text-align: right;
+    font-weight: 500;
+}
+
+.plan-name {
+    color: #D4AF37;
+    font-weight: 600;
+}
+
+.calories {
+    color: #22c55e;
+    font-weight: 600;
+}
+
+.days-remaining {
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+.notes {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-style: italic;
 }
 
 /* Card Actions */
@@ -344,24 +352,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px;
+    gap: 6px;
+    padding: 10px 12px;
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.03);
     color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .action-btn .material-icons {
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .action-btn:hover {
     transform: translateY(-2px);
-    border-color: rgba(212, 175, 55, 0.5);
-    background: rgba(212, 175, 55, 0.1);
-    color: #D4AF37;
 }
 
 .btn-view:hover {
@@ -370,16 +378,10 @@
     color: #3b82f6;
 }
 
-.btn-edit:hover {
+.btn-change:hover {
     border-color: rgba(251, 146, 60, 0.5);
     background: rgba(251, 146, 60, 0.1);
     color: #fb923c;
-}
-
-.btn-assign:hover {
-    border-color: rgba(34, 197, 94, 0.5);
-    background: rgba(34, 197, 94, 0.1);
-    color: #22c55e;
 }
 
 .btn-delete:hover {
@@ -465,11 +467,11 @@
         align-items: stretch;
     }
 
-    .filter-group {
-        flex-direction: column;
+    .search-box {
+        min-width: auto;
     }
 
-    .filter-item {
+    .filter-group {
         width: 100%;
     }
 
@@ -477,8 +479,16 @@
         width: 100%;
     }
 
-    .workout-grid {
+    .assignments-grid {
         grid-template-columns: 1fr;
+    }
+
+    .card-actions {
+        flex-direction: column;
+    }
+
+    .action-btn {
+        width: 100%;
     }
 }
 
@@ -491,15 +501,7 @@
         font-size: 2rem;
     }
 
-    .workout-card {
+    .assignment-card {
         padding: 20px;
-    }
-
-    .card-actions {
-        flex-direction: column;
-    }
-
-    .action-btn {
-        width: 100%;
     }
 }

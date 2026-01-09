@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Workout } from '../../../core/models/gym-extensions.model';
 import { WorkoutService } from '../../../core/services/workout.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 
 @Component({
     selector: 'app-workout-library',
@@ -16,6 +17,7 @@ import { ToastService } from '../../../core/services/toast.service';
 export class AssignedWorkoutsComponent implements OnInit {
     private workoutService = inject(WorkoutService);
     private toastService = inject(ToastService);
+    private confirmDialog = inject(ConfirmDialogService);
     private router = inject(Router);
 
     // All workouts from API
@@ -96,18 +98,30 @@ export class AssignedWorkoutsComponent implements OnInit {
     }
 
     deleteWorkout(workoutId: string) {
-        if (confirm('Are you sure you want to delete this workout?')) {
-            this.workoutService.deleteWorkout(workoutId).subscribe({
-                next: () => {
-                    this.toastService.success('Workout deleted successfully');
-                    this.loadWorkouts(); // Reload the list
-                },
-                error: (error) => {
-                    console.error('Error deleting workout:', error);
-                    this.toastService.error('Failed to delete workout');
-                }
-            });
-        }
+        // Find the workout to get its title
+        const workout = this.allWorkouts.find(w => w._id === workoutId);
+        const workoutTitle = workout?.title || 'this workout';
+
+        // Show custom confirmation dialog
+        this.confirmDialog.confirm({
+            title: 'Delete Workout',
+            message: `Are you sure you want to delete "${workoutTitle}"? This action cannot be undone.`,
+            confirmText: 'Delete',
+            cancelText: 'Cancel'
+        }).subscribe(confirmed => {
+            if (confirmed) {
+                this.workoutService.deleteWorkout(workoutId).subscribe({
+                    next: () => {
+                        this.toastService.success('Workout deleted successfully');
+                        this.loadWorkouts(); // Reload the list
+                    },
+                    error: (error) => {
+                        console.error('Error deleting workout:', error);
+                        this.toastService.error('Failed to delete workout');
+                    }
+                });
+            }
+        });
     }
 
     // Get badge class for level

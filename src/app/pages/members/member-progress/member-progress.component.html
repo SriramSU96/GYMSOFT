@@ -1,0 +1,182 @@
+<div class="page-header">
+    <div class="header-content">
+        <div>
+            <h1 class="page-title">
+                <span class="material-icons">trending_up</span>
+                Member Progress
+            </h1>
+            <p class="page-subtitle">Track fitness progress and performance</p>
+        </div>
+        <button (click)="addProgress()" class="btn btn-primary">
+            <span class="material-icons">add</span>
+            Add Progress
+        </button>
+    </div>
+</div>
+
+<!-- Add Progress Dialog -->
+<app-add-progress-dialog></app-add-progress-dialog>
+
+<!-- Search & Filter Bar -->
+<div class="filter-bar">
+    <div class="filter-group">
+        <label class="filter-label">Select Member</label>
+        <select [(ngModel)]="selectedMemberId" (change)="onMemberChange()" class="filter-select member-select"
+            [disabled]="loadingMembers">
+            <option value="" disabled>{{ loadingMembers ? 'Loading members...' : 'Choose a member' }}</option>
+            <option *ngFor="let member of members" [value]="member._id">
+                {{ member.name }} - {{ member.phone }}
+            </option>
+        </select>
+    </div>
+
+    <div class="search-box">
+        <span class="material-icons">search</span>
+        <input type="text" [(ngModel)]="searchTerm" placeholder="Search by member name or phone" class="search-input">
+    </div>
+
+    <div class="filter-group">
+        <label class="filter-label">Time Period</label>
+        <select [(ngModel)]="timeFilter" (change)="applyFilters()" class="filter-select">
+            <option value="last30">Last 30 Days</option>
+            <option value="last90">Last 3 Months</option>
+            <option value="last180">Last 6 Months</option>
+            <option value="all">All Time</option>
+        </select>
+    </div>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading progress data...</p>
+</div>
+
+<!-- Member Summary Card -->
+<div class="summary-card" *ngIf="!loading && selectedMember">
+    <div class="summary-header">
+        <div class="member-info">
+            <div class="member-avatar">
+                <span class="material-icons">person</span>
+            </div>
+            <div class="member-details">
+                <h2 class="member-name">{{ selectedMember.memberName }}</h2>
+                <p class="member-meta">{{ selectedMember.phone }} • Age: {{ selectedMember.age }}</p>
+            </div>
+        </div>
+        <span class="status-badge" [ngClass]="getStatusClass(selectedMember.progressStatus)">
+            {{ selectedMember.progressStatus }}
+        </span>
+    </div>
+
+    <div class="summary-stats">
+        <div class="stat-item">
+            <span class="stat-label">Fitness Goal</span>
+            <span class="stat-value">{{ selectedMember.fitnessGoal }}</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Current Weight</span>
+            <span class="stat-value">{{ selectedMember.currentWeight }} kg</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Current BMI</span>
+            <span class="stat-value">{{ selectedMember.currentBMI }}</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Weight Change</span>
+            <span class="stat-value change" [class.positive]="(selectedMember.weightChange || 0) < 0">
+                {{ selectedMember.weightChange }} kg
+            </span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">BMI Change</span>
+            <span class="stat-value change" [class.positive]="(selectedMember.bmiChange || 0) < 0">
+                {{ selectedMember.bmiChange }}
+            </span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Total Records</span>
+            <span class="stat-value">{{ selectedMember.totalRecords }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Progress Charts -->
+<div class="charts-section" *ngIf="!loading && selectedMember">
+    <div class="chart-card">
+        <h3 class="chart-title">
+            <span class="material-icons">show_chart</span>
+            Weight Progress
+        </h3>
+        <div class="chart-placeholder">
+            <span class="material-icons">insert_chart</span>
+            <p>Chart will be rendered here</p>
+            <small>Ready for Chart.js integration</small>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <h3 class="chart-title">
+            <span class="material-icons">analytics</span>
+            BMI Progress
+        </h3>
+        <div class="chart-placeholder">
+            <span class="material-icons">insert_chart</span>
+            <p>Chart will be rendered here</p>
+            <small>Ready for Chart.js integration</small>
+        </div>
+    </div>
+</div>
+
+<!-- Progress History Table -->
+<div class="table-card" *ngIf="!loading && filteredRecords.length > 0">
+    <h3 class="table-title">
+        <span class="material-icons">history</span>
+        Progress History
+    </h3>
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Weight (kg)</th>
+                    <th>BMI</th>
+                    <th>Body Fat %</th>
+                    <th>Notes</th>
+                    <th>Recorded By</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let record of filteredRecords" class="table-row">
+                    <td class="date">{{ record.recordedDate | date:'mediumDate' }}</td>
+                    <td class="weight">{{ record.weight }}</td>
+                    <td class="bmi">{{ record.bmi }}</td>
+                    <td class="bodyfat">{{ record.bodyFat || '-' }}</td>
+                    <td class="notes">{{ record.notes || '-' }}</td>
+                    <td class="recorded-by">{{ record.recordedBy }}</td>
+                    <td class="actions">
+                        <button (click)="editProgress(record._id || '')" class="action-btn btn-edit" title="Edit">
+                            <span class="material-icons">edit</span>
+                        </button>
+                        <button (click)="deleteProgress(record._id || '')" class="action-btn btn-delete" title="Delete">
+                            <span class="material-icons">delete</span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Empty State -->
+<div *ngIf="!loading && filteredRecords.length === 0" class="empty-state">
+    <span class="material-icons">trending_up</span>
+    <h3>No progress records yet</h3>
+    <p>Start tracking member progress to see insights and trends</p>
+    <button (click)="addProgress()" class="btn btn-primary">
+        <span class="material-icons">add</span>
+        Add First Progress Entry
+    </button>
+</div>

@@ -100,7 +100,7 @@
             <button (click)="assignWorkout(workout._id || '')" class="action-btn btn-assign" title="Assign to Member">
                 <span class="material-icons">person_add</span>
             </button>
-            <button  class="action-btn btn-delete" title="Delete Workout">
+            <button (click)="deleteWorkout(workout._id || '')" class="action-btn btn-delete" title="Delete Workout">
                 <span class="material-icons">delete</span>
             </button>
         </div>

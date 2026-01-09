@@ -13,9 +13,19 @@ export class DietService {
 
     constructor(private http: HttpClient) { }
 
-    // Get all diet plans
-    getDietPlans(): Observable<DietPlan[]> {
-        return this.http.get<DietPlan[]>(this.apiUrl);
+    // Get all diet plans with optional filtering
+    getDietPlans(gymId?: string, memberId?: string): Observable<DietPlan[]> {
+        let params = new HttpParams();
+
+        if (gymId) {
+            params = params.set('gymId', gymId);
+        }
+
+        if (memberId) {
+            params = params.set('memberId', memberId);
+        }
+
+        return this.http.get<DietPlan[]>(this.apiUrl, { params });
     }
 
     // Get a single diet plan by ID
@@ -41,5 +51,15 @@ export class DietService {
     // Get member's assigned diet plan
     getMemberDiet(memberId: string): Observable<DietPlan> {
         return this.http.get<DietPlan>(`${environment.apiUrl}/members/${memberId}/diet`);
+    }
+
+    // Get diet plans by gym
+    getDietPlansByGym(gymId: string): Observable<DietPlan[]> {
+        return this.getDietPlans(gymId);
+    }
+
+    // Get diet plans for a specific member
+    getMemberDietPlans(memberId: string, gymId?: string): Observable<DietPlan[]> {
+        return this.getDietPlans(gymId, memberId);
     }
 }

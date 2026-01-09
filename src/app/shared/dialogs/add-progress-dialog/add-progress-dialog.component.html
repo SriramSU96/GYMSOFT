@@ -1,0 +1,117 @@
+<div class="dialog-overlay" *ngIf="isOpen" (click)="close()">
+    <div class="dialog-container" (click)="$event.stopPropagation()">
+        <!-- Dialog Header -->
+        <div class="dialog-header">
+            <div class="header-content">
+                <h2 class="dialog-title">
+                    <span class="material-icons">add_circle</span>
+                    Add Progress Entry
+                </h2>
+                <p class="member-name" *ngIf="memberName">for {{ memberName }}</p>
+            </div>
+            <button class="close-btn" (click)="close()" type="button">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+
+        <!-- Dialog Body -->
+        <div class="dialog-body">
+            <form (ngSubmit)="save()">
+                <!-- Primary Metrics -->
+                <div class="form-section">
+                    <h3 class="section-title">Primary Metrics</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Weight (kg) *</label>
+                            <input type="number" [(ngModel)]="weight" (ngModelChange)="calculateBMI()" name="weight"
+                                class="form-input" placeholder="75.5" step="0.1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">BMI</label>
+                            <input type="number" [(ngModel)]="bmi" name="bmi" class="form-input" placeholder="24.2"
+                                step="0.1" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Body Fat %</label>
+                            <input type="number" [(ngModel)]="bodyFat" name="bodyFat" class="form-input"
+                                placeholder="18.5" step="0.1">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Muscle Mass (kg)</label>
+                            <input type="number" [(ngModel)]="muscleMass" name="muscleMass" class="form-input"
+                                placeholder="45.0" step="0.1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Body Measurements -->
+                <div class="form-section">
+                    <h3 class="section-title">Body Measurements (cm)</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Chest</label>
+                            <input type="number" [(ngModel)]="chest" name="chest" class="form-input" placeholder="95"
+                                step="0.1">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Waist</label>
+                            <input type="number" [(ngModel)]="waist" name="waist" class="form-input" placeholder="80"
+                                step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Hips</label>
+                            <input type="number" [(ngModel)]="hips" name="hips" class="form-input" placeholder="95"
+                                step="0.1">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Arms</label>
+                            <input type="number" [(ngModel)]="arms" name="arms" class="form-input" placeholder="35"
+                                step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Thighs</label>
+                            <input type="number" [(ngModel)]="thighs" name="thighs" class="form-input" placeholder="55"
+                                step="0.1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label class="form-label">Notes</label>
+                        <textarea [(ngModel)]="notes" name="notes" class="form-textarea"
+                            placeholder="Add any notes about this progress entry..." rows="3"></textarea>
+                    </div>
+                </div>
+
+                <!-- Dialog Actions -->
+                <div class="dialog-actions">
+                    <button type="button" (click)="close()" class="btn btn-secondary" [disabled]="saving">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" [disabled]="saving">
+                        <span class="material-icons" *ngIf="!saving">save</span>
+                        <span class="spinner-small" *ngIf="saving"></span>
+                        {{ saving ? 'Saving...' : 'Save Progress' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
