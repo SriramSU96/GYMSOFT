@@ -38,6 +38,11 @@ import { PlanAssignment } from './pages/workouts/plan-assignment/plan-assignment
 import { MyWorkout } from './pages/members/my-workout/my-workout.component';
 import { MyDiet } from './pages/members/my-diet/my-diet.component';
 
+// Exercise Library
+import { ExerciseListComponent } from './pages/workouts/exercises/exercise-list/exercise-list.component';
+import { ExerciseFormComponent } from './pages/workouts/exercises/exercise-form/exercise-form.component';
+import { ExerciseDetailComponent } from './pages/workouts/exercises/exercise-detail/exercise-detail.component';
+
 // Inventory & POS
 import { ProductList } from './pages/inventory/product-list/product-list.component';
 import { PosTerminal } from './pages/inventory/pos-terminal/pos-terminal.component';
@@ -49,6 +54,7 @@ import { ClassCalendar } from './pages/classes/class-calendar/class-calendar.com
 import { MyBookings } from './pages/classes/my-bookings/my-bookings.component';
 
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
     {
@@ -118,6 +124,12 @@ export const routes: Routes = [
             { path: 'plans/assign', component: PlanAssignment },
             { path: 'my-workout', component: MyWorkout },
             { path: 'my-diet', component: MyDiet },
+
+            // Exercise Library
+            { path: 'workouts/exercises', component: ExerciseListComponent },
+            { path: 'workouts/exercises/add', component: ExerciseFormComponent, canActivate: [roleGuard(['admin', 'trainer', 'manager'])] },
+            { path: 'workouts/exercises/:id', component: ExerciseDetailComponent },
+            { path: 'workouts/exercises/:id/edit', component: ExerciseFormComponent, canActivate: [roleGuard(['admin', 'trainer', 'manager'])] },
 
             // Inventory & POS
             { path: 'inventory/products', component: ProductList },

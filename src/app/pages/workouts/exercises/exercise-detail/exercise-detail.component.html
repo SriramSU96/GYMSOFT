@@ -1,0 +1,100 @@
+<div class="exercise-detail-container">
+    <div *ngIf="loading$ | async" class="loading-state">
+        <p>Loading exercise details...</p>
+    </div>
+
+    <div *ngIf="(exercise$ | async) as exercise" class="exercise-detail">
+        <div class="detail-header">
+            <div class="header-content">
+                <h1>{{ exercise.name }}</h1>
+                <span class="status-badge" [class.active]="exercise.isActive" [class.inactive]="!exercise.isActive">
+                    {{ exercise.isActive ? 'Active' : 'Inactive' }}
+                </span>
+            </div>
+            <button class="btn-secondary" (click)="goBack()">Back to List</button>
+        </div>
+
+        <!-- Exercise Information -->
+        <div class="detail-section">
+            <h2>Exercise Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Muscle Group:</strong>
+                    <span>{{ exercise.muscleGroup }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Equipment:</strong>
+                    <span>{{ exercise.equipment }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Difficulty:</strong>
+                    <span class="difficulty-badge" [attr.data-level]="exercise.difficulty">
+                        {{ exercise.difficulty }}
+                    </span>
+                </div>
+                <div class="info-item">
+                    <strong>Created By:</strong>
+                    <span>{{ exercise.createdBy.name }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Created:</strong>
+                    <span>{{ exercise.createdAt | date:'medium' }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Last Updated:</strong>
+                    <span>{{ exercise.updatedAt | date:'medium' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="detail-section" *ngIf="exercise.description">
+            <h2>Description</h2>
+            <p class="description">{{ exercise.description }}</p>
+        </div>
+
+        <!-- Video -->
+        <div class="detail-section" *ngIf="exercise.videoUrl">
+            <h2>Demonstration Video</h2>
+            <div class="video-container">
+                <iframe *ngIf="getYouTubeEmbedUrl(exercise.videoUrl) as embedUrl" [src]="embedUrl" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+                <a *ngIf="!getYouTubeEmbedUrl(exercise.videoUrl)" [href]="exercise.videoUrl" target="_blank"
+                    rel="noopener noreferrer" class="video-link">
+                    View Video (External Link)
+                </a>
+            </div>
+        </div>
+
+        <!-- Image -->
+        <div class="detail-section" *ngIf="exercise.imageUrl">
+            <h2>Exercise Image</h2>
+            <div class="image-container">
+                <img [src]="exercise.imageUrl" [alt]="exercise.name" />
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="detail-actions">
+            <button *ngIf="canEdit" [routerLink]="['/workouts/exercises', exercise._id, 'edit']" class="btn-primary">
+                Edit Exercise
+            </button>
+
+            <button *ngIf="canActivate" (click)="toggleActivation(exercise)" [class.btn-warning]="exercise.isActive"
+                [class.btn-success]="!exercise.isActive">
+                {{ exercise.isActive ? 'Deactivate' : 'Activate' }}
+            </button>
+
+            <button *ngIf="canDelete" (click)="deleteExercise(exercise)" class="btn-danger">
+                Delete Permanently
+            </button>
+        </div>
+    </div>
+
+    <div *ngIf="!(loading$ | async) && !(exercise$ | async)" class="empty-state">
+        <p>Exercise not found.</p>
+        <button class="btn-primary" (click)="goBack()">Back to List</button>
+    </div>
+</div>
