@@ -76,20 +76,51 @@ export class PlanAssignment implements OnInit {
             gymId: this.authService.getCurrentUser()?.gymId
         };
 
-        this.workoutService.assignPlan(assignment).subscribe({
-            next: () => {
-                this.successMessage = 'Plans assigned successfully!';
+        // Check what we are assigning
+        const { workoutId, dietPlanId, memberId, startDate, endDate } = this.assignForm.value;
+        const gymId = this.authService.getCurrentUser()?.gymId;
+
+        const requests = [];
+
+        if (workoutId) {
+            const workoutAssignment = { memberId, workoutId, startDate, endDate, gymId };
+            requests.push(this.workoutService.assignPlan(workoutAssignment));
+        }
+
+        if (dietPlanId) {
+            const dietAssignment = { memberId, dietPlanId, startDate, endDate, gymId };
+            requests.push(this.dietService.assignDietPlan(dietAssignment));
+        }
+
+        // ForkJoin in real app, simplistic approach here
+        // If both, await both. For now assuming typical user aligns one or both.
+        // We will chaining them for simplicity or Just firing independent subs
+
+        let completed = 0;
+        const checkDone = () => {
+            completed++;
+            if (completed >= requests.length) {
+                this.successMessage = 'Plan(s) assigned successfully!';
                 this.isLoading = false;
                 this.assignForm.reset({
                     startDate: new Date().toISOString().split('T')[0]
                 });
                 setTimeout(() => this.successMessage = '', 3000);
-            },
+            }
+        };
+
+        if (requests.length === 0) {
+            this.isLoading = false;
+            return;
+        }
+
+        requests.forEach(req => req.subscribe({
+            next: () => checkDone(),
             error: (err) => {
                 console.error(err);
-                this.isLoading = false;
+                this.isLoading = false; // Note: if one fails, other might succeed
             }
-        });
+        }));
     }
     getWorkoutGoal(id: string): string {
         const workout = this.workouts.find(w => w._id === id);

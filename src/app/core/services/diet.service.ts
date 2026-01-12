@@ -98,8 +98,8 @@ export class DietService {
     }
 
     // Get member's assigned diet plan
-    getMemberDiet(memberId: string): Observable<DietPlan> {
-        return this.http.get<DietPlan>(`${environment.apiUrl}/members/${memberId}/diet`);
+    getMemberDiet(memberId: string): Observable<any> {
+        return this.http.get<any>(`${environment.apiUrl}/members/${memberId}/diet-plan`);
     }
 
     // Get diet plans by gym
@@ -110,5 +110,57 @@ export class DietService {
     // Get diet plans for a specific member
     getMemberDietPlans(memberId: string, gymId?: string): Observable<DietPlan[]> {
         return this.getDietPlans(gymId, memberId);
+    }
+
+    // ==========================================
+    // DIET DAYS
+    // ==========================================
+    createDay(dietId: string, day: any): Observable<any> {
+        return this.http.post(`${this.apiUrl}/${dietId}/days`, day);
+    }
+
+    updateDay(id: string, day: any): Observable<any> {
+        return this.http.put(`${this.apiUrl}/days/${id}`, day);
+    }
+
+    deleteDay(id: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/days/${id}`);
+    }
+
+    // ==========================================
+    // MEAL SLOTS
+    // ==========================================
+    createSlot(dayId: string, slot: any): Observable<any> {
+        return this.http.post(`${this.apiUrl}/days/${dayId}/meal-slots`, slot);
+    }
+
+    updateSlot(id: string, slot: any): Observable<any> {
+        return this.http.put(`${this.apiUrl}/meal-slots/${id}`, slot);
+    }
+
+    deleteSlot(id: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/meal-slots/${id}`);
+    }
+
+    // ==========================================
+    // MEAL ITEMS
+    // ==========================================
+    addMealItem(slotId: string, item: any): Observable<any> {
+        return this.http.post(`${this.apiUrl}/meal-slots/${slotId}/meals`, item);
+    }
+
+    updateMealItem(id: string, item: any): Observable<any> {
+        return this.http.put(`${this.apiUrl}/meal-items/${id}`, item);
+    }
+
+    removeMealItem(id: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/meal-items/${id}`);
+    }
+
+    // ==========================================
+    // ASSIGNMENT
+    // ==========================================
+    assignDietPlan(assignment: any): Observable<any> {
+        return this.http.post(`${this.apiUrl}/assign`, assignment);
     }
 }

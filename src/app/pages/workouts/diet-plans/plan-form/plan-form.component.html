@@ -1,0 +1,64 @@
+<div class="form-container">
+    <div class="page-header">
+        <h1>{{ isEditMode ? 'Edit Diet Plan' : 'Create Diet Plan' }}</h1>
+        <p>{{ isEditMode ? 'Update plan details' : 'Define the basic details for the new diet plan' }}</p>
+    </div>
+
+    <form [formGroup]="planForm" (ngSubmit)="onSubmit()" class="form-card">
+        <div class="form-group">
+            <label for="title">Plan Title *</label>
+            <input type="text" id="title" formControlName="title" class="form-input"
+                placeholder="e.g. 4 Week Cutting Plan">
+            <div *ngIf="submitted && planForm.get('title')?.errors" class="text-xs text-red-500 mt-1">
+                Title is required (min 3 chars).
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" formControlName="description" class="form-textarea" rows="3"
+                placeholder="Brief description..."></textarea>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="goal">Goal *</label>
+                <select id="goal" formControlName="goal" class="form-select">
+                    <option value="">Select Goal</option>
+                    <option *ngFor="let goal of goals" [value]="goal">{{ goal }}</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="level">Difficulty Level *</label>
+                <select id="level" formControlName="level" class="form-select">
+                    <option value="">Select Level</option>
+                    <option *ngFor="let level of levels" [value]="level">{{ level }}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="duration">Duration (Weeks) *</label>
+                <input type="number" id="duration" formControlName="durationWeeks" class="form-input" min="1" max="52">
+            </div>
+
+            <div class="form-group" style="display: flex; align-items: center; padding-top: 30px;">
+                <label class="checkbox-container"
+                    style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" formControlName="isActive">
+                    <span class="text-primary">Active Plan</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="isLoading">Cancel</button>
+            <button type="submit" class="btn-primary" [disabled]="isLoading">
+                <span *ngIf="isLoading" class="spinner-sm mr-2"></span>
+                {{ isEditMode ? 'Update Details' : 'Create & Open Builder' }}
+            </button>
+        </div>
+    </form>
+</div>

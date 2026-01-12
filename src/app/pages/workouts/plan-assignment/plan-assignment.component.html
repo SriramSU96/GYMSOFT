@@ -40,7 +40,7 @@
                     <select id="diet" formControlName="dietPlanId">
                         <option value="" disabled>-- Select Diet Plan --</option>
                         <option *ngFor="let d of diets" [value]="d._id">
-                            {{ d.title }} (~{{ d.calories }} kcal)
+                            {{ d.title }} (~{{ d.calories || 0 }} kcal)
                         </option>
                     </select>
                 </div>

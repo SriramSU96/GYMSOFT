@@ -48,8 +48,8 @@ export class SidebarComponent implements OnInit {
             children: [
                 { label: 'Exercise Library', icon: 'fitness_center', route: '/workouts/exercises' },
                 { label: 'Workout Plans', icon: 'assignment', route: '/workouts/plans' },
-                { label: 'Diet Meals', icon: 'lunch_dining', route: '/diets' },
-                { label: 'Diet Plans', icon: 'menu_book', route: '/diets/plans' }
+                { label: 'Diet Meals', icon: 'lunch_dining', route: '/diets/meals' },
+                { label: 'Diet Plans', icon: 'menu_book', route: '/diets/manage-plans' }
             ]
         },
         {

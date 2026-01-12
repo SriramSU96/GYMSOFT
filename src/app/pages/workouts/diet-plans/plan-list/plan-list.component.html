@@ -1,0 +1,94 @@
+<div class="diet-library-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <h1>Diet Plans</h1>
+            <p class="subtitle">Create and manage diet templates for members</p>
+        </div>
+        <button class="btn-primary" routerLink="/diets/plans/create">
+            <span class="material-icons">add</span>
+            Create Plan
+        </button>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="search-bar">
+            <span class="material-icons">search</span>
+            <input type="text" placeholder="Search diet plans..." [ngModel]="searchQuery" (input)="onSearch($event)">
+        </div>
+
+        <div class="filters">
+            <div class="select-wrapper">
+                <select [(ngModel)]="selectedGoal" (change)="applyFilters()">
+                    <option value="">All Goals</option>
+                    <option *ngFor="let goal of goals" [value]="goal">{{ goal }}</option>
+                </select>
+            </div>
+
+            <div class="select-wrapper">
+                <select [(ngModel)]="selectedLevel" (change)="applyFilters()">
+                    <option value="">All Levels</option>
+                    <option *ngFor="let level of levels" [value]="level">{{ level }}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-area">
+        <!-- Loading -->
+        <div *ngIf="isLoading" class="loading-state">
+            <div class="spinner"></div>
+            <p>Loading plans...</p>
+        </div>
+
+        <!-- Empty -->
+        <div *ngIf="!isLoading && filteredPlans.length === 0" class="empty-state">
+            <span class="material-icons">menu_book</span>
+            <h3>No diet plans found</h3>
+            <p>Create a new diet plan to get started.</p>
+        </div>
+
+        <!-- Grid -->
+        <div *ngIf="!isLoading && filteredPlans.length > 0" class="plan-grid">
+            <div *ngFor="let plan of filteredPlans" class="plan-card">
+                <div class="card-header">
+                    <div class="badges">
+                        <span class="badge level">{{ plan.level }}</span>
+                        <span class="badge goal">{{ plan.goal }}</span>
+                    </div>
+                    <h3 class="plan-title">{{ plan.title }}</h3>
+                </div>
+
+                <div class="card-body">
+                    <p class="description">{{ plan.description || 'No description provided.' }}</p>
+
+                    <div class="meta-info">
+                        <div class="meta-item">
+                            <span class="material-icons" style="font-size: 16px;">calendar_today</span>
+                            <span>{{ plan.durationWeeks }} Weeks</span>
+                            <!-- Note: Backend spec says durationDays, Frontend model says durationWeeks. Assuming Weeks for now or mapping appropriately -->
+                        </div>
+                        <div class="meta-item">
+                            <span class="material-icons" style="font-size: 16px;">restaurant</span>
+                            <span>{{ plan.meals?.length || 0 }} Meals</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-actions">
+                    <button class="btn-icon" [routerLink]="['/diets/builder', plan._id]" title="Open Builder">
+                        <span class="material-icons">build</span>
+                    </button>
+                    <button class="btn-icon" [routerLink]="['/diets/plans', plan._id, 'edit']" title="Edit Details">
+                        <span class="material-icons">edit</span>
+                    </button>
+                    <button class="btn-icon danger" (click)="deletePlan(plan)" title="Delete">
+                        <span class="material-icons">delete</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

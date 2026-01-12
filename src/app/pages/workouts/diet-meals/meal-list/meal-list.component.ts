@@ -2,9 +2,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { DietService } from '../../../../../core/services/diet.service';
-import { DietMeal, DietMealFilters, MealCategory, FoodType } from '../../../../../core/models/diet.model';
+import { RouterModule, Router } from '@angular/router';
+import { DietService } from '../../../../core/services/diet.service';
+import { DietMeal, DietMealFilters, MealCategory, FoodType } from '../../../../core/models/diet.model';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -39,7 +39,10 @@ export class MealListComponent implements OnInit {
     selectedMeal: DietMeal | null = null;
     isModalOpen = false;
 
-    constructor(private dietService: DietService) {
+    constructor(
+        private dietService: DietService,
+        private router: Router
+    ) {
         // Setup search debounce
         this.searchSubject.pipe(
             debounceTime(400),
@@ -76,13 +79,13 @@ export class MealListComponent implements OnInit {
         };
 
         this.dietService.getMeals(filters).subscribe({
-            next: (response) => {
+            next: (response: any) => {
                 this.meals = response.data;
                 this.totalMeals = response.pagination.total;
                 this.totalPages = response.pagination.totalPages;
                 this.isLoading = false;
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('Error loading meals', err);
                 this.isLoading = false;
                 // Mock data fallback if API fails (for development/demo)
@@ -116,8 +119,7 @@ export class MealListComponent implements OnInit {
     }
 
     editMeal(meal: DietMeal) {
-        console.log('Edit meal', meal);
-        // Router navigate to edit page
+        this.router.navigate(['/diets/meals', meal._id, 'edit']);
     }
 
     deactivateMeal(meal: DietMeal) {

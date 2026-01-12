@@ -1,0 +1,95 @@
+<div class="form-container">
+    <div class="page-header">
+        <h1>{{ isEditMode ? 'Edit Meal' : 'Add New Meal' }}</h1>
+        <p>{{ isEditMode ? 'Update meal details and nutrition info' : 'Create a new meal for diet plans' }}</p>
+    </div>
+
+    <form [formGroup]="mealForm" (ngSubmit)="onSubmit()" class="form-card">
+        <!-- Basic Info -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <span class="material-icons">restaurant</span>
+                Basic Information
+            </h3>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label for="name">Meal Name *</label>
+                    <input type="text" id="name" formControlName="name" class="form-input"
+                        placeholder="e.g. Grilled Chicken Salad">
+                    <div *ngIf="submitted && mealForm.get('name')?.errors" class="text-xs text-red-500 mt-1">
+                        Name is required (min 3 chars).
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category *</label>
+                    <select id="category" formControlName="category" class="form-select">
+                        <option value="">Select Category</option>
+                        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="foodType">Diet Type *</label>
+                    <select id="foodType" formControlName="foodType" class="form-select">
+                        <option value="">Select Type</option>
+                        <option *ngFor="let type of foodTypes" [value]="type">{{ type }}</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="description">Description</label>
+                    <textarea id="description" formControlName="description" class="form-textarea" rows="3"
+                        placeholder="Brief description of the meal..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nutrition Info -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <span class="material-icons">bar_chart</span>
+                Nutrition Facts (per serving)
+            </h3>
+            <div class="nutrition-grid">
+                <div class="form-group">
+                    <label for="calories">Calories *</label>
+                    <input type="number" id="calories" formControlName="calories" class="form-input" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="protein">Protein (g) *</label>
+                    <input type="number" id="protein" formControlName="protein" class="form-input" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="carbs">Carbs (g) *</label>
+                    <input type="number" id="carbs" formControlName="carbs" class="form-input" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="fats">Fats (g) *</label>
+                    <input type="number" id="fats" formControlName="fats" class="form-input" min="0">
+                </div>
+            </div>
+
+            <div class="form-grid mt-4" style="margin-top: var(--space-md);">
+                <div class="form-group">
+                    <label for="fiber">Fiber (g)</label>
+                    <input type="number" id="fiber" formControlName="fiber" class="form-input" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="portionSize">Portion Size</label>
+                    <input type="text" id="portionSize" formControlName="portionSize" class="form-input"
+                        placeholder="e.g. 1 bowl, 200g">
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+            <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="isLoading">Cancel</button>
+            <button type="submit" class="btn-primary" [disabled]="isLoading">
+                <span *ngIf="isLoading" class="spinner-sm mr-2"></span>
+                {{ isEditMode ? 'Update Logic' : 'Create Meal' }}
+            </button>
+        </div>
+    </form>
+</div>

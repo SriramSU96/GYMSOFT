@@ -1,120 +1,120 @@
-<div>
-    <div>
-        <div>
-            <h2>{{ isEditing ? 'Edit Diet Plan' : 'Create New Diet Plan' }}</h2>
-            <p>Create a nutrition plan with meals and macros.</p>
+<div class="builder-container" *ngIf="!isLoading && plan">
+
+    <!-- Left: Plan Structure -->
+    <div class="plan-structure">
+        <!-- Header -->
+        <div class="header-card">
+            <div>
+                <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">{{ plan.title }}</h2>
+                <div class="badges" style="margin-top: 5px; display:flex; gap: 5px;">
+                    <span class="badge"
+                        style="background: var(--primary-color-alpha); color: var(--primary-color); padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">{{
+                        plan.goal }}</span>
+                    <span class="badge"
+                        style="background: #e0e0e0; color: #555; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">{{
+                        plan.level }}</span>
+                </div>
+            </div>
+            <button class="btn-primary" routerLink="/diets/manage-plans">Done</button>
         </div>
-        <a routerLink="/diets">Back to List</a>
-    </div>
 
-    <div>
-        <!-- Main Form -->
-        <div>
-            <form [formGroup]="dietForm" (ngSubmit)="onSubmit()">
+        <!-- Days Navigation -->
+        <div class="days-nav">
+            <button *ngFor="let day of plan.days; let i = index" class="day-tab" [class.active]="i === activeDayIndex"
+                (click)="selectDay(i)" (contextmenu)="deleteDay(day, i); $event.preventDefault()">
+                Day {{ day.dayNumber }}
+            </button>
+            <button class="day-tab add-btn" (click)="addDay()">
+                <span class="material-icons" style="font-size: 16px; vertical-align: middle;">add</span> Day
+            </button>
+        </div>
 
-                <!-- Basic Details -->
-                <div>
-                    <h3>Plan Overview</h3>
-                    <div>
-                        <div>
-                            <label for="title">Plan Title</label>
-                            <input id="title" type="text" formControlName="title" placeholder="e.g. High Protein Bulk">
-                        </div>
-                        <div>
-                            <label for="calories">Daily Calories Target</label>
-                            <input id="calories" type="number" formControlName="calories" placeholder="2500">
-                        </div>
-                    </div>
+        <!-- Active Day View -->
+        <div *ngIf="getActiveDay() as activeDay" class="slots-container">
+
+            <!-- Meal Slots -->
+            <div *ngFor="let slot of activeDay.mealSlots; let slotIdx = index" class="slot-card">
+                <div class="slot-header">
+                    <span style="font-weight: 600;">{{ slot.mealTime }}</span>
+                    <button class="btn-icon danger" (click)="deleteSlot(activeDay, slot, slotIdx)">
+                        <span class="material-icons">close</span>
+                    </button>
                 </div>
 
-                <!-- Meals List -->
-                <div>
-                    <div>
-                        <h3>Meals</h3>
-                        <button type="button" (click)="addMeal()">
-                            <span>restaurant</span> Add Meal
+                <div class="slot-items">
+                    <!-- Existing Items -->
+                    <div *ngFor="let item of slot.items; let itemIdx = index" class="item-row">
+                        <div class="item-info">
+                            <div style="font-weight: 500;">{{ item.dietMealId?.name || 'Unknown Meal' }}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                                {{ item.dietMealId?.calories || 0 }} kcal | P:{{item.dietMealId?.protein}}
+                                C:{{item.dietMealId?.carbs}} F:{{item.dietMealId?.fats}}
+                            </div>
+                        </div>
+                        <input type="text" [value]="item.quantity" (change)="updateItemQty(item, $event.target.value)"
+                            class="form-input item-qty" placeholder="Qty (e.g. 200g)">
+
+                        <button class="btn-icon danger" (click)="removeItem(slot, item, itemIdx)">
+                            <span class="material-icons">delete</span>
                         </button>
                     </div>
 
-                    <div formArrayName="meals">
-                        <div *ngFor="let meal of meals.controls; let i=index" [formGroupName]="i">
-
-                            <!-- Remove Button -->
-                            <button type="button" (click)="removeMeal(i)">
-                                <span>close</span>
-                            </button>
-
-                            <div>
-                                <div>
-                                    <div>
-                                        <label>Time / Meal Type</label>
-                                        <input type="text" formControlName="time" placeholder="Breakfast / 8:00 AM">
-                                    </div>
-                                    <div>
-                                        <label>Foods</label>
-                                        <input type="text" formControlName="foodItems" placeholder="Oats, Eggs, Apple">
-                                    </div>
-                                </div>
-
-                                <!-- Macros Inline -->
-                                <div>
-                                    <div>
-                                        <label>Protein
-                                            (g)</label>
-                                        <input type="number" formControlName="protein">
-                                    </div>
-                                    <div>
-                                        <label>Carbs
-                                            (g)</label>
-                                        <input type="number" formControlName="carbs">
-                                    </div>
-                                    <div>
-                                        <label>Fats
-                                            (g)</label>
-                                        <input type="number" formControlName="fats">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div *ngIf="meals.length === 0">
-                        No meals added. Click "Add Meal" to start planning.
+                    <!-- Drop Zone / Empty Message -->
+                    <div *ngIf="!slot.items || slot.items.length === 0" class="text-xs text-muted text-center p-2">
+                        No meals added. Select from library on the right.
                     </div>
                 </div>
 
-                <!-- Actions -->
-                <div>
-                    <button type="button" routerLink="/diets">Cancel</button>
-                    <button type="submit" [disabled]="dietForm.invalid || isLoading">
-                        {{ isLoading ? 'Saving...' : (isEditing ? 'Update Plan' : 'Create Plan') }}
-                    </button>
-                </div>
-            </form>
+                <!-- Add Item Action (Simplified, in reality could be drag drop or 'Add' button triggers modal) -->
+                <!-- We handled adding via sidebar click for now -->
+            </div>
+
+            <!-- Add Slot Buttons -->
+            <div class="flex gap-2 justify-center mt-4">
+                <button class="btn-secondary" (click)="addSlot(activeDay, 'Breakfast')">+ Breakfast</button>
+                <button class="btn-secondary" (click)="addSlot(activeDay, 'Lunch')">+ Lunch</button>
+                <button class="btn-secondary" (click)="addSlot(activeDay, 'Dinner')">+ Dinner</button>
+                <button class="btn-secondary" (click)="addSlot(activeDay, 'Snack')">+ Snack</button>
+            </div>
+
         </div>
 
-        <!-- Sidebar / Macros Quick View -->
-        <div>
-            <div>
-                <h4>Macro Guide</h4>
-                <div>
-                    <div>
-                        <span>Protein</span>
-                        <span>4 cal/g</span>
-                    </div>
-                    <div>
-                        <span>Carbs</span>
-                        <span>4 cal/g</span>
-                    </div>
-                    <div>
-                        <span>Fats</span>
-                        <span>9 cal/g</span>
-                    </div>
-                    <div>
-                        <p>Use the macro inputs to estimate total calories.</p>
-                    </div>
-                </div>
-            </div>
+        <!-- Empty Day State -->
+        <div *ngIf="(!plan.days || plan.days.length === 0)" class="empty-state">
+            <p>No days added. Click "+ Day" to start.</p>
         </div>
     </div>
+
+    <!-- Right: Meal Library Sidebar -->
+    <div class="library-sidebar">
+        <div class="sidebar-header">
+            <h3 style="margin: 0; font-size: 1.1rem;">Meal Library</h3>
+            <input type="text" placeholder="Search meals..." [ngModel]="searchQuery" (input)="onSearchMeals($event)"
+                class="form-input mt-2 w-full text-sm">
+        </div>
+
+        <div class="meal-list">
+            <div *ngFor="let meal of availableMeals" class="library-meal-card">
+                <div>
+                    <div style="font-weight: 500; font-size: 0.9rem;">{{ meal.name }}</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">{{ meal.calories }} kcal</div>
+                </div>
+                <button class="btn-icon"
+                    (click)="getActiveDay() && getActiveDay().mealSlots.length > 0 ? addMealToSlot(getActiveDay().mealSlots[0], meal) : null"
+                    title="Add to first slot">
+                    <span class="material-icons">add_circle</span>
+                </button>
+                <!-- Note: UX Improvement - Drag and drop or Select slot modal would be better -->
+            </div>
+        </div>
+
+        <div class="p-2 text-xs text-muted bg-surface border-t border-subtle">
+            Tip: Click '+' to add to the first slot of the active day.
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="isLoading" class="loading-state full-screen">
+    <div class="spinner"></div>
 </div>

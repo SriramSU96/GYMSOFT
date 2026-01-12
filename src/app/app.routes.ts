@@ -33,10 +33,14 @@ import { SecurityComponent } from './pages/settings/security/security.component'
 
 // Workouts & Diets
 import { WorkoutBuilder } from './pages/workouts/workout-builder/workout-builder.component';
-import { DietBuilder } from './pages/workouts/diet-builder/diet-builder.component';
+
 import { PlanAssignment } from './pages/workouts/plan-assignment/plan-assignment.component';
 import { MyWorkout } from './pages/members/my-workout/my-workout.component';
 import { MyDiet } from './pages/members/my-diet/my-diet.component';
+import { DietPlanListComponent } from './pages/workouts/diet-plans/plan-list/plan-list.component';
+import { DietPlanFormComponent } from './pages/workouts/diet-plans/plan-form/plan-form.component';
+import { DietBuilderComponent } from './pages/workouts/diet-builder/diet-builder.component';
+// import { DietMealsComponent } from './pages/workouts/diet-meals/diet-meals.component';
 
 // Exercise Library
 import { ExerciseListComponent } from './pages/workouts/exercises/exercise-list/exercise-list.component';
@@ -45,6 +49,7 @@ import { ExerciseDetailComponent } from './pages/workouts/exercises/exercise-det
 
 // Diet Meals
 import { MealListComponent } from './pages/workouts/diet-meals/meal-list/meal-list.component';
+import { MealFormComponent } from './pages/workouts/diet-meals/meal-form/meal-form.component';
 
 // Workout Plans
 import { PlanListComponent } from './pages/workouts/plans/plan-list/plan-list.component';
@@ -127,9 +132,14 @@ export const routes: Routes = [
             // Workouts & Diets
             { path: 'workouts/builder', component: WorkoutBuilder },
             { path: 'workouts/builder/:id', component: WorkoutBuilder },
-            { path: 'diets/builder', component: DietBuilder },
-            { path: 'diets/builder/:id', component: DietBuilder },
+            { path: 'diets/manage-plans', component: DietPlanListComponent },
+            { path: 'diets/plans/create', component: DietPlanFormComponent },
+            { path: 'diets/plans/:id/edit', component: DietPlanFormComponent },
+            { path: 'diets/builder', component: DietBuilderComponent },
+            { path: 'diets/builder/:id', component: DietBuilderComponent },
             { path: 'diets/meals', component: MealListComponent }, // New Meal Library
+            { path: 'diets/meals/add', component: MealFormComponent },
+            { path: 'diets/meals/:id/edit', component: MealFormComponent },
             { path: 'plans/assign', component: PlanAssignment },
             { path: 'my-workout', component: MyWorkout },
             { path: 'my-diet', component: MyDiet },

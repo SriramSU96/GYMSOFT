@@ -28,14 +28,40 @@ export interface DietMeal {
     };
 }
 
+export interface DietMealItem {
+    _id?: string;
+    dietMealId: any; // Populated DietMeal
+    quantity: string;
+    notes?: string;
+    order: number;
+}
+
+export interface DietMealSlot {
+    _id?: string;
+    mealTime: string;
+    items: DietMealItem[];
+}
+
+export interface DietDay {
+    _id?: string;
+    dayNumber: number;
+    mealSlots: DietMealSlot[];
+}
+
 export interface DietPlan {
     _id?: string;
     title: string;
-    calories: number;
-    meals: DietMeal[];
-    createdBy: string; // Added field
-    memberId?: string; // NEW: Optional field for member-specific diet plans
+    description?: string;
+    level: 'Beginner' | 'Intermediate' | 'Advanced';
+    goal: 'Weight Loss' | 'Muscle Gain' | 'Fitness' | 'Endurance';
+    durationWeeks: number;
+    days?: DietDay[]; // Nested structure
+    calories?: number;
+    meals?: any[]; // Legacy or flattened support if needed
+    createdBy: string;
+    memberId?: string;
     gymId: string;
+    isActive: boolean;
 }
 
 export interface AssignedPlan {
