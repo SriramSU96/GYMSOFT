@@ -20,7 +20,8 @@ import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.s
     selector: 'app-exercise-detail',
     standalone: true,
     imports: [CommonModule, RouterModule],
-    templateUrl: './exercise-detail.component.html'
+    templateUrl: './exercise-detail.component.html',
+    styleUrls: ['./exercise-detail.component.css']
 })
 export class ExerciseDetailComponent implements OnInit {
     private store = inject(Store);

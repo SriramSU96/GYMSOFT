@@ -46,7 +46,7 @@ export class SidebarComponent implements OnInit {
             icon: 'restaurant',
             expanded: false,
             children: [
-                { label: 'Exercise Library', icon: 'fitness_center', route: '/workouts' },
+                { label: 'Exercise Library', icon: 'fitness_center', route: '/workouts/exercises' },
                 { label: 'Workout Plans', icon: 'assignment', route: '/workouts/plans' },
                 { label: 'Diet Meals', icon: 'lunch_dining', route: '/diets' },
                 { label: 'Diet Plans', icon: 'menu_book', route: '/diets/plans' }

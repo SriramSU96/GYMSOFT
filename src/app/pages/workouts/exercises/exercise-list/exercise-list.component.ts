@@ -27,7 +27,8 @@ import { take } from 'rxjs/operators';
     selector: 'app-exercise-list',
     standalone: true,
     imports: [CommonModule, RouterModule, FormsModule],
-    templateUrl: './exercise-list.component.html'
+    templateUrl: './exercise-list.component.html',
+    styleUrls: ['./exercise-list.component.css']
 })
 export class ExerciseListComponent implements OnInit, OnDestroy {
     private store = inject(Store);

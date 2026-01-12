@@ -1,0 +1,45 @@
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { WorkoutPlanStructure } from '../../../../core/models/workout-plan.model';
+import { selectSelectedPlan, selectLoading } from '../../../../core/store/workout-plans/workout-plan.selectors';
+import { loadPlanStructure } from '../../../../core/store/workout-plans/workout-plan.actions';
+
+@Component({
+    selector: 'app-plan-detail',
+    standalone: true,
+    imports: [CommonModule, RouterModule],
+    templateUrl: './plan-detail.component.html',
+    styleUrls: ['./plan-detail.component.css']
+})
+export class PlanDetailComponent implements OnInit {
+    private route = inject(ActivatedRoute);
+    private router = inject(Router);
+    private store = inject(Store);
+
+    plan$: Observable<WorkoutPlanStructure | null>;
+    loading$: Observable<boolean>;
+
+    constructor() {
+        this.plan$ = this.store.select(selectSelectedPlan);
+        this.loading$ = this.store.select(selectLoading);
+    }
+
+    ngOnInit() {
+        const planId = this.route.snapshot.paramMap.get('id');
+        if (planId) {
+            this.store.dispatch(loadPlanStructure({ planId }));
+        }
+    }
+
+    goBack() {
+        this.router.navigate(['/workouts/plans']);
+    }
+
+    editPlan(planId: string) {
+        this.router.navigate(['/workouts/plans', planId, 'edit']);
+    }
+}
+

@@ -1,104 +1,134 @@
-<div class="exercise-library">
+<div class="exercise-library-page">
+    <!-- Page Header -->
     <div class="page-header">
-        <h1>Exercise Library</h1>
+        <div class="header-content">
+            <h1 class="page-title">Exercise Library</h1>
+            <p class="page-subtitle">Manage your master exercise catalog</p>
+        </div>
         <button *ngIf="canCreate" [routerLink]="['/workouts/exercises/add']" class="btn-primary">
+            <span class="material-icons">add</span>
             Add Exercise
         </button>
     </div>
 
-    <!-- Filters Section -->
-    <div class="filters-section">
-        <div class="filter-group">
-            <label for="muscleGroup">Muscle Group</label>
-            <select id="muscleGroup" [(ngModel)]="selectedMuscleGroup" (change)="applyFilters()">
-                <option value="">All Muscle Groups</option>
-                <option *ngFor="let group of muscleGroups" [value]="group">{{ group }}</option>
-            </select>
+    <!-- Filter Panel Card -->
+    <div class="filter-card">
+        <div class="filter-grid">
+            <div class="filter-item">
+                <label class="filter-label">Muscle Group</label>
+                <select class="filter-select" [(ngModel)]="selectedMuscleGroup" (change)="applyFilters()">
+                    <option value="">All Groups</option>
+                    <option *ngFor="let group of muscleGroups" [value]="group">{{ group }}</option>
+                </select>
+            </div>
+
+            <div class="filter-item">
+                <label class="filter-label">Equipment</label>
+                <select class="filter-select" [(ngModel)]="selectedEquipment" (change)="applyFilters()">
+                    <option value="">All Equipment</option>
+                    <option *ngFor="let eq of equipmentTypes" [value]="eq">{{ eq }}</option>
+                </select>
+            </div>
+
+            <div class="filter-item">
+                <label class="filter-label">Difficulty</label>
+                <select class="filter-select" [(ngModel)]="selectedDifficulty" (change)="applyFilters()">
+                    <option value="">All Levels</option>
+                    <option *ngFor="let level of difficultyLevels" [value]="level">{{ level }}</option>
+                </select>
+            </div>
+
+            <div class="filter-item filter-search">
+                <label class="filter-label">Search</label>
+                <div class="search-input-wrapper">
+                    <span class="material-icons search-icon">search</span>
+                    <input type="text" class="filter-search-input" placeholder="Search exercises..."
+                        [(ngModel)]="searchTerm" (input)="onSearchChange($any($event.target).value)">
+                </div>
+            </div>
         </div>
 
-        <div class="filter-group">
-            <label for="equipment">Equipment</label>
-            <select id="equipment" [(ngModel)]="selectedEquipment" (change)="applyFilters()">
-                <option value="">All Equipment</option>
-                <option *ngFor="let eq of equipmentTypes" [value]="eq">{{ eq }}</option>
-            </select>
-        </div>
-
-        <div class="filter-group">
-            <label for="difficulty">Difficulty</label>
-            <select id="difficulty" [(ngModel)]="selectedDifficulty" (change)="applyFilters()">
-                <option value="">All Levels</option>
-                <option *ngFor="let level of difficultyLevels" [value]="level">{{ level }}</option>
-            </select>
-        </div>
-
-        <div class="filter-group search-group">
-            <label for="search">Search</label>
-            <input type="text" id="search" placeholder="Search exercises..." [(ngModel)]="searchTerm"
-                (input)="onSearchChange($any($event.target).value)">
-        </div>
-
-        <div class="filter-group checkbox-group" *ngIf="canActivate">
-            <label>
-                <input type="checkbox" [(ngModel)]="includeInactive" (change)="applyFilters()">
-                Include Inactive
+        <div class="filter-actions">
+            <label class="checkbox-label" *ngIf="canActivate">
+                <input type="checkbox" class="filter-checkbox" [(ngModel)]="includeInactive" (change)="applyFilters()">
+                <span>Include inactive exercises</span>
             </label>
+            <button class="btn-text" (click)="clearFilters()">Clear Filters</button>
         </div>
+    </div>
 
-        <button class="btn-secondary" (click)="clearFilters()">Clear Filters</button>
+    <!-- Results Summary -->
+    <div class="results-summary" *ngIf="(pagination$ | async) as pagination">
+        <span class="results-count">{{ pagination.total }} exercise{{ pagination.total !== 1 ? 's' : '' }} found</span>
     </div>
 
     <!-- Loading State -->
-    <div *ngIf="loading$ | async" class="loading-state">
-        <p>Loading exercises...</p>
+    <div *ngIf="loading$ | async" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading exercises...</p>
     </div>
 
-    <!-- Exercise List -->
+    <!-- Exercise Cards Grid -->
     <div *ngIf="!(loading$ | async)" class="exercise-grid">
+        <!-- Empty State -->
         <div *ngIf="(exercises$ | async)?.length === 0" class="empty-state">
-            <p>No exercises found. Try adjusting your filters or create a new exercise.</p>
+            <span class="material-icons empty-icon">fitness_center</span>
+            <h3 class="empty-title">No exercises found</h3>
+            <p class="empty-description">Try adjusting your filters or create a new exercise to get started.</p>
+            <button *ngIf="canCreate" [routerLink]="['/workouts/exercises/add']" class="btn-primary">
+                <span class="material-icons">add</span>
+                Add Exercise
+            </button>
         </div>
 
+        <!-- Exercise Cards -->
         <div *ngFor="let exercise of exercises$ | async" class="exercise-card">
-            <div class="exercise-header">
-                <h3>{{ exercise.name }}</h3>
-                <span class="status-badge" [class.active]="exercise.isActive" [class.inactive]="!exercise.isActive">
+            <div class="card-header">
+                <h3 class="exercise-name">{{ exercise.name }}</h3>
+                <span class="status-badge" [class.status-active]="exercise.isActive"
+                    [class.status-inactive]="!exercise.isActive">
                     {{ exercise.isActive ? 'Active' : 'Inactive' }}
                 </span>
             </div>
 
-            <div class="exercise-details">
-                <div class="detail-item">
-                    <strong>Muscle Group:</strong> {{ exercise.muscleGroup }}
-                </div>
-                <div class="detail-item">
-                    <strong>Equipment:</strong> {{ exercise.equipment }}
-                </div>
-                <div class="detail-item">
-                    <strong>Difficulty:</strong> {{ exercise.difficulty }}
-                </div>
-                <div class="detail-item" *ngIf="exercise.description">
-                    <strong>Description:</strong> {{ exercise.description | slice:0:100 }}{{ exercise.description.length
-                    > 100 ? '...' : '' }}
-                </div>
+            <div class="card-badges">
+                <span class="badge badge-muscle">
+                    <span class="material-icons badge-icon">fitness_center</span>
+                    {{ exercise.muscleGroup }}
+                </span>
+                <span class="badge badge-equipment">
+                    <span class="material-icons badge-icon">sports_gymnastics</span>
+                    {{ exercise.equipment }}
+                </span>
+                <span class="badge badge-difficulty" [attr.data-level]="exercise.difficulty.toLowerCase()">
+                    {{ exercise.difficulty }}
+                </span>
             </div>
 
-            <div class="exercise-actions">
-                <button [routerLink]="['/workouts/exercises', exercise._id]" class="btn-info">
-                    View Details
+            <p class="exercise-description" *ngIf="exercise.description">
+                {{ exercise.description | slice:0:120 }}{{ exercise.description.length > 120 ? '...' : '' }}
+            </p>
+
+            <div class="card-actions">
+                <button [routerLink]="['/workouts/exercises', exercise._id]" class="btn-card btn-view">
+                    <span class="material-icons">visibility</span>
+                    View
                 </button>
 
                 <button *ngIf="canEdit" [routerLink]="['/workouts/exercises', exercise._id, 'edit']"
-                    class="btn-secondary">
+                    class="btn-card btn-edit">
+                    <span class="material-icons">edit</span>
                     Edit
                 </button>
 
-                <button *ngIf="canActivate" (click)="toggleActivation(exercise)" [class.btn-warning]="exercise.isActive"
-                    [class.btn-success]="!exercise.isActive">
+                <button *ngIf="canActivate" (click)="toggleActivation(exercise)" class="btn-card"
+                    [class.btn-deactivate]="exercise.isActive" [class.btn-activate]="!exercise.isActive">
+                    <span class="material-icons">{{ exercise.isActive ? 'block' : 'check_circle' }}</span>
                     {{ exercise.isActive ? 'Deactivate' : 'Activate' }}
                 </button>
 
-                <button *ngIf="canDelete" (click)="deleteExercise(exercise)" class="btn-danger">
+                <button *ngIf="canDelete" (click)="deleteExercise(exercise)" class="btn-card btn-delete">
+                    <span class="material-icons">delete</span>
                     Delete
                 </button>
             </div>
@@ -106,17 +136,19 @@
     </div>
 
     <!-- Pagination -->
-    <div *ngIf="(pagination$ | async) as pagination" class="pagination">
-        <button (click)="previousPage()" [disabled]="currentPage === 1" class="btn-secondary">
+    <div *ngIf="(pagination$ | async) as pagination" class="pagination-container">
+        <button (click)="previousPage()" [disabled]="currentPage === 1" class="btn-pagination">
+            <span class="material-icons">chevron_left</span>
             Previous
         </button>
 
-        <span class="page-info">
-            Page {{ pagination.page }} of {{ pagination.pages }} ({{ pagination.total }} total)
+        <span class="pagination-info">
+            Page <strong>{{ pagination.page }}</strong> of <strong>{{ pagination.pages }}</strong>
         </span>
 
-        <button (click)="nextPage()" [disabled]="currentPage === pagination.pages" class="btn-secondary">
+        <button (click)="nextPage()" [disabled]="currentPage === pagination.pages" class="btn-pagination">
             Next
+            <span class="material-icons">chevron_right</span>
         </button>
     </div>
 </div>

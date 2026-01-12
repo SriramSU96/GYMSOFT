@@ -1,0 +1,260 @@
+<div class="plan-builder-page">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <h1 class="page-title">Create Workout Plan</h1>
+            <p class="page-subtitle">Build a comprehensive workout program</p>
+        </div>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="step-indicator">
+        <div class="step" [class.active]="(currentStep$ | async) === 1" [class.completed]="(currentStep$ | async)! > 1">
+            <div class="step-number">1</div>
+            <div class="step-label">Plan Details</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" [class.active]="(currentStep$ | async) === 2" [class.completed]="(currentStep$ | async)! > 2">
+            <div class="step-number">2</div>
+            <div class="step-label">Add Days</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" [class.active]="(currentStep$ | async) === 3" [class.completed]="(currentStep$ | async)! > 3">
+            <div class="step-number">3</div>
+            <div class="step-label">Add Exercises</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" [class.active]="(currentStep$ | async) === 4">
+            <div class="step-number">4</div>
+            <div class="step-label">Review</div>
+        </div>
+    </div>
+
+    <!-- Step 1: Plan Details -->
+    <div *ngIf="(currentStep$ | async) === 1" class="step-content">
+        <div class="form-card">
+            <h2 class="form-title">Plan Details</h2>
+            <p class="form-subtitle">Define the basic information for your workout plan</p>
+
+            <form [formGroup]="planForm" (ngSubmit)="onSubmitPlanDetails()">
+                <div class="form-group">
+                    <label>Plan Title <span class="required">*</span></label>
+                    <input type="text" formControlName="title" placeholder="e.g., Beginner Full Body Workout">
+                    <span class="error-message"
+                        *ngIf="planForm.get('title')?.invalid && planForm.get('title')?.touched">
+                        Title is required (minimum 3 characters)
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea formControlName="description" rows="4"
+                        placeholder="Describe the workout plan..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Level <span class="required">*</span></label>
+                        <select formControlName="level">
+                            <option *ngFor="let level of levels" [value]="level">{{ level }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Goal <span class="required">*</span></label>
+                        <select formControlName="goal">
+                            <option *ngFor="let goal of goals" [value]="goal">{{ goal }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Duration (weeks) <span class="required">*</span></label>
+                        <input type="number" formControlName="durationWeeks" min="1" max="52">
+                        <span class="error-message"
+                            *ngIf="planForm.get('durationWeeks')?.invalid && planForm.get('durationWeeks')?.touched">
+                            Duration must be between 1 and 52 weeks
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" (click)="cancel()" class="btn-secondary">Cancel</button>
+                    <button type="submit" [disabled]="planForm.invalid" class="btn-primary">
+                        Next: Add Days
+                        <span class="material-icons">arrow_forward</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Step 2: Add Days -->
+    <div *ngIf="(currentStep$ | async) === 2" class="step-content">
+        <div class="form-card">
+            <h2 class="form-title">Add Workout Days</h2>
+            <p class="form-subtitle">Define the workout days for this plan</p>
+
+            <!-- Day Input -->
+            <div class="day-input-section">
+                <div class="form-group">
+                    <label>Day Focus <span class="help-text">(e.g., Chest Day, Leg Day, Full Body)</span></label>
+                    <div class="input-with-button">
+                        <input type="text" [(ngModel)]="newDayFocus" (keyup.enter)="addDay()"
+                            placeholder="Enter day focus...">
+                        <button type="button" (click)="addDay()" [disabled]="!newDayFocus.trim()" class="btn-add-day">
+                            <span class="material-icons">add</span>
+                            Add Day
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Days List -->
+            <div *ngIf="days.length > 0" class="days-list">
+                <h3 class="days-list-title">Workout Days ({{ days.length }})</h3>
+                <div class="day-card" *ngFor="let day of days; let i = index">
+                    <div class="day-info">
+                        <span class="day-number">Day {{ day.dayNumber }}</span>
+                        <span class="day-focus">{{ day.focus }}</span>
+                    </div>
+                    <button type="button" (click)="removeDay(i)" class="btn-remove-day">
+                        <span class="material-icons">delete</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="days.length === 0" class="empty-days">
+                <span class="material-icons empty-icon">calendar_today</span>
+                <p>No workout days added yet. Add your first day above.</p>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" (click)="goToStep(1)" class="btn-secondary">
+                    <span class="material-icons">arrow_back</span>
+                    Back
+                </button>
+                <button type="button" (click)="onSubmitDays()" [disabled]="days.length === 0" class="btn-primary">
+                    Next: Add Exercises
+                    <span class="material-icons">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3: Add Exercises -->
+    <div *ngIf="(currentStep$ | async) === 3" class="step-content">
+        <div class="form-card">
+            <h2 class="form-title">Add Exercises</h2>
+            <p class="form-subtitle">Select exercises from the library - they'll be added automatically</p>
+
+            <!-- Day Tabs -->
+            <div class="day-tabs">
+                <button *ngFor="let day of builderDays$ | async" type="button" (click)="selectDay(day._id!)"
+                    [class.active]="selectedDayId === day._id" class="day-tab">
+                    Day {{ day.dayNumber }}: {{ day.focus }}
+                    <span class="exercise-count" *ngIf="getDayExercises(day._id!).length > 0">
+                        {{ getDayExercises(day._id!).length }}
+                    </span>
+                </button>
+            </div>
+
+            <!-- Exercise Form -->
+            <div *ngIf="selectedDayId" class="exercise-form-section">
+                <div class="form-row">
+                    <div class="form-group" style="flex: 2;">
+                        <label>Exercise <span class="required">*</span></label>
+                        <select [(ngModel)]="selectedExerciseId" (ngModelChange)="onExerciseSelected()">
+                            <option value="">Select an exercise...</option>
+                            <option *ngFor="let exercise of exercises$ | async" [value]="exercise._id">
+                                {{ exercise.name }} ({{ exercise.muscleGroup }})
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sets</label>
+                        <input type="number" [(ngModel)]="exerciseSets" min="1" max="10">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Reps</label>
+                        <input type="text" [(ngModel)]="exerciseReps" placeholder="10-12">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Rest (sec)</label>
+                        <input type="number" [(ngModel)]="exerciseRest" min="0" max="300">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tempo <span class="help-text">(optional, e.g., 3-0-1-0)</span></label>
+                        <input type="text" [(ngModel)]="exerciseTempo" placeholder="3-0-1-0">
+                    </div>
+
+                    <div class="form-group" style="flex: 2;">
+                        <label>Notes <span class="help-text">(optional)</span></label>
+                        <input type="text" [(ngModel)]="exerciseNotes" placeholder="Special instructions...">
+                    </div>
+                </div>
+
+                <!-- Exercise List for Selected Day -->
+                <div *ngIf="getDayExercises(selectedDayId).length > 0" class="exercise-list">
+                    <h3 class="exercise-list-title">Exercises ({{ getDayExercises(selectedDayId).length }})</h3>
+                    <div class="exercise-item" *ngFor="let ex of getDayExercises(selectedDayId); let i = index">
+                        <div class="exercise-order">{{ ex.order }}</div>
+                        <div class="exercise-details">
+                            <div class="exercise-name">Exercise ID: {{ ex.exerciseId }}</div>
+                            <div class="exercise-config">
+                                {{ ex.sets }} sets × {{ ex.reps }} reps • {{ ex.restSeconds }}s rest
+                                <span *ngIf="ex.tempo"> • Tempo: {{ ex.tempo }}</span>
+                            </div>
+                            <div class="exercise-notes" *ngIf="ex.notes">{{ ex.notes }}</div>
+                        </div>
+                        <button type="button" (click)="removeExerciseFromDay(selectedDayId, i)"
+                            class="btn-remove-exercise">
+                            <span class="material-icons">delete</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No Day Selected -->
+            <div *ngIf="!selectedDayId" class="empty-state-small">
+                <p>Select a day above to add exercises</p>
+            </div>
+
+            <!-- Warning if no exercises added -->
+            <div *ngIf="getTotalExerciseCount() === 0" class="warning-message">
+                <span class="material-icons">warning</span>
+                <p>No exercises added yet. Click a day tab above and select an exercise from the dropdown to add it
+                    automatically.</p>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" (click)="goToStep(2)" class="btn-secondary">
+                    <span class="material-icons">arrow_back</span>
+                    Back
+                </button>
+                <button type="button" (click)="onSubmitExercises()" [disabled]="getTotalExerciseCount() === 0"
+                    class="btn-primary">
+                    Complete Plan
+                    <span class="material-icons">check</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 4: Review (Coming Soon) -->
+    <div *ngIf="(currentStep$ | async) === 4" class="step-content">
+        <div class="form-card">
+            <h2 class="form-title">Review & Save</h2>
+            <p class="form-subtitle">This feature is coming soon.</p>
+            <div class="form-actions">
+                <button (click)="cancel()" class="btn-primary">Back to Plans</button>
+            </div>
+        </div>
+    </div>
+</div>

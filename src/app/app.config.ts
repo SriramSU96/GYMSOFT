@@ -33,6 +33,8 @@ import { gymReducer } from './core/store/gyms/gym.reducer';
 import { GymEffects } from './core/store/gyms/gym.effects';
 import { exerciseReducer } from './core/store/exercises/exercise.reducer';
 import { ExerciseEffects } from './core/store/exercises/exercise.effects';
+import { workoutPlanReducer } from './core/store/workout-plans/workout-plan.reducer';
+import { WorkoutPlanEffects } from './core/store/workout-plans/workout-plan.effects';
 
 import { routes } from './app.routes';
 
@@ -56,7 +58,8 @@ export const appConfig: ApplicationConfig = {
       security: securityReducer,
       community: communityReducer,
       gyms: gymReducer,
-      exercises: exerciseReducer
+      exercises: exerciseReducer,
+      workoutPlans: workoutPlanReducer
     }),
     provideEffects(
       AuthEffects,
@@ -72,7 +75,8 @@ export const appConfig: ApplicationConfig = {
       SecurityEffects,
       CommunityEffects,
       GymEffects,
-      ExerciseEffects
+      ExerciseEffects,
+      WorkoutPlanEffects
     ),
     provideStoreDevtools({ maxAge: 25, logOnly: false })
   ]

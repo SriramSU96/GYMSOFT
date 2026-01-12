@@ -1,0 +1,196 @@
+/* Step 3: Exercise Management CSS - Add to end of file */
+
+/* Day Tabs */
+.day-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.day-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    border: 1px solid #333333;
+    background: #252525;
+    color: #b0b0b0;
+    cursor: pointer;
+    transition: all 200ms;
+}
+
+.day-tab:hover {
+    background: #2a2a2a;
+    border-color: #D4AF37;
+    color: #ffffff;
+}
+
+.day-tab.active {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(242, 201, 76, 0.1));
+    border-color: #D4AF37;
+    color: #D4AF37;
+    font-weight: 600;
+}
+
+.exercise-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 12px;
+    background: #D4AF37;
+    color: #000000;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Exercise Form Section */
+.exercise-form-section {
+    margin-bottom: 24px;
+}
+
+.btn-add-exercise {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 200ms;
+    background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 100%);
+    color: #000000;
+    white-space: nowrap;
+}
+
+.btn-add-exercise:hover:not(:disabled) {
+    background: linear-gradient(135deg, #F2C94C 0%, #D4AF37 100%);
+    transform: translateY(-1px);
+}
+
+.btn-add-exercise:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-add-exercise .material-icons {
+    font-size: 18px;
+}
+
+/* Exercise List */
+.exercise-list {
+    margin-top: 24px;
+}
+
+.exercise-list-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #D4AF37;
+    margin: 0 0 16px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.exercise-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    background: #252525;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border-left: 3px solid #D4AF37;
+    transition: all 200ms;
+}
+
+.exercise-item:hover {
+    background: #2a2a2a;
+    transform: translateX(4px);
+}
+
+.exercise-order {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.15);
+    color: #D4AF37;
+    font-weight: 600;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.exercise-details {
+    flex: 1;
+}
+
+.exercise-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+
+.exercise-config {
+    font-size: 13px;
+    color: #b0b0b0;
+    margin-bottom: 4px;
+}
+
+.exercise-notes {
+    font-size: 12px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.btn-remove-exercise {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 200ms;
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    flex-shrink: 0;
+}
+
+.btn-remove-exercise:hover {
+    background: rgba(239, 68, 68, 0.25);
+    transform: scale(1.1);
+}
+
+.btn-remove-exercise .material-icons {
+    font-size: 20px;
+}
+
+/* Empty State Small */
+.empty-state-small {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    background: #252525;
+    border-radius: 8px;
+    margin-bottom: 24px;
+}
+
+.empty-state-small p {
+    font-size: 14px;
+    color: #b0b0b0;
+    margin: 0;
+}

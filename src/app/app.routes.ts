@@ -43,6 +43,14 @@ import { ExerciseListComponent } from './pages/workouts/exercises/exercise-list/
 import { ExerciseFormComponent } from './pages/workouts/exercises/exercise-form/exercise-form.component';
 import { ExerciseDetailComponent } from './pages/workouts/exercises/exercise-detail/exercise-detail.component';
 
+// Diet Meals
+import { MealListComponent } from './pages/workouts/diet-meals/meal-list/meal-list.component';
+
+// Workout Plans
+import { PlanListComponent } from './pages/workouts/plans/plan-list/plan-list.component';
+import { PlanBuilderComponent } from './pages/workouts/plans/plan-builder/plan-builder.component';
+import { PlanDetailComponent } from './pages/workouts/plans/plan-detail/plan-detail.component';
+
 // Inventory & POS
 import { ProductList } from './pages/inventory/product-list/product-list.component';
 import { PosTerminal } from './pages/inventory/pos-terminal/pos-terminal.component';
@@ -121,6 +129,7 @@ export const routes: Routes = [
             { path: 'workouts/builder/:id', component: WorkoutBuilder },
             { path: 'diets/builder', component: DietBuilder },
             { path: 'diets/builder/:id', component: DietBuilder },
+            { path: 'diets/meals', component: MealListComponent }, // New Meal Library
             { path: 'plans/assign', component: PlanAssignment },
             { path: 'my-workout', component: MyWorkout },
             { path: 'my-diet', component: MyDiet },
@@ -128,8 +137,14 @@ export const routes: Routes = [
             // Exercise Library
             { path: 'workouts/exercises', component: ExerciseListComponent },
             { path: 'workouts/exercises/add', component: ExerciseFormComponent, canActivate: [roleGuard(['admin', 'trainer', 'manager'])] },
-            { path: 'workouts/exercises/:id', component: ExerciseDetailComponent },
             { path: 'workouts/exercises/:id/edit', component: ExerciseFormComponent, canActivate: [roleGuard(['admin', 'trainer', 'manager'])] },
+            { path: 'workouts/exercises/:id', component: ExerciseDetailComponent },
+
+            // Workout Plans
+            { path: 'workouts/plans', component: PlanListComponent },
+            { path: 'workouts/plans/create', component: PlanBuilderComponent },
+            { path: 'workouts/plans/:id', component: PlanDetailComponent },
+            { path: 'workouts/plans/:id/edit', component: PlanBuilderComponent },
 
             // Inventory & POS
             { path: 'inventory/products', component: ProductList },

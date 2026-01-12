@@ -16,7 +16,8 @@ import { MuscleGroup, Equipment, Difficulty, CreateExerciseDto, UpdateExerciseDt
     selector: 'app-exercise-form',
     standalone: true,
     imports: [CommonModule, RouterModule, ReactiveFormsModule],
-    templateUrl: './exercise-form.component.html'
+    templateUrl: './exercise-form.component.html',
+    styleUrls: ['./exercise-form.component.css']
 })
 export class ExerciseFormComponent implements OnInit {
     private fb = inject(FormBuilder);

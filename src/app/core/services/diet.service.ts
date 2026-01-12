@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DietPlan } from '../models/gym-extensions.model';
+import { DietMeal, DietMealFilters, DietMealListResponse } from '../models/diet.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -10,8 +11,56 @@ import { environment } from '../../../environments/environment';
 })
 export class DietService {
     private apiUrl = `${environment.apiUrl}/diets`;
+    private mealsUrl = `${environment.apiUrl}/diet-meals`;
+    private uploadUrl = `${environment.apiUrl}/upload`;
 
     constructor(private http: HttpClient) { }
+
+    // ==========================================
+    // DIET MEAL LIBRARY (NEW)
+    // ==========================================
+
+    getMeals(filters: DietMealFilters): Observable<DietMealListResponse> {
+        let params = new HttpParams()
+            .set('page', filters.page.toString())
+            .set('pageSize', filters.pageSize.toString());
+
+        if (filters.category) params = params.set('category', filters.category);
+        if (filters.foodType) params = params.set('foodType', filters.foodType);
+        if (filters.search) params = params.set('search', filters.search);
+
+        return this.http.get<DietMealListResponse>(this.mealsUrl, { params });
+    }
+
+    getMeal(id: string): Observable<DietMeal> {
+        return this.http.get<DietMeal>(`${this.mealsUrl}/${id}`);
+    }
+
+    createMeal(meal: Partial<DietMeal>): Observable<DietMeal> {
+        return this.http.post<DietMeal>(this.mealsUrl, meal);
+    }
+
+    updateMeal(id: string, meal: Partial<DietMeal>): Observable<DietMeal> {
+        return this.http.put<DietMeal>(`${this.mealsUrl}/${id}`, meal);
+    }
+
+    deleteMeal(id: string): Observable<void> {
+        return this.http.delete<void>(`${this.mealsUrl}/${id}`);
+    }
+
+    deactivateMeal(id: string): Observable<void> {
+        return this.http.patch<void>(`${this.mealsUrl}/${id}/deactivate`, {});
+    }
+
+    uploadImage(file: File): Observable<{ success: boolean; message: string; imageUrl: string }> {
+        const formData = new FormData();
+        formData.append('image', file);
+        return this.http.post<{ success: boolean; message: string; imageUrl: string }>(this.uploadUrl, formData);
+    }
+
+    // ==========================================
+    // DIET PLANS (EXISTING)
+    // ==========================================
 
     // Get all diet plans with optional filtering
     getDietPlans(gymId?: string, memberId?: string): Observable<DietPlan[]> {

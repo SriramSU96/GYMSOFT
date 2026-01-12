@@ -1,0 +1,98 @@
+<div class="plan-detail-page" *ngIf="plan$ | async as plan">
+    <!-- Header -->
+    <div class="page-header">
+        <button (click)="goBack()" class="btn-back">
+            <span class="material-icons">arrow_back</span>
+            Back to Plans
+        </button>
+        <div class="header-actions">
+            <button (click)="editPlan(plan._id!)" class="btn-primary">
+                <span class="material-icons">edit</span>
+                Edit Plan
+            </button>
+        </div>
+    </div>
+
+    <!-- Plan Overview -->
+    <div class="plan-overview">
+        <h1 class="plan-title">{{ plan.title }}</h1>
+        <p class="plan-description" *ngIf="plan.description">{{ plan.description }}</p>
+
+        <div class="plan-meta">
+            <div class="meta-item">
+                <span class="material-icons">trending_up</span>
+                <div>
+                    <div class="meta-label">Level</div>
+                    <div class="meta-value">{{ plan.level }}</div>
+                </div>
+            </div>
+            <div class="meta-item">
+                <span class="material-icons">flag</span>
+                <div>
+                    <div class="meta-label">Goal</div>
+                    <div class="meta-value">{{ plan.goal }}</div>
+                </div>
+            </div>
+            <div class="meta-item">
+                <span class="material-icons">calendar_today</span>
+                <div>
+                    <div class="meta-label">Duration</div>
+                    <div class="meta-value">{{ plan.durationWeeks }} weeks</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workout Days -->
+    <div class="workout-days">
+        <h2 class="section-title">Workout Schedule</h2>
+
+        <div *ngIf="plan.days && plan.days.length > 0; else noDays" class="days-grid">
+            <div *ngFor="let day of plan.days" class="day-card">
+                <div class="day-header">
+                    <h3 class="day-title">Day {{ day.dayNumber }}</h3>
+                    <span class="day-focus">{{ day.focus }}</span>
+                </div>
+
+                <div *ngIf="day.exercises && day.exercises.length > 0" class="exercises-list">
+                    <div *ngFor="let exercise of day.exercises; let i = index" class="exercise-item">
+                        <div class="exercise-number">{{ i + 1 }}</div>
+                        <div class="exercise-details">
+                            <div class="exercise-name">{{ exercise.exerciseId?.name || 'Exercise' }}</div>
+                            <div class="exercise-specs">
+                                <span>{{ exercise.sets }} sets</span>
+                                <span class="separator">•</span>
+                                <span>{{ exercise.reps }} reps</span>
+                                <span class="separator">•</span>
+                                <span>{{ exercise.restSeconds }}s rest</span>
+                            </div>
+                            <div *ngIf="exercise.notes" class="exercise-notes">
+                                <span class="material-icons">info</span>
+                                {{ exercise.notes }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="!day.exercises || day.exercises.length === 0" class="no-exercises">
+                    <span class="material-icons">fitness_center</span>
+                    <p>No exercises added yet</p>
+                </div>
+            </div>
+        </div>
+
+        <ng-template #noDays>
+            <div class="empty-state">
+                <span class="material-icons">event_busy</span>
+                <h3>No Workout Days</h3>
+                <p>This plan doesn't have any workout days configured yet.</p>
+            </div>
+        </ng-template>
+    </div>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="loading$ | async" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading plan details...</p>
+</div>

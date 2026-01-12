@@ -1,0 +1,139 @@
+<div class="plan-list-page">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <h1 class="page-title">Workout Plans</h1>
+            <p class="page-subtitle">Manage and assign workout programs</p>
+        </div>
+        <button (click)="createPlan()" class="btn-primary">
+            <span class="material-icons">add</span>
+            Create Plan
+        </button>
+    </div>
+
+    <!-- Filter Panel Card -->
+    <div class="filter-card">
+        <div class="filter-grid">
+            <div class="filter-item">
+                <label class="filter-label">Level</label>
+                <select class="filter-select" [(ngModel)]="selectedLevel" (change)="applyFilters()">
+                    <option value="">All Levels</option>
+                    <option *ngFor="let level of levels" [value]="level">{{ level }}</option>
+                </select>
+            </div>
+
+            <div class="filter-item">
+                <label class="filter-label">Goal</label>
+                <select class="filter-select" [(ngModel)]="selectedGoal" (change)="applyFilters()">
+                    <option value="">All Goals</option>
+                    <option *ngFor="let goal of goals" [value]="goal">{{ goal }}</option>
+                </select>
+            </div>
+
+            <div class="filter-item filter-search">
+                <label class="filter-label">Search</label>
+                <div class="search-input-wrapper">
+                    <span class="material-icons search-icon">search</span>
+                    <input type="text" class="filter-search-input" placeholder="Search plans..."
+                        [(ngModel)]="searchTerm" (input)="onSearchChange($any($event.target).value)">
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-actions">
+            <span class="results-count" *ngIf="(pagination$ | async) as pagination">
+                {{ pagination.total }} plan{{ pagination.total !== 1 ? 's' : '' }} found
+            </span>
+            <button class="btn-text" (click)="clearAllFilters()">Clear Filters</button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading$ | async" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading workout plans...</p>
+    </div>
+
+    <!-- Plan Cards Grid -->
+    <div *ngIf="!(loading$ | async)" class="plan-grid">
+        <!-- Empty State -->
+        <div *ngIf="(plans$ | async)?.length === 0" class="empty-state">
+            <span class="material-icons empty-icon">fitness_center</span>
+            <h3 class="empty-title">No workout plans found</h3>
+            <p class="empty-description">Create your first workout plan to get started.</p>
+            <button *ngIf="canCreate" [routerLink]="['/workouts/plans/create']" class="btn-primary">
+                <span class="material-icons">add</span>
+                Create Plan
+            </button>
+        </div>
+
+        <!-- Plan Cards -->
+        <div *ngFor="let plan of plans$ | async" class="plan-card">
+            <div class="card-header">
+                <h3 class="plan-title">{{ plan.title }}</h3>
+                <span class="status-badge" [class.status-active]="plan.isActive"
+                    [class.status-inactive]="!plan.isActive">
+                    {{ plan.isActive ? 'Active' : 'Inactive' }}
+                </span>
+            </div>
+
+            <p class="plan-description" *ngIf="plan.description">
+                {{ plan.description | slice:0:120 }}{{ plan.description.length > 120 ? '...' : '' }}
+            </p>
+
+            <div class="card-badges">
+                <span class="badge badge-level" [attr.data-level]="plan.level.toLowerCase()">
+                    <span class="material-icons badge-icon">trending_up</span>
+                    {{ plan.level }}
+                </span>
+                <span class="badge badge-goal">
+                    <span class="material-icons badge-icon">flag</span>
+                    {{ plan.goal }}
+                </span>
+                <span class="badge badge-duration">
+                    <span class="material-icons badge-icon">calendar_today</span>
+                    {{ plan.durationWeeks }} weeks
+                </span>
+            </div>
+
+            <div class="card-actions">
+                <button [routerLink]="['/workouts/plans', plan._id]" class="btn-card btn-view">
+                    <span class="material-icons">visibility</span>
+                    View
+                </button>
+
+                <button *ngIf="canEdit" [routerLink]="['/workouts/plans', plan._id, 'edit']" class="btn-card btn-edit">
+                    <span class="material-icons">edit</span>
+                    Edit
+                </button>
+
+                <button *ngIf="canAssign" class="btn-card btn-assign">
+                    <span class="material-icons">person_add</span>
+                    Assign
+                </button>
+
+                <button *ngIf="canDelete" (click)="deletePlan(plan._id!, plan.title)" class="btn-card btn-delete">
+                    <span class="material-icons">delete</span>
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="(pagination$ | async) as pagination" class="pagination-container">
+        <button (click)="previousPage()" [disabled]="currentPage === 1" class="btn-pagination">
+            <span class="material-icons">chevron_left</span>
+            Previous
+        </button>
+
+        <span class="pagination-info">
+            Page <strong>{{ pagination.page }}</strong> of <strong>{{ pagination.pages }}</strong>
+        </span>
+
+        <button (click)="nextPage()" [disabled]="currentPage === pagination.pages" class="btn-pagination">
+            Next
+            <span class="material-icons">chevron_right</span>
+        </button>
+    </div>
+</div>

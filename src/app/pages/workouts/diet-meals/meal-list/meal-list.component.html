@@ -1,0 +1,170 @@
+<div class="meal-library-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <h1>Diet Meal Library</h1>
+            <p class="subtitle">Manage food items used in diet plans</p>
+        </div>
+        <button class="btn-primary" routerLink="/diets/meals/add">
+            <span class="material-icons">add</span>
+            Add Meal
+        </button>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="search-bar">
+            <span class="material-icons">search</span>
+            <input type="text" placeholder="Search meals..." [ngModel]="searchQuery" (input)="onSearch($event)">
+        </div>
+
+        <div class="filters">
+            <div class="select-wrapper">
+                <select [(ngModel)]="selectedCategory" (change)="onFilterChange()">
+                    <option value="">All Categories</option>
+                    <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+                </select>
+            </div>
+
+            <div class="select-wrapper">
+                <select [(ngModel)]="selectedFoodType" (change)="onFilterChange()">
+                    <option value="">All Diet Types</option>
+                    <option *ngFor="let type of foodTypes" [value]="type">{{ type }}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-area">
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="loading-state">
+            <div class="spinner"></div>
+            <p>Loading meals...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!isLoading && meals.length === 0" class="empty-state">
+            <span class="material-icons">restaurant_menu</span>
+            <h3>No diet meals found</h3>
+            <p>Try adjusting your search or add a new meal to the library.</p>
+            <button class="btn-secondary" routerLink="/diets/meals/add">Add First Meal</button>
+        </div>
+
+        <!-- Meal Grid -->
+        <div *ngIf="!isLoading && meals.length > 0" class="meal-grid">
+            <div *ngFor="let meal of meals" class="meal-card">
+                <div class="card-header">
+                    <div class="badges">
+                        <span class="badge category">{{ meal.category }}</span>
+                        <span class="badge type" [ngClass]="{
+                            'veg': meal.foodType === 'Veg' || meal.foodType === 'Vegan',
+                            'non-veg': meal.foodType === 'Non-Veg'
+                        }">{{ meal.foodType }}</span>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <h3 class="meal-name">{{ meal.name }}</h3>
+                    <div class="nutrition-summary">
+                        <div class="macro-pill calories">
+                            <span class="value">{{ meal.calories }}</span>
+                            <span class="label">kcal</span>
+                        </div>
+                        <div class="macros-row">
+                            <div class="macro-item">
+                                <span class="label">P</span>
+                                <span class="value">{{ meal.protein }}g</span>
+                            </div>
+                            <div class="macro-item">
+                                <span class="label">C</span>
+                                <span class="value">{{ meal.carbs }}g</span>
+                            </div>
+                            <div class="macro-item">
+                                <span class="label">F</span>
+                                <span class="value">{{ meal.fats }}g</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-actions">
+                    <button class="btn-icon" (click)="openMealDetails(meal)" title="View Details">
+                        <span class="material-icons">visibility</span>
+                    </button>
+                    <button class="btn-icon" (click)="editMeal(meal)" title="Edit">
+                        <span class="material-icons">edit</span>
+                    </button>
+                    <button class="btn-icon danger" (click)="deactivateMeal(meal)" title="Deactivate">
+                        <span class="material-icons">block</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div *ngIf="totalPages > 1" class="pagination">
+            <button [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+                <span class="material-icons">chevron_left</span>
+            </button>
+            <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
+                <span class="material-icons">chevron_right</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Details Modal -->
+<div *ngIf="isModalOpen && selectedMeal" class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>{{ selectedMeal.name }}</h2>
+            <button class="btn-close" (click)="closeModal()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div class="modal-overview">
+                <div class="info-badges">
+                    <span class="badge category">{{ selectedMeal.category }}</span>
+                    <span class="badge type">{{ selectedMeal.foodType }}</span>
+                </div>
+                <div class="calories-highlight">
+                    <span class="big-number">{{ selectedMeal.calories }}</span>
+                    <span class="unit">Calories</span>
+                </div>
+            </div>
+
+            <p class="description" *ngIf="selectedMeal.description">{{ selectedMeal.description }}</p>
+
+            <div class="nutrition-details">
+                <h3>Nutrition Breakdown</h3>
+                <div class="macro-grid">
+                    <div class="macro-card protein">
+                        <div class="macro-val">{{ selectedMeal.protein }}g</div>
+                        <div class="macro-name">Protein</div>
+                    </div>
+                    <div class="macro-card carbs">
+                        <div class="macro-val">{{ selectedMeal.carbs }}g</div>
+                        <div class="macro-name">Carbs</div>
+                    </div>
+                    <div class="macro-card fats">
+                        <div class="macro-val">{{ selectedMeal.fats }}g</div>
+                        <div class="macro-name">Fats</div>
+                    </div>
+                    <div class="macro-card fiber">
+                        <div class="macro-val">{{ selectedMeal.fiber }}g</div>
+                        <div class="macro-name">Fiber</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-secondary" (click)="editMeal(selectedMeal)">Edit Meal</button>
+            <button class="btn-primary" (click)="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
