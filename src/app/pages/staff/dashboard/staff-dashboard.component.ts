@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { RouterModule } from '@angular/router';
 import { combineLatest, map, Observable } from 'rxjs';
 import { loadStaff, loadSalaries, markStaffAttendance, loadStaffAttendance } from '../../../core/store/staff/staff.actions';
-import { selectStaffList, selectSalarySummary, selectStaffIsLoading, selectStaffAttendance } from '../../../core/store/staff/staff.selectors';
+import { selectAllStaff, selectSalarySummary, selectStaffLoading, selectStaffAttendance } from '../../../core/store/staff/staff.selectors';
 import { Staff, StaffAttendance } from '../../../core/models/staff.model';
 
 @Component({
@@ -18,16 +18,16 @@ import { Staff, StaffAttendance } from '../../../core/models/staff.model';
 export class StaffDashboardComponent implements OnInit {
     private store = inject(Store);
 
-    staffList$: Observable<Staff[]> = this.store.select(selectStaffList);
+    staffList$: Observable<Staff[]> = this.store.select(selectAllStaff);
     attendance$: Observable<StaffAttendance[]> = this.store.select(selectStaffAttendance);
-    salarySummary$: Observable<{ total: number, paid: number, pending: number }> = this.store.select(selectSalarySummary);
-    isLoading$: Observable<boolean> = this.store.select(selectStaffIsLoading);
+    salarySummary$: Observable<any> = this.store.select(selectSalarySummary);
+    isLoading$: Observable<boolean> = this.store.select(selectStaffLoading);
 
     staffWithAttendance$ = combineLatest([this.staffList$, this.attendance$]).pipe(
         map(([staff, attendance]: [Staff[], StaffAttendance[]]) => {
             const today = new Date().toISOString().split('T')[0];
             return staff.map(s => {
-                const dayAttendance = attendance.find((a: StaffAttendance) => a.staffId === s._id && a.date === today);
+                const dayAttendance = attendance.find((a: StaffAttendance) => a.staffId === s._id && new Date(a.date).toISOString().split('T')[0] === today);
                 return {
                     ...s,
                     status: dayAttendance ? dayAttendance.status : 'Absent' // Default to Absent if no record
@@ -37,12 +37,12 @@ export class StaffDashboardComponent implements OnInit {
     );
 
     ngOnInit(): void {
-        this.store.dispatch(loadStaff());
-        this.store.dispatch(loadSalaries());
-        this.store.dispatch(loadStaffAttendance());
+        this.store.dispatch(loadStaff({}));
+        this.store.dispatch(loadSalaries({ params: {} }));
+        this.store.dispatch(loadStaffAttendance({}));
     }
 
     markAttendance(staffId: string, status: any) {
-        this.store.dispatch(markStaffAttendance({ staffId, status }));
+        this.store.dispatch(markStaffAttendance({ attendance: { staffId, status } }));
     }
 }

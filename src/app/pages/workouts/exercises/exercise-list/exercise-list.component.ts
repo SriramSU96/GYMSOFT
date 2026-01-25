@@ -59,7 +59,7 @@ export class ExerciseListComponent implements OnInit, OnDestroy {
     difficultyLevels = Object.values(Difficulty);
 
     // User permissions
-    currentUser = this.authService.getCurrentUser();
+    currentUser = this.authService.currentUserValue;
     canCreate = this.hasRole(['admin', 'trainer', 'manager']);
     canEdit = this.hasRole(['admin', 'trainer', 'manager']);
     canActivate = this.hasRole(['admin', 'manager']);

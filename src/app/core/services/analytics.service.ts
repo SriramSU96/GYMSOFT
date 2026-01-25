@@ -1,4 +1,3 @@
-
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -10,35 +9,37 @@ import { environment } from '../../../environments/environment';
 })
 export class AnalyticsService {
     private http = inject(HttpClient);
-    private apiUrl = `${environment.apiUrl}/dashboard/analytics`;
+    private apiUrl = `${environment.apiUrl}/analytics`; // Updated to /analytics base
 
-    getOverview(): Observable<GymKPIs> {
-        return this.http.get<GymKPIs>(`${this.apiUrl}/overview`);
+    // Dashboard Overview
+    getOverview(): Observable<{ success: boolean; data: GymKPIs }> {
+        return this.http.get<{ success: boolean; data: GymKPIs }>(`${this.apiUrl}/overview`);
     }
 
-    getRetention(): Observable<RetentionRate> {
-        return this.http.get<RetentionRate>(`${this.apiUrl}/retention`);
+    // Specific Widgets
+    getRetention(): Observable<{ success: boolean; data: RetentionRate }> {
+        return this.http.get<{ success: boolean; data: RetentionRate }>(`${this.apiUrl}/retention`);
     }
 
-    getPeakHours(): Observable<PeakHours> {
-        return this.http.get<PeakHours>(`${this.apiUrl}/peak-hours`);
+    getPeakHours(): Observable<{ success: boolean; data: PeakHours }> {
+        return this.http.get<{ success: boolean; data: PeakHours }>(`${this.apiUrl}/peak-hours`);
     }
 
-    getTrainerPerformance(): Observable<TrainerPerformance[]> {
-        return this.http.get<TrainerPerformance[]>(`${this.apiUrl}/trainer-performance`);
+    getTrainerPerformance(): Observable<{ success: boolean; data: TrainerPerformance[] }> {
+        return this.http.get<{ success: boolean; data: TrainerPerformance[] }>(`${this.apiUrl}/trainers/performance`);
     }
 
-    getAdvancedAnalytics(filter?: string): Observable<AdvancedAnalytics> {
-        let params = new HttpParams();
-        if (filter) {
-            params = params.set('period', filter);
-        }
-        return this.http.get<AdvancedAnalytics>(`${this.apiUrl}/advanced`, { params });
+    // Advanced / Detailed Analytics
+    getAdvancedAnalytics(period: 'week' | 'month' | 'year' = 'month'): Observable<{ success: boolean; data: AdvancedAnalytics }> {
+        const params = new HttpParams().set('period', period);
+        return this.http.get<{ success: boolean; data: AdvancedAnalytics }>(`${this.apiUrl}/dashboard/advanced`, { params });
     }
 
-    getFinancialReport(month: string): Observable<FinancialReport> {
-        return this.http.get<FinancialReport>(`${this.apiUrl}/financial-report`, {
-            params: new HttpParams().set('month', month)
-        });
+    // Financial
+    getFinancialReport(month: string, year: number): Observable<{ success: boolean; data: FinancialReport }> {
+        const params = new HttpParams()
+            .set('month', month)
+            .set('year', year.toString());
+        return this.http.get<{ success: boolean; data: FinancialReport }>(`${this.apiUrl}/finance/report`, { params });
     }
 }

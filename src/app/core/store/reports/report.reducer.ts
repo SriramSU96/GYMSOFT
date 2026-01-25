@@ -1,46 +1,82 @@
-
 import { createReducer, on } from '@ngrx/store';
 import * as ReportActions from './report.actions';
-import { ProfitLoss, YearlySummary } from '../../models/report.model';
+import { ProfitLoss, YearlySummary, MemberReport, AttendanceReport } from '../../models/report.model';
 
 export interface ReportState {
     profitLoss: ProfitLoss | null;
     yearlySummary: YearlySummary | null;
-    isLoading: boolean;
+    memberReport: MemberReport | null;
+    attendanceReport: AttendanceReport | null;
+    loading: {
+        financial: boolean;
+        member: boolean;
+        attendance: boolean;
+        download: boolean;
+    };
     error: any;
 }
 
 export const initialState: ReportState = {
     profitLoss: null,
     yearlySummary: null,
-    isLoading: false,
+    memberReport: null,
+    attendanceReport: null,
+    loading: {
+        financial: false,
+        member: false,
+        attendance: false,
+        download: false
+    },
     error: null
 };
 
 export const reportReducer = createReducer(
     initialState,
-    on(ReportActions.loadProfitLoss, ReportActions.loadYearlySummary, ReportActions.addExpense, (state) => ({
-        ...state,
-        isLoading: true,
-        error: null
+
+    // Financial
+    on(ReportActions.loadProfitLoss, ReportActions.loadYearlySummary, state => ({
+        ...state, loading: { ...state.loading, financial: true }, error: null
     })),
     on(ReportActions.loadProfitLossSuccess, (state, { data }) => ({
-        ...state,
-        profitLoss: data,
-        isLoading: false
+        ...state, profitLoss: data, loading: { ...state.loading, financial: false }
     })),
     on(ReportActions.loadYearlySummarySuccess, (state, { data }) => ({
-        ...state,
-        yearlySummary: data,
-        isLoading: false
+        ...state, yearlySummary: data, loading: { ...state.loading, financial: false }
     })),
-    on(ReportActions.addExpenseSuccess, (state) => ({
-        ...state, // Usually we might want to reload P&L after adding expense, or just stop loading
-        isLoading: false
+    on(ReportActions.loadProfitLossFailure, ReportActions.loadYearlySummaryFailure, (state, { error }) => ({
+        ...state, loading: { ...state.loading, financial: false }, error
     })),
-    on(ReportActions.loadProfitLossFailure, ReportActions.loadYearlySummaryFailure, ReportActions.addExpenseFailure, (state, { error }) => ({
-        ...state,
-        isLoading: false,
-        error
+
+    // Member Report
+    on(ReportActions.generateMemberReport, state => ({
+        ...state, loading: { ...state.loading, member: true }, error: null
+    })),
+    on(ReportActions.generateMemberReportSuccess, (state, { data }) => ({
+        ...state, memberReport: data, loading: { ...state.loading, member: false }
+    })),
+    on(ReportActions.generateMemberReportFailure, (state, { error }) => ({
+        ...state, loading: { ...state.loading, member: false }, error
+    })),
+
+    // Attendance Report
+    on(ReportActions.generateAttendanceReport, state => ({
+        ...state, loading: { ...state.loading, attendance: true }, error: null
+    })),
+    on(ReportActions.generateAttendanceReportSuccess, (state, { data }) => ({
+        ...state, attendanceReport: data, loading: { ...state.loading, attendance: false }
+    })),
+    on(ReportActions.generateAttendanceReportFailure, (state, { error }) => ({
+        ...state, loading: { ...state.loading, attendance: false }, error
+    })),
+
+    // Download
+    on(ReportActions.downloadReport, state => ({
+        ...state, loading: { ...state.loading, download: true }, error: null
+    })),
+    on(ReportActions.downloadReportSuccess, state => ({
+        ...state, loading: { ...state.loading, download: false }
+    })),
+    on(ReportActions.downloadReportFailure, (state, { error }) => ({
+        ...state, loading: { ...state.loading, download: false }, error
     }))
 );

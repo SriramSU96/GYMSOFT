@@ -1,45 +1,57 @@
 import { createReducer, on } from '@ngrx/store';
-import * as GymActions from './gym.actions';
 import { Gym, GymBranch } from '../../models/gym.model';
+import * as GymActions from './gym.actions';
 
 export interface GymState {
-    gyms: Gym[];
+    currentGym: Gym | null;
     branches: GymBranch[];
-    selectedGym: Gym | GymBranch | null;
-    isLoading: boolean;
+    loading: boolean;
     error: any;
 }
 
 export const initialState: GymState = {
-    gyms: [],
+    currentGym: null,
     branches: [],
-    selectedGym: null,
-    isLoading: false,
+    loading: false,
     error: null
 };
 
 export const gymReducer = createReducer(
     initialState,
-    on(GymActions.loadGyms, (state) => ({ ...state, isLoading: true })),
-    on(GymActions.loadGymsSuccess, (state, { gyms }) => ({
-        ...state,
-        gyms,
-        isLoading: false,
-        selectedGym: state.selectedGym || gyms[0] || null
+
+    // Gym Loading / Updating
+    on(GymActions.loadCurrentGym, GymActions.updateGym, GymActions.updateSettings, (state) => ({
+        ...state, loading: true, error: null
     })),
-    on(GymActions.loadGymsFailure, (state, { error }) => ({ ...state, error, isLoading: false })),
+    on(GymActions.loadCurrentGymSuccess, GymActions.updateGymSuccess, GymActions.updateSettingsSuccess, (state, { gym }) => ({
+        ...state, currentGym: gym, loading: false
+    })),
+    on(GymActions.loadCurrentGymFailure, GymActions.updateGymFailure, GymActions.updateSettingsFailure, (state, { error }) => ({
+        ...state, loading: false, error
+    })),
 
-    on(GymActions.loadBranches, (state) => ({ ...state, isLoading: true })),
-    on(GymActions.loadBranchesSuccess, (state, { branches }) => ({ ...state, branches, isLoading: false })),
-    on(GymActions.loadBranchesFailure, (state, { error }) => ({ ...state, error, isLoading: false })),
+    // Branches
+    on(GymActions.loadBranches, (state) => ({
+        ...state, loading: true, error: null
+    })),
+    on(GymActions.loadBranchesSuccess, (state, { branches }) => ({
+        ...state, branches, loading: false
+    })),
+    on(GymActions.loadBranchesFailure, (state, { error }) => ({
+        ...state, loading: false, error
+    })),
 
-    on(GymActions.createBranch, (state) => ({ ...state, isLoading: true })),
     on(GymActions.createBranchSuccess, (state, { branch }) => ({
-        ...state,
-        branches: [...state.branches, branch],
-        isLoading: false
+        ...state, branches: [...state.branches, branch], loading: false
     })),
-    on(GymActions.createBranchFailure, (state, { error }) => ({ ...state, error, isLoading: false })),
-
-    on(GymActions.selectGym, (state, { gym }) => ({ ...state, selectedGym: gym }))
+    on(GymActions.updateBranchSuccess, (state, { branch }) => ({
+        ...state,
+        branches: state.branches.map(b => b.id === branch.id || b._id === branch._id ? branch : b),
+        loading: false
+    })),
+    on(GymActions.deleteBranchSuccess, (state, { id }) => ({
+        ...state,
+        branches: state.branches.filter(b => b.id !== id && b._id !== id),
+        loading: false
+    }))
 );

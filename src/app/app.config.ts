@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
@@ -35,12 +35,17 @@ import { exerciseReducer } from './core/store/exercises/exercise.reducer';
 import { ExerciseEffects } from './core/store/exercises/exercise.effects';
 import { workoutPlanReducer } from './core/store/workout-plans/workout-plan.reducer';
 import { WorkoutPlanEffects } from './core/store/workout-plans/workout-plan.effects';
+import { expenseReducer } from './core/store/expenses/expense.reducer';
+import { ExpenseEffects } from './core/store/expenses/expense.effects';
+import { posReducer } from './core/store/pos/pos.reducer';
+import { PosEffects } from './core/store/pos/pos.effects';
+import { classReducer } from './core/store/classes/class.reducer';
+import { ClassEffects } from './core/store/classes/class.effects';
 
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
@@ -58,8 +63,11 @@ export const appConfig: ApplicationConfig = {
       security: securityReducer,
       community: communityReducer,
       gyms: gymReducer,
+      expenses: expenseReducer, // Registered expense reducer
       exercises: exerciseReducer,
-      workoutPlans: workoutPlanReducer
+      workoutPlans: workoutPlanReducer,
+      pos: posReducer,
+      classes: classReducer
     }),
     provideEffects(
       AuthEffects,
@@ -75,8 +83,11 @@ export const appConfig: ApplicationConfig = {
       SecurityEffects,
       CommunityEffects,
       GymEffects,
+      ExpenseEffects,
       ExerciseEffects,
-      WorkoutPlanEffects
+      WorkoutPlanEffects,
+      PosEffects,
+      ClassEffects
     ),
     provideStoreDevtools({ maxAge: 25, logOnly: false })
   ]

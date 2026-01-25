@@ -35,7 +35,7 @@ export class ExerciseDetailComponent implements OnInit {
     loading$ = this.store.select(selectExerciseLoading);
 
     // User permissions
-    currentUser = this.authService.getCurrentUser();
+    currentUser = this.authService.currentUserValue;
     canEdit = this.hasRole(['admin', 'trainer', 'manager']);
     canActivate = this.hasRole(['admin', 'manager']);
     canDelete = this.hasRole(['admin']);

@@ -1,39 +1,623 @@
-<div>
-    <div>
-        <h2>Salary Management</h2>
+<div class="page-container">
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Staff Salary & Payroll</h1>
+            <p class="page-subtitle">Calculate and manage monthly staff salaries</p>
+        </div>
+        <div class="flex items-center gap-md">
+            <select [(ngModel)]="selectedMonth" (change)="onMonthChange()" class="month-selector">
+                <option *ngFor="let month of months" [value]="month.value">{{ month.label }}</option>
+            </select>
+            <button class="btn btn-primary" (click)="generateSalary()">
+                <span class="material-icons">calculate</span>
+                Generate Salary
+            </button>
+        </div>
     </div>
 
-    <div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Staff Name</th>
-                    <th>Month</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let salary of salaries">
-                    <td >{{ salary.staffName }}</td>
-                    <td>{{ salary.month }}</td>
-                    <td>${{ salary.amount }}</td>
-                    <td>
-                        <span [ngClass]="{
-                            'badge-success': salary.status === 'paid',
-                            'badge-warning': salary.status === 'pending'
-                        }">
-                            {{ salary.status | uppercase }}
-                        </span>
-                    </td>
-                    <td>
-                        <button *ngIf="salary.status === 'pending'">
-                            Mark Paid
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- STATS CARDS -->
+    <div class="stats-grid">
+        <div class="stat-card glass">
+            <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.15); color: var(--success);">
+                <span class="material-icons">payments</span>
+            </div>
+            <div>
+                <p class="stat-label">Total Payroll</p>
+                <h2 class="stat-value">₹{{ getTotalPayroll() | number:'1.2-2' }}</h2>
+            </div>
+        </div>
+        <div class="stat-card glass">
+            <div class="stat-icon" style="background-color: rgba(245, 158, 11, 0.15); color: var(--warning);">
+                <span class="material-icons">pending_actions</span>
+            </div>
+            <div>
+                <p class="stat-label">Pending Payments</p>
+                <h2 class="stat-value">{{ getPendingCount() }}</h2>
+            </div>
+        </div>
+        <div class="stat-card glass">
+            <div class="stat-icon" style="background-color: rgba(59, 130, 246, 0.15); color: var(--info);">
+                <span class="material-icons">check_circle</span>
+            </div>
+            <div>
+                <p class="stat-label">Paid This Month</p>
+                <h2 class="stat-value">{{ getPaidCount() }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters-bar">
+        <input type="text" placeholder="Search by staff name..." [(ngModel)]="searchQuery" (input)="applyFilters()"
+            class="search-input" />
+        <select [(ngModel)]="statusFilter" (change)="applyFilters()" class="filter-select">
+            <option value="">All Status</option>
+            <option value="Paid">Paid</option>
+            <option value="Pending">Pending</option>
+            <option value="Processing">Processing</option>
+        </select>
+    </div>
+
+    <!-- PAYROLL TABLE -->
+    <div class="card">
+        <div class="table-container">
+            <table *ngIf="filteredSalaries.length > 0; else emptyState">
+                <thead>
+                    <tr>
+                        <th>Staff Name</th>
+                        <th>Role</th>
+                        <th>Salary Type</th>
+                        <th>Present Days</th>
+                        <th>Working Hours</th>
+                        <th>Gross Salary</th>
+                        <th>Deductions</th>
+                        <th>Net Salary</th>
+                        <th>Payment Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let salary of filteredSalaries"
+                        [class.highlight-unpaid]="salary.paymentStatus === 'Pending'">
+                        <!-- Staff Name -->
+                        <td>
+                            <div class="staff-info">
+                                <div class="staff-avatar">{{ getInitials(salary.staffName) }}</div>
+                                <span class="staff-name">{{ salary.staffName }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Role -->
+                        <td>
+                            <span class="role-badge">{{ salary.role }}</span>
+                        </td>
+
+                        <!-- Salary Type -->
+                        <td>
+                            <span class="salary-type-badge" [class]="getSalaryTypeClass(salary.salaryType)">
+                                {{ salary.salaryType }}
+                            </span>
+                        </td>
+
+                        <!-- Present Days -->
+                        <td class="text-center">
+                            <strong>{{ salary.presentDays }}</strong> / {{ salary.totalWorkingDays }}
+                        </td>
+
+                        <!-- Working Hours -->
+                        <td class="text-center">
+                            <strong>{{ salary.workingHours }}</strong> hrs
+                        </td>
+
+                        <!-- Gross Salary -->
+                        <td>
+                            <span class="amount">₹{{ salary.grossSalary | number:'1.2-2' }}</span>
+                        </td>
+
+                        <!-- Deductions -->
+                        <td>
+                            <span class="amount text-danger" *ngIf="salary.deductions > 0">
+                                -₹{{ salary.deductions | number:'1.2-2' }}
+                            </span>
+                            <span *ngIf="salary.deductions === 0">-</span>
+                        </td>
+
+                        <!-- Net Salary -->
+                        <td>
+                            <span class="amount net-salary">₹{{ salary.netSalary | number:'1.2-2' }}</span>
+                        </td>
+
+                        <!-- Payment Status -->
+                        <td>
+                            <span class="badge" [class]="getStatusBadgeClass(salary.paymentStatus)">
+                                {{ salary.paymentStatus }}
+                            </span>
+                        </td>
+
+                        <!-- Actions -->
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon btn-secondary" (click)="viewSalaryDetails(salary)"
+                                    title="View Details">
+                                    <span class="material-icons">visibility</span>
+                                </button>
+                                <button *ngIf="salary.paymentStatus === 'Pending'" class="btn-icon btn-primary"
+                                    (click)="markAsPaid(salary)" title="Mark as Paid">
+                                    <span class="material-icons">check_circle</span>
+                                </button>
+                                <button class="btn-icon btn-secondary" (click)="openSalaryConfig(salary)"
+                                    title="Configure Salary">
+                                    <span class="material-icons">settings</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- EMPTY STATE -->
+            <ng-template #emptyState>
+                <div class="empty-state">
+                    <span class="material-icons empty-icon">account_balance_wallet</span>
+                    <h3>No salary records found</h3>
+                    <p>{{ searchQuery || statusFilter ? 'Try adjusting your filters' : 'Click "Generate Salary" to
+                        create payroll for this month' }}</p>
+                </div>
+            </ng-template>
+        </div>
     </div>
 </div>
+
+<!-- SALARY CONFIGURATION MODAL -->
+<div *ngIf="showConfigModal" class="modal-backdrop" (click)="closeConfigModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Salary Configuration</h3>
+            <button class="btn-icon btn-secondary" (click)="closeConfigModal()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Staff Name</label>
+                <input type="text" [value]="selectedSalary?.staffName" disabled />
+            </div>
+
+            <div class="form-group">
+                <label>Salary Type</label>
+                <select [(ngModel)]="salaryConfig.salaryType" (change)="onSalaryTypeChange()">
+                    <option value="Monthly">Monthly Fixed</option>
+                    <option value="Daily">Daily Rate</option>
+                    <option value="Hourly">Hourly Rate</option>
+                </select>
+            </div>
+
+            <div class="form-group" *ngIf="salaryConfig.salaryType === 'Monthly'">
+                <label>Base Salary (Monthly)</label>
+                <input type="number" [(ngModel)]="salaryConfig.baseSalary" placeholder="Enter monthly salary" />
+            </div>
+
+            <div class="form-group" *ngIf="salaryConfig.salaryType === 'Daily'">
+                <label>Daily Rate</label>
+                <input type="number" [(ngModel)]="salaryConfig.dailyRate" placeholder="Enter daily rate" />
+            </div>
+
+            <div class="form-group" *ngIf="salaryConfig.salaryType === 'Hourly'">
+                <label>Hourly Rate</label>
+                <input type="number" [(ngModel)]="salaryConfig.hourlyRate" placeholder="Enter hourly rate" />
+            </div>
+
+            <div class="form-group">
+                <label>Overtime Rate (per hour)</label>
+                <input type="number" [(ngModel)]="salaryConfig.overtimeRate" placeholder="Enter overtime rate" />
+            </div>
+
+            <div class="form-group">
+                <label>Deductions</label>
+                <input type="number" [(ngModel)]="salaryConfig.deductions" placeholder="Enter deductions" />
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeConfigModal()">Cancel</button>
+            <button class="btn btn-primary" (click)="saveSalaryConfig()">
+                <span class="material-icons">save</span>
+                Save Configuration
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- SALARY DETAILS MODAL -->
+<div *ngIf="showDetailsModal" class="modal-backdrop" (click)="closeDetailsModal()">
+    <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Salary Details - {{ selectedSalary?.staffName }}</h3>
+            <button class="btn-icon btn-secondary" (click)="closeDetailsModal()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <!-- Month & Year -->
+            <div class="detail-section">
+                <h4>Period</h4>
+                <p class="text-accent">{{ getMonthLabel(selectedSalary?.month || '') }}</p>
+            </div>
+
+            <!-- Attendance Summary -->
+            <div class="detail-section">
+                <h4>Attendance Summary</h4>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Total Working Days</span>
+                        <span class="detail-value">{{ selectedSalary?.totalWorkingDays }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Present Days</span>
+                        <span class="detail-value text-success">{{ selectedSalary?.presentDays }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Absent Days</span>
+                        <span class="detail-value text-danger">{{ selectedSalary?.absentDays }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Working Hours</span>
+                        <span class="detail-value">{{ selectedSalary?.workingHours }} hrs</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Overtime Hours</span>
+                        <span class="detail-value text-warning">{{ selectedSalary?.overtimeHours }} hrs</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Salary Calculation Breakdown -->
+            <div class="detail-section">
+                <h4>Salary Calculation Breakdown</h4>
+                <div class="breakdown-table">
+                    <div class="breakdown-row">
+                        <span>Base Salary ({{ selectedSalary?.salaryType }})</span>
+                        <span>₹{{ selectedSalary?.baseSalaryAmount | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="breakdown-row"
+                        *ngIf="selectedSalary?.overtimeAmount && (selectedSalary?.overtimeAmount || 0) > 0">
+                        <span>Overtime Pay ({{ selectedSalary?.overtimeHours }} hrs)</span>
+                        <span class="text-success">+₹{{ selectedSalary?.overtimeAmount | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="breakdown-row" *ngIf="selectedSalary?.bonuses && (selectedSalary?.bonuses || 0) > 0">
+                        <span>Bonuses & Incentives</span>
+                        <span class="text-success">+₹{{ selectedSalary?.bonuses | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="breakdown-row total-row">
+                        <span><strong>Gross Salary</strong></span>
+                        <span><strong>₹{{ selectedSalary?.grossSalary | number:'1.2-2' }}</strong></span>
+                    </div>
+                    <div class="breakdown-row"
+                        *ngIf="selectedSalary?.deductions && (selectedSalary?.deductions || 0) > 0">
+                        <span>Deductions (Tax, PF, etc.)</span>
+                        <span class="text-danger">-₹{{ selectedSalary?.deductions | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="breakdown-row net-row">
+                        <span><strong>Net Salary</strong></span>
+                        <span><strong>₹{{ selectedSalary?.netSalary | number:'1.2-2' }}</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Status -->
+            <div class="detail-section">
+                <h4>Payment Information</h4>
+                <div class="payment-info">
+                    <div class="payment-status-large">
+                        <span class="badge" [class]="getStatusBadgeClass(selectedSalary?.paymentStatus || '')">
+                            {{ selectedSalary?.paymentStatus }}
+                        </span>
+                    </div>
+                    <p class="text-muted" *ngIf="selectedSalary?.paidDate">
+                        Paid on: {{ selectedSalary?.paidDate | date:'fullDate' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeDetailsModal()">Close</button>
+            <button *ngIf="selectedSalary?.paymentStatus === 'Pending'" class="btn btn-primary"
+                (click)="markAsPaid(selectedSalary!)">
+                <span class="material-icons">check_circle</span>
+                Mark as Paid
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- CUSTOM STYLES -->
+<style>
+    /* Month Selector */
+    .month-selector {
+        min-width: 200px;
+        padding: 0.625rem 1rem;
+        background-color: var(--bg-input);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        font-size: var(--font-size-sm);
+        cursor: pointer;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--space-lg);
+        margin-bottom: var(--space-lg);
+    }
+
+    .stat-card {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-lg);
+        border-radius: var(--radius-lg);
+    }
+
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+    }
+
+    .stat-label {
+        font-size: var(--font-size-sm);
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .stat-value {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        margin: 0;
+        color: var(--text-primary);
+    }
+
+    /* Filters */
+    .filters-bar {
+        display: flex;
+        gap: var(--space-md);
+        margin-bottom: var(--space-lg);
+    }
+
+    .filter-select {
+        min-width: 150px;
+    }
+
+    /* Staff Info */
+    .staff-info {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+    }
+
+    .staff-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-full);
+        background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+        color: var(--text-inverse);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-size-sm);
+    }
+
+    .staff-name {
+        font-weight: var(--font-weight-semibold);
+    }
+
+    /* Role Badge */
+    .role-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background-color: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-medium);
+    }
+
+    /* Salary Type Badge */
+    .salary-type-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .salary-type-monthly {
+        background-color: rgba(59, 130, 246, 0.15);
+        color: var(--info);
+    }
+
+    .salary-type-daily {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+    }
+
+    .salary-type-hourly {
+        background-color: rgba(245, 158, 11, 0.15);
+        color: var(--warning);
+    }
+
+    /* Amount Styling */
+    .amount {
+        font-weight: var(--font-weight-semibold);
+        font-family: 'Courier New', monospace;
+    }
+
+    .net-salary {
+        color: var(--accent-primary);
+        font-size: var(--font-size-lg);
+    }
+
+    /* Status Badges */
+    .badge-paid {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+    }
+
+    .badge-pending {
+        background-color: rgba(245, 158, 11, 0.15);
+        color: var(--warning);
+    }
+
+    .badge-processing {
+        background-color: rgba(59, 130, 246, 0.15);
+        color: var(--info);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: var(--space-xs);
+    }
+
+    /* Highlight Unpaid */
+    .highlight-unpaid {
+        background-color: rgba(245, 158, 11, 0.03);
+        border-left: 3px solid var(--warning);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: var(--space-2xl);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        color: var(--text-muted);
+        margin-bottom: var(--space-md);
+    }
+
+    .empty-state h3 {
+        color: var(--text-secondary);
+        margin-bottom: var(--space-sm);
+    }
+
+    .empty-state p {
+        color: var(--text-muted);
+    }
+
+    /* Modal Large */
+    .modal-large {
+        max-width: 700px;
+    }
+
+    /* Detail Sections */
+    .detail-section {
+        margin-bottom: var(--space-xl);
+        padding-bottom: var(--space-lg);
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .detail-section:last-child {
+        border-bottom: none;
+    }
+
+    .detail-section h4 {
+        color: var(--accent-primary);
+        margin-bottom: var(--space-md);
+        font-size: var(--font-size-lg);
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-md);
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .detail-label {
+        font-size: var(--font-size-xs);
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .detail-value {
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-bold);
+    }
+
+    /* Breakdown Table */
+    .breakdown-table {
+        background-color: var(--bg-hover);
+        border-radius: var(--radius-md);
+        padding: var(--space-md);
+    }
+
+    .breakdown-row {
+        display: flex;
+        justify-content: space-between;
+        padding: var(--space-sm) 0;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .breakdown-row:last-child {
+        border-bottom: none;
+    }
+
+    .breakdown-row.total-row {
+        border-top: 2px solid var(--border-subtle);
+        padding-top: var(--space-md);
+        margin-top: var(--space-sm);
+    }
+
+    .breakdown-row.net-row {
+        background-color: var(--accent-soft);
+        margin: var(--space-sm) calc(-1 * var(--space-md)) 0;
+        padding: var(--space-md);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-lg);
+        color: var(--accent-primary);
+    }
+
+    /* Payment Info */
+    .payment-info {
+        text-align: center;
+    }
+
+    .payment-status-large .badge {
+        font-size: var(--font-size-md);
+        padding: 0.5rem 1.5rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filters-bar {
+            flex-direction: column;
+        }
+
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+    }
+</style>

@@ -1,23 +1,36 @@
-
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, map, mergeMap } from 'rxjs/operators';
-import { SecurityService } from '../../services/security.service';
+import { map, mergeMap, catchError } from 'rxjs/operators';
 import * as SecurityActions from './security.actions';
+import { SecurityService } from '../../services/security.service';
+import { ToastService } from '../../services/toast.service';
 
 @Injectable()
 export class SecurityEffects {
     private actions$ = inject(Actions);
     private securityService = inject(SecurityService);
+    private toast = inject(ToastService);
 
     loadLogs$ = createEffect(() =>
         this.actions$.pipe(
-            ofType(SecurityActions.loadLogs),
+            ofType(SecurityActions.loadAuditLogs),
+            mergeMap(action =>
+                this.securityService.getLogs(action.filter).pipe(
+                    map(response => SecurityActions.loadAuditLogsSuccess({ logs: response.data })),
+                    catchError(error => of(SecurityActions.loadAuditLogsFailure({ error })))
+                )
+            )
+        )
+    );
+
+    loadStats$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(SecurityActions.loadSecurityStats),
             mergeMap(() =>
-                this.securityService.getLogs().pipe(
-                    map((logs) => SecurityActions.loadLogsSuccess({ logs })),
-                    catchError((error) => of(SecurityActions.loadLogsFailure({ error })))
+                this.securityService.getSecurityStats().pipe(
+                    map(response => SecurityActions.loadSecurityStatsSuccess({ stats: response.data })),
+                    catchError(error => of(SecurityActions.loadSecurityStatsFailure({ error })))
                 )
             )
         )
@@ -28,8 +41,26 @@ export class SecurityEffects {
             ofType(SecurityActions.loadRoles),
             mergeMap(() =>
                 this.securityService.getRoles().pipe(
-                    map((roles) => SecurityActions.loadRolesSuccess({ roles })),
-                    catchError((error) => of(SecurityActions.loadRolesFailure({ error })))
+                    map(response => SecurityActions.loadRolesSuccess({ roles: response.data })),
+                    catchError(error => of(SecurityActions.loadRolesFailure({ error })))
+                )
+            )
+        )
+    );
+
+    revokeSession$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(SecurityActions.revokeSession),
+            mergeMap(action =>
+                this.securityService.revokeSession(action.sessionId).pipe(
+                    map(() => {
+                        this.toast.success('Session Revoked');
+                        return SecurityActions.revokeSessionSuccess({ sessionId: action.sessionId });
+                    }),
+                    catchError(error => {
+                        this.toast.error('Revocation Failed');
+                        return of(SecurityActions.revokeSessionFailure({ error }));
+                    })
                 )
             )
         )

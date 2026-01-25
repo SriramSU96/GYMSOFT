@@ -47,16 +47,16 @@ export class PlanAssignment implements OnInit {
 
     loadData(): void {
         this.isLoading = true;
-        const gymId = this.authService.getCurrentUser()?.gymId;
+        const gymId = this.authService.currentUserValue?.gymId;
 
         // Load available workouts, diets, and members in parallel
         // Note: In a real app, use forkJoin for cleaner loading
         this.workoutService.getWorkouts().subscribe(w => this.workouts = w);
-        this.dietService.getDietPlans().subscribe(d => this.diets = d);
+        this.dietService.getPlans().subscribe(d => this.diets = (d as any).data || d);
 
         // Assuming MemberService has a method to get active members
         // Assuming MemberService has a method to get active members
-        this.memberService.getMembers('').subscribe(res => {
+        this.memberService.getMembers({}).subscribe(res => {
             // Handle both paginated and array response
             const data = (res as any).data || res;
             let allMembers = Array.isArray(data) ? data : [];
@@ -73,14 +73,14 @@ export class PlanAssignment implements OnInit {
         this.isLoading = true;
         const assignment = {
             ...this.assignForm.value,
-            gymId: this.authService.getCurrentUser()?.gymId
+            gymId: this.authService.currentUserValue?.gymId
         };
 
         // Check what we are assigning
         const { workoutId, dietPlanId, memberId, startDate, endDate } = this.assignForm.value;
-        const gymId = this.authService.getCurrentUser()?.gymId;
+        const gymId = this.authService.currentUserValue?.gymId;
 
-        const requests = [];
+        const requests: import('rxjs').Observable<any>[] = [];
 
         if (workoutId) {
             const workoutAssignment = { memberId, workoutId, startDate, endDate, gymId };
@@ -89,7 +89,7 @@ export class PlanAssignment implements OnInit {
 
         if (dietPlanId) {
             const dietAssignment = { memberId, dietPlanId, startDate, endDate, gymId };
-            requests.push(this.dietService.assignDietPlan(dietAssignment));
+            requests.push(this.dietService.assignPlan(dietAssignment));
         }
 
         // ForkJoin in real app, simplistic approach here

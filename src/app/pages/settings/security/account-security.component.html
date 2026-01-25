@@ -1,0 +1,337 @@
+<div class="page-container">
+    <!-- ============================================ -->
+    <!-- PAGE HEADER -->
+    <!-- ============================================ -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Account Security</h1>
+            <p class="page-subtitle">Manage sessions, authentication, and permissions</p>
+        </div>
+
+        <div class="header-actions">
+            <span class="status-badge" [ngClass]="getStatusClass(currentUser.accountStatus)">
+                {{ getStatusLabel(currentUser.accountStatus) }}
+            </span>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 1: ACCOUNT OVERVIEW -->
+    <!-- ============================================ -->
+    <div class="overview-grid">
+        <div class="overview-card card">
+            <div class="overview-icon sessions">
+                <span class="material-icons">devices</span>
+            </div>
+            <div class="overview-content">
+                <span class="overview-label">Active Sessions</span>
+                <h3 class="overview-value">{{ accountOverview.activeSessions }}</h3>
+            </div>
+        </div>
+
+        <div class="overview-card card">
+            <div class="overview-icon login">
+                <span class="material-icons">login</span>
+            </div>
+            <div class="overview-content">
+                <span class="overview-label">Last Login</span>
+                <h3 class="overview-value small">{{ formatTimestamp(accountOverview.lastLogin) }}</h3>
+            </div>
+        </div>
+
+        <div class="overview-card card">
+            <div class="overview-icon status">
+                <span class="material-icons">verified_user</span>
+            </div>
+            <div class="overview-content">
+                <span class="overview-label">Account Status</span>
+                <h3 class="overview-value highlight">{{ getStatusLabel(accountOverview.accountStatus) }}</h3>
+            </div>
+        </div>
+
+        <div class="overview-card card">
+            <div class="overview-icon role">
+                <span class="material-icons">admin_panel_settings</span>
+            </div>
+            <div class="overview-content">
+                <span class="overview-label">Current Role</span>
+                <h3 class="overview-value">{{ accountOverview.role }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-layout">
+        <div class="left-column">
+            <!-- ============================================ -->
+            <!-- SECTION 2: ACTIVE SESSIONS -->
+            <!-- ============================================ -->
+            <div class="section-container">
+                <div class="section-header">
+                    <h2 class="section-title">Active Sessions</h2>
+                    <button class="btn btn-secondary btn-sm" (click)="logoutAllDevices()">
+                        <span class="material-icons">logout</span>
+                        Logout All Other Devices
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="sessions-list">
+                        <div *ngFor="let session of activeSessions" class="session-item"
+                            [class.current]="session.isCurrent">
+                            <div class="session-icon">
+                                <span class="material-icons">{{ session.device.toLowerCase().includes('phone') ?
+                                    'smartphone' : 'computer' }}</span>
+                            </div>
+                            <div class="session-details">
+                                <h4 class="session-device">
+                                    {{ session.device }}
+                                    <span *ngIf="session.isCurrent" class="current-badge">Current Device</span>
+                                </h4>
+                                <div class="session-meta">
+                                    <span>{{ session.location }} • {{ session.city }}</span>
+                                    <span>Last active: {{ formatTimestamp(session.lastActive) }}</span>
+                                </div>
+                            </div>
+                            <button *ngIf="!session.isCurrent" class="btn-icon btn-danger"
+                                (click)="logoutSession(session.id)" title="Logout Session">
+                                <span class="material-icons">logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- SECTION 4: PASSWORD & AUTH SETTINGS -->
+            <!-- ============================================ -->
+            <div class="section-container">
+                <h2 class="section-title">Authentication Settings</h2>
+
+                <div class="card">
+                    <!-- Change Password -->
+                    <div class="auth-section">
+                        <h3>Change Password</h3>
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" [(ngModel)]="passwordForm.currentPassword" class="form-input"
+                                placeholder="Enter current password">
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" [(ngModel)]="passwordForm.newPassword"
+                                (input)="calculatePasswordStrength()" class="form-input"
+                                placeholder="Enter new password">
+
+                            <!-- Strength Meter -->
+                            <div class="strength-meter" *ngIf="passwordForm.newPassword">
+                                <div class="strength-bar">
+                                    <div class="strength-fill" [style.width.%]="passwordStrength"
+                                        [ngClass]="getPasswordStrengthClass()"></div>
+                                </div>
+                                <span class="strength-label" [ngClass]="getPasswordStrengthClass()">{{
+                                    getPasswordStrengthLabel() }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <input type="password" [(ngModel)]="passwordForm.confirmPassword" class="form-input"
+                                placeholder="Confirm new password">
+                        </div>
+                        <button class="btn btn-primary" (click)="changePassword()"
+                            [disabled]="!passwordForm.currentPassword || !passwordForm.newPassword">
+                            Update Password
+                        </button>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- 2FA Toggle -->
+                    <div class="auth-section row">
+                        <div class="auth-info">
+                            <h3>Two-Factor Authentication</h3>
+                            <p>Add an extra layer of security to your account.</p>
+                        </div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="2fa" [checked]="twoFactorEnabled" (change)="toggle2FA()">
+                            <label for="2fa"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <!-- ============================================ -->
+            <!-- SECTION 3: LOGIN ACTIVITY -->
+            <!-- ============================================ -->
+            <div class="section-container">
+                <h2 class="section-title">Login History</h2>
+
+                <div class="card">
+                    <div class="activity-timeline">
+                        <div *ngFor="let activity of loginActivity" class="activity-item">
+                            <div class="activity-status-dot" [ngClass]="getActivityStatusClass(activity.status)"></div>
+                            <div class="activity-content">
+                                <div class="activity-header">
+                                    <span class="activity-action">{{ activity.action }}</span>
+                                    <span class="activity-time">{{ formatTimestamp(activity.timestamp) }}</span>
+                                </div>
+                                <div class="activity-details">
+                                    <span>{{ activity.device }}</span>
+                                    <span>{{ activity.ip }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- SECTION 7: ACCOUNT CONTROL -->
+            <!-- ============================================ -->
+            <div class="section-container">
+                <h2 class="section-title">Account Control</h2>
+
+                <div class="card danger-zone">
+                    <div class="control-item">
+                        <div class="control-info">
+                            <h3>Suspend Account</h3>
+                            <p>Temporarily disable access for this account.</p>
+                        </div>
+                        <button *ngIf="accountOverview.accountStatus === 'active'" class="btn btn-danger-outline"
+                            (click)="suspendAccount()">
+                            Suspend
+                        </button>
+                        <button *ngIf="accountOverview.accountStatus === 'suspended'" class="btn btn-primary"
+                            (click)="reactivateAccount()">
+                            Reactivate
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 5: ROLE & PERMISSIONS -->
+    <!-- ============================================ -->
+    <div class="section-container" *ngIf="currentUser.role === 'Super Admin'">
+        <div class="section-header">
+            <h2 class="section-title">Role & Permissions</h2>
+            <div class="role-selector">
+                <select [(ngModel)]="selectedRole" (change)="onRoleChange()" class="role-select">
+                    <option *ngFor="let role of availableRoles" [value]="role">{{ role }}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th class="text-center">View</th>
+                            <th class="text-center">Create</th>
+                            <th class="text-center">Edit</th>
+                            <th class="text-center">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let perm of permissions">
+                            <td class="module-name">{{ perm.module }}</td>
+                            <td class="text-center">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" [checked]="perm.view"
+                                        (change)="togglePermission(perm.module, 'view')">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </td>
+                            <td class="text-center">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" [checked]="perm.create"
+                                        (change)="togglePermission(perm.module, 'create')">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </td>
+                            <td class="text-center">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" [checked]="perm.edit"
+                                        (change)="togglePermission(perm.module, 'edit')">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </td>
+                            <td class="text-center">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" [checked]="perm.delete"
+                                        (change)="togglePermission(perm.module, 'delete')">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-primary" (click)="savePermissions()">Save Permissions</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 6: AUDIT LOG VIEWER -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Security Audit Log</h2>
+
+        <div class="card">
+            <div class="audit-filters">
+                <div class="filter-group">
+                    <input type="date" [(ngModel)]="auditFilters.dateFrom" class="filter-input">
+                    <span class="separator">-</span>
+                    <input type="date" [(ngModel)]="auditFilters.dateTo" class="filter-input">
+                </div>
+                <select [(ngModel)]="auditFilters.actionType" class="filter-select">
+                    <option value="all">All Actions</option>
+                    <option value="create">Create</option>
+                    <option value="update">Update</option>
+                    <option value="delete">Delete</option>
+                </select>
+                <div class="filter-actions">
+                    <button class="btn btn-secondary" (click)="applyAuditFilters()">Filter</button>
+                    <button class="btn-icon btn-secondary" (click)="clearAuditFilters()" title="Clear Filters">
+                        <span class="material-icons">clear</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Module</th>
+                            <th>Timestamp</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let log of auditLogs">
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar-sm">{{ log.user.charAt(0) }}</div>
+                                    <span>{{ log.user }}</span>
+                                </div>
+                            </td>
+                            <td><span class="action-badge">{{ log.action }}</span></td>
+                            <td>{{ log.module }}</td>
+                            <td class="timestamp-cell">{{ formatTimestamp(log.timestamp) }}</td>
+                            <td class="details-cell">{{ log.details }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

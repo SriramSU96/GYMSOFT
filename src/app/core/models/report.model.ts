@@ -1,3 +1,10 @@
+export interface ReportFilter {
+    startDate?: string;
+    endDate?: string;
+    type?: 'Financial' | 'Attendance' | 'Member' | 'Inventory';
+    format?: 'PDF' | 'CSV' | 'Excel';
+    gymId?: string;
+}
 
 export interface ProfitLoss {
     month: string;
@@ -11,15 +18,28 @@ export interface ProfitLoss {
 
 export interface YearlySummary {
     year: number;
-    data: ProfitLoss[];
+    months: ProfitLoss[];
+    totalRevenue: number;
+    totalExpenses: number;
+    totalProfit: number;
 }
 
-export interface Expense {
-    _id?: string;
-    title: string;
-    amount: number;
-    category: 'Rent' | 'Equipment' | 'Maintenance' | 'Salary' | 'Other';
-    date?: string;
-    description?: string;
-    gymId: string;
+export interface MemberReport {
+    totalMembers: number;
+    activeMembers: number;
+    expiredMembers: number;
+    newSignups: number;
+    attendanceRate: number;
+    demographics: {
+        ageGroup: string;
+        count: number;
+    }[];
+}
+
+export interface AttendanceReport {
+    date: Date;
+    totalCheckins: number;
+    uniqueMembers: number;
+    peakHour: string;
+    averageDuration: number;
 }

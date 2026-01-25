@@ -101,22 +101,4 @@ export interface Sale {
 }
 
 // --- CLASS & BOOKING MODELS ---
-export interface GymClass {
-    _id?: string;
-    title: string;
-    trainerId: string; // User ID
-    scheduleDate: string; // ISO Date
-    startTime: string; // "10:00 AM"
-    duration: number; // minutes
-    capacity: number;
-    bookingsCount?: number;
-    gymId: string;
-}
-
-export interface Booking {
-    _id?: string;
-    classId: string; // Spec says Ref
-    memberId: string;
-    status: 'Booked' | 'Cancelled' | 'Attended';
-    gymId: string;
-}
+// Moved to class.model.ts

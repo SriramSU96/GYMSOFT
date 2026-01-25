@@ -26,15 +26,18 @@ export class GymBranchAddComponent {
 
     onSubmit() {
         if (this.branchForm.valid && this.parentGym) {
-            const gymId = (this.parentGym as Gym).ownerId ? (this.parentGym as Gym).id : (this.parentGym as GymBranch).gymId;
+            const gymId = (this.parentGym as any)._id || (this.parentGym as GymBranch).gymId;
+
+            const branchData: Partial<GymBranch> = {
+                ...this.branchForm.value,
+                gymId,
+                name: this.branchForm.value.name || '',
+                address: this.branchForm.value.address || '',
+                isMain: false
+            };
 
             this.store.dispatch(GymActions.createBranch({
-                gymId,
-                branchData: {
-                    ...this.branchForm.value,
-                    gymId,
-                    isMain: false // Forces false for new sub-branches
-                }
+                branch: branchData
             }));
 
             this.close.emit();

@@ -1,74 +1,58 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { WorkoutPlanState } from './workout-plan.reducer';
+import { WorkoutPlansState, adapter } from './workout-plan.reducer';
 
-export const selectWorkoutPlanState = createFeatureSelector<WorkoutPlanState>('workoutPlans');
+export const selectWorkoutPlansState = createFeatureSelector<WorkoutPlansState>('workoutPlans');
 
-// Plans
-export const selectPlans = createSelector(
-    selectWorkoutPlanState,
-    (state) => state.plans
+export const {
+    selectIds,
+    selectEntities,
+    selectAll,
+    selectTotal,
+} = adapter.getSelectors(selectWorkoutPlansState);
+
+export const selectAllWorkoutPlans = selectAll;
+
+export const selectWorkoutPlansLoading = createSelector(
+    selectWorkoutPlansState,
+    (state) => state.isLoading
 );
 
-export const selectSelectedPlan = createSelector(
-    selectWorkoutPlanState,
-    (state) => state.selectedPlan
-);
-
-export const selectMemberWorkout = createSelector(
-    selectWorkoutPlanState,
-    (state) => state.memberWorkout
-);
-
-// Filters & Pagination
-export const selectFilters = createSelector(
-    selectWorkoutPlanState,
-    (state) => state.filters
-);
-
-export const selectPagination = createSelector(
-    selectWorkoutPlanState,
-    (state) => state.pagination
-);
-
-// Builder State
-export const selectBuilderState = createSelector(
-    selectWorkoutPlanState,
-    (state) => state.builderState
-);
-
-export const selectBuilderStep = createSelector(
-    selectBuilderState,
-    (builder) => builder.step
-);
-
-export const selectBuilderPlanId = createSelector(
-    selectBuilderState,
-    (builder) => builder.planId
-);
-
-export const selectBuilderDays = createSelector(
-    selectBuilderState,
-    (builder) => builder.days
-);
-
-// Loading & Error
-export const selectLoading = createSelector(
-    selectWorkoutPlanState,
-    (state) => state.loading
-);
-
-export const selectError = createSelector(
-    selectWorkoutPlanState,
+export const selectWorkoutPlansError = createSelector(
+    selectWorkoutPlansState,
     (state) => state.error
 );
 
-// Filtered Plans
-export const selectActivePlans = createSelector(
-    selectPlans,
-    (plans) => plans.filter(plan => plan.isActive)
+export const selectSelectedWorkoutPlan = createSelector(
+    selectWorkoutPlansState,
+    (state) => state.selectedPlan
 );
 
-export const selectInactivePlans = createSelector(
-    selectPlans,
-    (plans) => plans.filter(plan => !plan.isActive)
+// Removed old selectBuilderPlan and selectBuilderDays to avoid conflict
+
+export const selectPagination = createSelector(
+    selectWorkoutPlansState,
+    (state) => state.pagination
 );
+
+export const selectFilters = createSelector(
+    selectWorkoutPlansState,
+    (state) => state.filters
+);
+
+export const selectBuilderStep = createSelector(
+    selectWorkoutPlansState,
+    (state) => state.builder.step
+);
+
+export const selectBuilderPlanId = createSelector(
+    selectWorkoutPlansState,
+    (state) => state.builder.planId
+);
+
+export const selectBuilderDays = createSelector(
+    selectWorkoutPlansState,
+    (state) => state.builder.days
+);
+
+export const selectLoading = selectWorkoutPlansLoading;
+export const selectPlans = selectAllWorkoutPlans;

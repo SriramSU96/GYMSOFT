@@ -1,219 +1,41 @@
 import { createAction, props } from '@ngrx/store';
-import {
-    WorkoutPlan,
-    WorkoutDay,
-    WorkoutExercise,
-    AssignedWorkoutPlan,
-    WorkoutCompletion,
-    WorkoutPlanStructure,
-    CreateWorkoutPlanDto,
-    AddDaysDto,
-    AddExercisesDto,
-    AssignPlanDto,
-    TrackCompletionDto,
-    WorkoutPlanFilters,
-    WorkoutPlanListResponse,
-    MemberWorkoutResponse
-} from '../../models/workout-plan.model';
+import { WorkoutPlan, WorkoutPlansResponse, WorkoutDay, WorkoutExercise, AssignedWorkoutPlan } from '../../models/workout-plan.model';
 
-// ========================================
 // Load Plans
-// ========================================
-export const loadPlans = createAction(
-    '[Workout Plans] Load Plans',
-    props<{ filters?: WorkoutPlanFilters; pageNumber?: number; pageSize?: number }>()
-);
+export const loadWorkoutPlans = createAction('[Workout Plans] Load Plans', props<{ params: any }>());
+export const loadWorkoutPlansSuccess = createAction('[Workout Plans] Load Plans Success', props<{ response: WorkoutPlansResponse }>());
+export const loadWorkoutPlansFailure = createAction('[Workout Plans] Load Plans Failure', props<{ error: any }>());
 
-export const loadPlansSuccess = createAction(
-    '[Workout Plans] Load Plans Success',
-    props<{ response: WorkoutPlanListResponse }>()
-);
+// Load Single Plan
+export const loadWorkoutPlan = createAction('[Workout Plans] Load Plan', props<{ id: string }>());
+export const loadWorkoutPlanSuccess = createAction('[Workout Plans] Load Plan Success', props<{ plan: any }>()); // plan + details
+export const loadWorkoutPlanFailure = createAction('[Workout Plans] Load Plan Failure', props<{ error: any }>());
 
-export const loadPlansFailure = createAction(
-    '[Workout Plans] Load Plans Failure',
-    props<{ error: any }>()
-);
+// Create Plan
+export const createWorkoutPlan = createAction('[Workout Plans] Create Plan', props<{ plan: Partial<WorkoutPlan> }>());
+export const createWorkoutPlanSuccess = createAction('[Workout Plans] Create Plan Success', props<{ plan: WorkoutPlan }>());
+export const createWorkoutPlanFailure = createAction('[Workout Plans] Create Plan Failure', props<{ error: any }>());
 
-// ========================================
-// Load Single Plan Structure
-// ========================================
-export const loadPlanStructure = createAction(
-    '[Workout Plans] Load Plan Structure',
-    props<{ planId: string }>()
-);
-
-export const loadPlanStructureSuccess = createAction(
-    '[Workout Plans] Load Plan Structure Success',
-    props<{ plan: WorkoutPlanStructure }>()
-);
-
-export const loadPlanStructureFailure = createAction(
-    '[Workout Plans] Load Plan Structure Failure',
-    props<{ error: any }>()
-);
-
-// ========================================
-// Create Plan Workflow
-// ========================================
-export const createPlan = createAction(
-    '[Workout Plans] Create Plan',
-    props<{ dto: CreateWorkoutPlanDto }>()
-);
-
-export const createPlanSuccess = createAction(
-    '[Workout Plans] Create Plan Success',
-    props<{ plan: WorkoutPlan }>()
-);
-
-export const createPlanFailure = createAction(
-    '[Workout Plans] Create Plan Failure',
-    props<{ error: any }>()
-);
-
-export const addDaysToPlan = createAction(
-    '[Workout Plans] Add Days to Plan',
-    props<{ planId: string; dto: AddDaysDto }>()
-);
-
-export const addDaysToPlanSuccess = createAction(
-    '[Workout Plans] Add Days to Plan Success',
-    props<{ days: WorkoutDay[] }>()
-);
-
-export const addDaysToPlanFailure = createAction(
-    '[Workout Plans] Add Days to Plan Failure',
-    props<{ error: any }>()
-);
-
-export const addExercisesToDay = createAction(
-    '[Workout Plans] Add Exercises to Day',
-    props<{ dayId: string; dto: AddExercisesDto }>()
-);
-
-export const addExercisesToDaySuccess = createAction(
-    '[Workout Plans] Add Exercises to Day Success',
-    props<{ dayId: string; exercises: WorkoutExercise[] }>()
-);
-
-export const addExercisesToDayFailure = createAction(
-    '[Workout Plans] Add Exercises to Day Failure',
-    props<{ error: any }>()
-);
-
-// ========================================
-// Update Plan
-// ========================================
-export const updatePlan = createAction(
-    '[Workout Plans] Update Plan',
-    props<{ planId: string; dto: Partial<CreateWorkoutPlanDto> }>()
-);
-
-export const updatePlanSuccess = createAction(
-    '[Workout Plans] Update Plan Success',
-    props<{ plan: WorkoutPlan }>()
-);
-
-export const updatePlanFailure = createAction(
-    '[Workout Plans] Update Plan Failure',
-    props<{ error: any }>()
-);
-
-// ========================================
 // Delete Plan
-// ========================================
-export const deletePlan = createAction(
-    '[Workout Plans] Delete Plan',
-    props<{ planId: string }>()
-);
+export const deleteWorkoutPlan = createAction('[Workout Plans] Delete Plan', props<{ id: string }>());
+export const deleteWorkoutPlanSuccess = createAction('[Workout Plans] Delete Plan Success', props<{ id: string }>());
+export const deleteWorkoutPlanFailure = createAction('[Workout Plans] Delete Plan Failure', props<{ error: any }>());
 
-export const deletePlanSuccess = createAction(
-    '[Workout Plans] Delete Plan Success',
-    props<{ planId: string }>()
-);
+// Days & Exercises
+export const addWorkoutDays = createAction('[Workout Plans] Add Days', props<{ planId: string, daysStructure: any }>());
+export const addWorkoutDaysSuccess = createAction('[Workout Plans] Add Days Success', props<{ days: WorkoutDay[] }>());
+export const addWorkoutDaysFailure = createAction('[Workout Plans] Add Days Failure', props<{ error: any }>());
 
-export const deletePlanFailure = createAction(
-    '[Workout Plans] Delete Plan Failure',
-    props<{ error: any }>()
-);
+// Assignment
+// Builder
+export const setBuilderStep = createAction('[Workout Plans] Set Builder Step', props<{ step: number }>());
+export const resetBuilder = createAction('[Workout Plans] Reset Builder');
 
-// ========================================
-// Assign Plan to Member
-// ========================================
-export const assignPlan = createAction(
-    '[Workout Plans] Assign Plan',
-    props<{ dto: AssignPlanDto }>()
-);
+// Exercises
+export const addExercisesToDay = createAction('[Workout Plans] Add Exercises To Day', props<{ dayId: string, dto: any }>());
+export const addExercisesToDaySuccess = createAction('[Workout Plans] Add Exercises To Day Success', props<{ exercises: WorkoutExercise[] }>());
+export const addExercisesToDayFailure = createAction('[Workout Plans] Add Exercises To Day Failure', props<{ error: any }>());
 
-export const assignPlanSuccess = createAction(
-    '[Workout Plans] Assign Plan Success',
-    props<{ assignment: AssignedWorkoutPlan }>()
-);
-
-export const assignPlanFailure = createAction(
-    '[Workout Plans] Assign Plan Failure',
-    props<{ error: any }>()
-);
-
-// ========================================
-// Load Member Workout
-// ========================================
-export const loadMemberWorkout = createAction(
-    '[Workout Plans] Load Member Workout',
-    props<{ memberId: string }>()
-);
-
-export const loadMemberWorkoutSuccess = createAction(
-    '[Workout Plans] Load Member Workout Success',
-    props<{ response: MemberWorkoutResponse }>()
-);
-
-export const loadMemberWorkoutFailure = createAction(
-    '[Workout Plans] Load Member Workout Failure',
-    props<{ error: any }>()
-);
-
-// ========================================
-// Track Completion
-// ========================================
-export const trackCompletion = createAction(
-    '[Workout Plans] Track Completion',
-    props<{ dto: TrackCompletionDto }>()
-);
-
-export const trackCompletionSuccess = createAction(
-    '[Workout Plans] Track Completion Success',
-    props<{ completion: WorkoutCompletion }>()
-);
-
-export const trackCompletionFailure = createAction(
-    '[Workout Plans] Track Completion Failure',
-    props<{ error: any }>()
-);
-
-// ========================================
-// Filters
-// ========================================
-export const setFilters = createAction(
-    '[Workout Plans] Set Filters',
-    props<{ filters: WorkoutPlanFilters }>()
-);
-
-export const clearFilters = createAction(
-    '[Workout Plans] Clear Filters'
-);
-
-// ========================================
-// Builder State
-// ========================================
-export const setBuilderStep = createAction(
-    '[Workout Plans] Set Builder Step',
-    props<{ step: number }>()
-);
-
-export const resetBuilder = createAction(
-    '[Workout Plans] Reset Builder'
-);
-
-export const clearSelectedPlan = createAction(
-    '[Workout Plans] Clear Selected Plan'
-);
+export const assignWorkoutPlan = createAction('[Workout Plans] Assign Plan', props<{ assignment: { memberId: string; workoutPlanId: string; startDate: Date; endDate?: Date } }>());
+export const assignWorkoutPlanSuccess = createAction('[Workout Plans] Assign Plan Success', props<{ assignment: AssignedWorkoutPlan }>());
+export const assignWorkoutPlanFailure = createAction('[Workout Plans] Assign Plan Failure', props<{ error: any }>());

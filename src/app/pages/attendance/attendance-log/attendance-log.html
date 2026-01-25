@@ -1,28 +1,712 @@
-<div>
-    <div>
-        <h2>Attendance Log</h2>
+<div class="page-container">
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Member Attendance</h1>
+            <p class="page-subtitle">Track daily member gym attendance</p>
+        </div>
+        <div class="flex items-center gap-md">
+            <input type="date" [(ngModel)]="selectedDate" (change)="onDateChange()" class="date-picker" />
+            <button class="btn btn-primary" (click)="openQRScanner()">
+                <span class="material-icons">qr_code_scanner</span>
+                QR Scan
+            </button>
+        </div>
     </div>
 
-    <div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Member Name</th>
-                    <th>Check-In</th>
-                    <th>Check-Out</th>
-                    <th>Source</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let log of enrichedLogs$ | async">
-                    <td>{{ log.memberName }}</td>
-                    <td>{{ log.checkInTime }}</td>
-                    <td>{{ log.checkOutTime || 'Still in gym' }}</td>
-                    <td>
-                        <span class="badge" [class]="log.source">{{ log.source }}</span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- QUICK STATS -->
+    <div class="stats-grid">
+        <div class="stat-card glass">
+            <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.15); color: var(--success);">
+                <span class="material-icons">how_to_reg</span>
+            </div>
+            <div>
+                <p class="stat-label">Present Today</p>
+                <h2 class="stat-value">{{ getPresentCount() }}</h2>
+            </div>
+        </div>
+        <div class="stat-card glass">
+            <div class="stat-icon" style="background-color: rgba(59, 130, 246, 0.15); color: var(--info);">
+                <span class="material-icons">login</span>
+            </div>
+            <div>
+                <p class="stat-label">Active Now</p>
+                <h2 class="stat-value">{{ getActiveCount() }}</h2>
+            </div>
+        </div>
+        <div class="stat-card glass">
+            <div class="stat-icon" style="background-color: var(--accent-soft); color: var(--accent-primary);">
+                <span class="material-icons">trending_up</span>
+            </div>
+            <div>
+                <p class="stat-label">Attendance Rate</p>
+                <h2 class="stat-value">{{ getAttendanceRate() }}%</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters-bar">
+        <input type="text" placeholder="Search by name or phone..." [(ngModel)]="searchQuery" (input)="applyFilters()"
+            class="search-input" />
+        <select [(ngModel)]="statusFilter" (change)="applyFilters()" class="filter-select">
+            <option value="">All Members</option>
+            <option value="Present">Present</option>
+            <option value="Checked Out">Checked Out</option>
+            <option value="Not Visited">Not Visited</option>
+        </select>
+        <select [(ngModel)]="methodFilter" (change)="applyFilters()" class="filter-select">
+            <option value="">All Methods</option>
+            <option value="QR">QR Scan</option>
+            <option value="Manual">Manual</option>
+        </select>
+    </div>
+
+    <!-- ATTENDANCE TABLE -->
+    <div class="card">
+        <div class="table-container">
+            <table *ngIf="filteredAttendance.length > 0; else emptyState">
+                <thead>
+                    <tr>
+                        <th>Member Name</th>
+                        <th>Phone</th>
+                        <th>Membership</th>
+                        <th>Check-In Time</th>
+                        <th>Check-Out Time</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let record of filteredAttendance"
+                        [class.highlight-late]="isLateCheckIn(record.checkInTime)"
+                        [class.highlight-active]="record.status === 'Present'">
+
+                        <!-- Member Name -->
+                        <td>
+                            <div class="member-info">
+                                <div class="member-avatar">{{ getInitials(record.memberName) }}</div>
+                                <div>
+                                    <div class="member-name">{{ record.memberName }}</div>
+                                    <div class="member-id">ID: {{ record.memberId }}</div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Phone -->
+                        <td>
+                            <span class="phone-number">{{ record.phone }}</span>
+                        </td>
+
+                        <!-- Membership Status -->
+                        <td>
+                            <span class="badge" [class]="getMembershipBadgeClass(record.membershipStatus)">
+                                {{ record.membershipStatus }}
+                            </span>
+                        </td>
+
+                        <!-- Check-In Time -->
+                        <td>
+                            <div class="time-display" *ngIf="record.checkInTime">
+                                <span class="material-icons time-icon">login</span>
+                                <strong>{{ record.checkInTime }}</strong>
+                            </div>
+                            <span *ngIf="!record.checkInTime" class="text-muted">-</span>
+                        </td>
+
+                        <!-- Check-Out Time -->
+                        <td>
+                            <div class="time-display" *ngIf="record.checkOutTime">
+                                <span class="material-icons time-icon">logout</span>
+                                <strong>{{ record.checkOutTime }}</strong>
+                            </div>
+                            <span *ngIf="!record.checkOutTime && record.status === 'Present'" class="text-success">
+                                <span class="material-icons pulse-icon">fiber_manual_record</span>
+                                Active
+                            </span>
+                            <span *ngIf="!record.checkOutTime && record.status !== 'Present'"
+                                class="text-muted">-</span>
+                        </td>
+
+                        <!-- Method -->
+                        <td>
+                            <span class="method-badge" [class.method-qr]="record.method === 'QR'"
+                                [class.method-manual]="record.method === 'Manual'">
+                                <span class="material-icons">{{ record.method === 'QR' ? 'qr_code_2' : 'edit' }}</span>
+                                {{ record.method }}
+                            </span>
+                        </td>
+
+                        <!-- Status -->
+                        <td>
+                            <span class="badge" [class]="getStatusBadgeClass(record.status)">
+                                {{ record.status }}
+                            </span>
+                        </td>
+
+                        <!-- Actions -->
+                        <td>
+                            <div class="action-buttons">
+                                <button *ngIf="record.status === 'Not Visited'" class="btn-quick btn-checkin"
+                                    (click)="quickCheckIn(record)" title="Quick Check-In">
+                                    <span class="material-icons">login</span>
+                                    Check In
+                                </button>
+                                <button *ngIf="record.status === 'Present'" class="btn-quick btn-checkout"
+                                    (click)="quickCheckOut(record)" title="Check Out">
+                                    <span class="material-icons">logout</span>
+                                    Check Out
+                                </button>
+                                <button class="btn-icon btn-secondary" (click)="viewHistory(record)"
+                                    title="View History">
+                                    <span class="material-icons">history</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- EMPTY STATE -->
+            <ng-template #emptyState>
+                <div class="empty-state">
+                    <span class="material-icons empty-icon">people_outline</span>
+                    <h3>No members found</h3>
+                    <p>{{ searchQuery || statusFilter ? 'Try adjusting your filters' : 'No member attendance records for
+                        this date' }}</p>
+                </div>
+            </ng-template>
+        </div>
     </div>
 </div>
+
+<!-- MEMBER HISTORY MODAL -->
+<div *ngIf="showHistoryModal" class="modal-backdrop" (click)="closeHistoryModal()">
+    <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Attendance History - {{ selectedMember?.memberName }}</h3>
+            <button class="btn-icon btn-secondary" (click)="closeHistoryModal()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <!-- Member Info Summary -->
+            <div class="history-summary">
+                <div class="summary-item">
+                    <span class="summary-label">Phone</span>
+                    <span class="summary-value">{{ selectedMember?.phone }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Membership</span>
+                    <span class="summary-value">{{ selectedMember?.membershipStatus }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Monthly Attendance</span>
+                    <span class="summary-value text-accent">{{ getMonthlyAttendanceRate() }}%</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Last Visited</span>
+                    <span class="summary-value">{{ getLastVisitedDate() }}</span>
+                </div>
+            </div>
+
+            <!-- Attendance Calendar -->
+            <div class="calendar-section">
+                <h4>This Month's Attendance</h4>
+                <div class="attendance-calendar">
+                    <div *ngFor="let day of getMonthlyCalendar()" class="calendar-day"
+                        [class.day-present]="day.status === 'Present'" [class.day-absent]="day.status === 'Absent'"
+                        [class.day-future]="day.isFuture" [title]="day.tooltip">
+                        <div class="day-number">{{ day.day }}</div>
+                        <div class="day-status" *ngIf="!day.isFuture">
+                            <span class="material-icons" *ngIf="day.status === 'Present'">check_circle</span>
+                            <span class="material-icons" *ngIf="day.status === 'Absent'">cancel</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Visits -->
+            <div class="recent-visits">
+                <h4>Recent Visits</h4>
+                <div class="visit-list">
+                    <div *ngFor="let visit of getRecentVisits()" class="visit-item">
+                        <div class="visit-date">
+                            <span class="material-icons">event</span>
+                            {{ visit.date | date:'mediumDate' }}
+                        </div>
+                        <div class="visit-times">
+                            <span class="visit-time">
+                                <span class="material-icons">login</span>
+                                {{ visit.checkIn }}
+                            </span>
+                            <span class="visit-time" *ngIf="visit.checkOut">
+                                <span class="material-icons">logout</span>
+                                {{ visit.checkOut }}
+                            </span>
+                        </div>
+                        <div class="visit-method">
+                            <span class="method-badge" [class.method-qr]="visit.method === 'QR'">
+                                <span class="material-icons">{{ visit.method === 'QR' ? 'qr_code_2' : 'edit' }}</span>
+                                {{ visit.method }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeHistoryModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- SUCCESS NOTIFICATION -->
+<div *ngIf="showSuccessNotification" class="success-notification">
+    <span class="material-icons">check_circle</span>
+    <span>{{ successMessage }}</span>
+</div>
+
+<!-- CUSTOM STYLES -->
+<style>
+    /* Date Picker */
+    .date-picker {
+        padding: 0.625rem 1rem;
+        background-color: var(--bg-input);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        font-size: var(--font-size-sm);
+        cursor: pointer;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: var(--space-lg);
+        margin-bottom: var(--space-lg);
+    }
+
+    .stat-card {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-lg);
+        border-radius: var(--radius-lg);
+    }
+
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+    }
+
+    .stat-label {
+        font-size: var(--font-size-sm);
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .stat-value {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        margin: 0;
+    }
+
+    /* Filters */
+    .filters-bar {
+        display: flex;
+        gap: var(--space-md);
+        margin-bottom: var(--space-lg);
+    }
+
+    .filter-select {
+        min-width: 150px;
+    }
+
+    /* Member Info */
+    .member-info {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+    }
+
+    .member-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-full);
+        background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+        color: var(--text-inverse);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-size-sm);
+        flex-shrink: 0;
+    }
+
+    .member-name {
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+    }
+
+    .member-id {
+        font-size: var(--font-size-xs);
+        color: var(--text-muted);
+    }
+
+    /* Phone Number */
+    .phone-number {
+        font-family: 'Courier New', monospace;
+        color: var(--text-secondary);
+    }
+
+    /* Time Display */
+    .time-display {
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+    }
+
+    .time-icon {
+        font-size: 1rem;
+        color: var(--text-muted);
+    }
+
+    /* Pulse Icon for Active */
+    .pulse-icon {
+        font-size: 0.75rem;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    /* Method Badge */
+    .method-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-xs);
+        padding: 0.25rem 0.75rem;
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .method-badge.method-qr {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+    }
+
+    .method-badge.method-manual {
+        background-color: rgba(59, 130, 246, 0.15);
+        color: var(--info);
+    }
+
+    .method-badge .material-icons {
+        font-size: 1rem;
+    }
+
+    /* Membership Badges */
+    .badge-active {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+    }
+
+    .badge-expired {
+        background-color: rgba(239, 68, 68, 0.15);
+        color: var(--danger);
+    }
+
+    .badge-expiring {
+        background-color: rgba(245, 158, 11, 0.15);
+        color: var(--warning);
+    }
+
+    /* Status Badges */
+    .badge-present {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+    }
+
+    .badge-checked-out {
+        background-color: rgba(59, 130, 246, 0.15);
+        color: var(--info);
+    }
+
+    .badge-not-visited {
+        background-color: var(--bg-hover);
+        color: var(--text-muted);
+    }
+
+    /* Quick Action Buttons */
+    .btn-quick {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-xs);
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
+        border: none;
+        cursor: pointer;
+        transition: var(--transition-fast);
+    }
+
+    .btn-quick .material-icons {
+        font-size: 1.125rem;
+    }
+
+    .btn-checkin {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-checkin:hover {
+        background-color: rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-checkout {
+        background-color: rgba(59, 130, 246, 0.15);
+        color: var(--info);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-checkout:hover {
+        background-color: rgba(59, 130, 246, 0.25);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: var(--space-xs);
+        align-items: center;
+    }
+
+    /* Highlight Rows */
+    .highlight-late {
+        background-color: rgba(245, 158, 11, 0.03);
+        border-left: 3px solid var(--warning);
+    }
+
+    .highlight-active {
+        background-color: rgba(16, 185, 129, 0.03);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: var(--space-2xl);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        color: var(--text-muted);
+        margin-bottom: var(--space-md);
+    }
+
+    /* Modal Large */
+    .modal-large {
+        max-width: 800px;
+    }
+
+    /* History Summary */
+    .history-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: var(--space-md);
+        margin-bottom: var(--space-xl);
+        padding: var(--space-lg);
+        background-color: var(--bg-hover);
+        border-radius: var(--radius-md);
+    }
+
+    .summary-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .summary-label {
+        font-size: var(--font-size-xs);
+        color: var(--text-muted);
+        text-transform: uppercase;
+    }
+
+    .summary-value {
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-bold);
+    }
+
+    /* Calendar Section */
+    .calendar-section {
+        margin-bottom: var(--space-xl);
+    }
+
+    .calendar-section h4 {
+        color: var(--accent-primary);
+        margin-bottom: var(--space-md);
+    }
+
+    .attendance-calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: var(--space-sm);
+    }
+
+    .calendar-day {
+        aspect-ratio: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--bg-hover);
+        border-radius: var(--radius-md);
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: var(--transition-fast);
+    }
+
+    .calendar-day.day-present {
+        background-color: rgba(16, 185, 129, 0.15);
+        border-color: var(--success);
+    }
+
+    .calendar-day.day-absent {
+        background-color: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .calendar-day.day-future {
+        opacity: 0.3;
+        cursor: default;
+    }
+
+    .day-number {
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .day-status .material-icons {
+        font-size: 1rem;
+        margin-top: var(--space-xs);
+    }
+
+    /* Recent Visits */
+    .recent-visits h4 {
+        color: var(--accent-primary);
+        margin-bottom: var(--space-md);
+    }
+
+    .visit-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+
+    .visit-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--space-md);
+        background-color: var(--bg-hover);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-subtle);
+    }
+
+    .visit-date {
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+        color: var(--text-secondary);
+        font-size: var(--font-size-sm);
+    }
+
+    .visit-times {
+        display: flex;
+        gap: var(--space-md);
+    }
+
+    .visit-time {
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .visit-time .material-icons {
+        font-size: 1rem;
+    }
+
+    /* Success Notification */
+    .success-notification {
+        position: fixed;
+        top: 80px;
+        right: var(--space-lg);
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-md) var(--space-lg);
+        background-color: var(--success);
+        color: white;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-hover);
+        animation: slideInRight 0.3s ease-out;
+        z-index: 1000;
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filters-bar {
+            flex-direction: column;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .attendance-calendar {
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .visit-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--space-sm);
+        }
+    }
+</style>

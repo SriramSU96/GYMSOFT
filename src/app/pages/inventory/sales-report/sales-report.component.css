@@ -1,1 +1,78 @@
-/* CSS reused from global styles */
+/* Chart Containers */
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+/* Stat Icon Backgrounds */
+.bg-success-soft {
+    background-color: rgba(16, 185, 129, 0.15);
+}
+
+.bg-info-soft {
+    background-color: rgba(59, 130, 246, 0.15);
+}
+
+.bg-accent-soft {
+    background-color: rgba(212, 175, 55, 0.15);
+}
+
+.bg-primary-soft {
+    background-color: rgba(212, 175, 55, 0.15);
+}
+
+/* Table Enhancements */
+.highlight-row {
+    background-color: rgba(212, 175, 55, 0.08);
+    border-left: 3px solid var(--accent-primary);
+}
+
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+    color: var(--text-inverse);
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* Material Icons */
+.material-icons {
+    font-size: 20px;
+    vertical-align: middle;
+}
+
+/* Responsive Grid Overrides */
+@media (max-width: 1024px) {
+    .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .grid-4 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Print Styles */
+@media print {
+
+    .btn,
+    .page-header form {
+        display: none;
+    }
+
+    .card {
+        break-inside: avoid;
+    }
+}

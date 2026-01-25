@@ -204,8 +204,8 @@ export class DietBuilderComponent implements OnInit {
 
     loadPlan() {
         this.isLoading = true;
-        this.dietService.getDietPlan(this.planId!).subscribe({
-            next: (data) => { // Expecting full nested object
+        this.dietService.getPlanById(this.planId!).subscribe({
+            next: (data: any) => { // Expecting full nested object
                 this.plan = data;
                 // Ensure days exist
                 if (!this.plan.days || this.plan.days.length === 0) {
@@ -229,7 +229,7 @@ export class DietBuilderComponent implements OnInit {
         };
         this.dietService.getMeals(filters).subscribe({
             next: (res) => {
-                this.availableMeals = res.data;
+                this.availableMeals = res.meals;
             }
         });
     }
@@ -331,9 +331,11 @@ export class DietBuilderComponent implements OnInit {
         };
 
         this.dietService.addMealItem(slot._id, item).subscribe({
-            next: (newItem) => {
+            next: (response) => {
                 if (!slot.items) slot.items = [];
+                const newItem = response.mealItem;
                 // Manually populate dietMealId for local display
+                // @ts-ignore
                 newItem.dietMealId = meal;
                 slot.items.push(newItem);
                 this.isSaving = false;

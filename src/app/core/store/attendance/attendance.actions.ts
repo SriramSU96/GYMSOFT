@@ -1,25 +1,99 @@
-
 import { createAction, props } from '@ngrx/store';
-import { Attendance } from '../../models/attendance.model';
+import { Attendance, AttendanceFilter, AttendanceResponse, AttendanceStats, CheckInPayload } from '../../models/attendance.model';
+import { Update } from '@ngrx/entity';
 
-export const qrCheckIn = createAction('[Attendance] QR Check In', props<{ data: any }>());
-export const qrCheckInSuccess = createAction('[Attendance] QR Check In Success', props<{ record: Attendance }>());
-export const qrCheckInFailure = createAction('[Attendance] QR Check In Failure', props<{ error: any }>());
+// Load Attendance List
+export const loadAttendance = createAction(
+    '[Attendance] Load Attendance',
+    props<{ filter?: AttendanceFilter }>()
+);
 
-export const syncAttendance = createAction('[Attendance] Sync Attendance', props<{ records: Attendance[] }>());
-export const syncAttendanceSuccess = createAction('[Attendance] Sync Attendance Success');
-export const syncAttendanceFailure = createAction('[Attendance] Sync Attendance Failure', props<{ error: any }>());
+export const loadAttendanceSuccess = createAction(
+    '[Attendance] Load Attendance Success',
+    props<{ response: AttendanceResponse }>()
+);
 
-export const loadMemberAttendance = createAction('[Attendance] Load Member Attendance', props<{ memberId: string }>());
-export const loadMemberAttendanceSuccess = createAction('[Attendance] Load Member Attendance Success', props<{ records: Attendance[] }>());
-export const loadMemberAttendanceFailure = createAction('[Attendance] Load Member Attendance Failure', props<{ error: any }>());
+export const loadAttendanceFailure = createAction(
+    '[Attendance] Load Attendance Failure',
+    props<{ error: any }>()
+);
 
-export const loadAllAttendance = createAction('[Attendance] Load All Attendance');
-export const loadAllAttendanceSuccess = createAction('[Attendance] Load All Attendance Success', props<{ records: Attendance[] }>());
-export const loadAllAttendanceFailure = createAction('[Attendance] Load All Attendance Failure', props<{ error: any }>());
+// Manual Add / Mark Attendance
+export const markAttendance = createAction(
+    '[Attendance] Mark Attendance',
+    props<{ data: Partial<Attendance> }>()
+);
 
-// Scanner Actions
-export const startScan = createAction('[Attendance] Start Scan');
-export const scanSuccess = createAction('[Attendance] Scan Success', props<{ data: string }>());
-export const scanFailure = createAction('[Attendance] Scan Failure', props<{ error: string }>());
-export const stopScan = createAction('[Attendance] Stop Scan');
+export const markAttendanceSuccess = createAction(
+    '[Attendance] Mark Attendance Success',
+    props<{ attendance: Attendance }>()
+);
+
+export const markAttendanceFailure = createAction(
+    '[Attendance] Mark Attendance Failure',
+    props<{ error: any }>()
+);
+
+// Check-In (Manual)
+export const checkIn = createAction(
+    '[Attendance] Check In',
+    props<{ data: CheckInPayload }>()
+);
+
+export const checkInSuccess = createAction(
+    '[Attendance] Check In Success',
+    props<{ attendance: Attendance }>()
+);
+
+export const checkInFailure = createAction(
+    '[Attendance] Check In Failure',
+    props<{ error: any }>()
+);
+
+// QR Check-In
+export const qrCheckIn = createAction(
+    '[Attendance] QR Check In',
+    props<{ token: string }>()
+);
+
+export const qrCheckInSuccess = createAction(
+    '[Attendance] QR Check In Success',
+    props<{ attendance: Attendance }>()
+);
+
+export const qrCheckInFailure = createAction(
+    '[Attendance] QR Check In Failure',
+    props<{ error: any }>()
+);
+
+// Check-Out
+export const checkOut = createAction(
+    '[Attendance] Check Out',
+    props<{ id: string; checkOutTime?: Date }>()
+);
+
+export const checkOutSuccess = createAction(
+    '[Attendance] Check Out Success',
+    props<{ update: Update<Attendance> }>()
+);
+
+export const checkOutFailure = createAction(
+    '[Attendance] Check Out Failure',
+    props<{ error: any }>()
+);
+
+// Load Stats
+export const loadAttendanceStats = createAction(
+    '[Attendance] Load Stats',
+    props<{ date: string }>()
+);
+
+export const loadAttendanceStatsSuccess = createAction(
+    '[Attendance] Load Stats Success',
+    props<{ stats: AttendanceStats }>()
+);
+
+export const loadAttendanceStatsFailure = createAction(
+    '[Attendance] Load Stats Failure',
+    props<{ error: any }>()
+);

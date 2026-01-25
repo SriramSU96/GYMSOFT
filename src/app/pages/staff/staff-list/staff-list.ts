@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { loadStaff } from '../../../core/store/staff/staff.actions';
-import { selectStaff, selectStaffIsLoading } from '../../../core/store/staff/staff.selectors';
+import { selectAllStaff, selectStaffLoading } from '../../../core/store/staff/staff.selectors';
 
 @Component({
   selector: 'app-staff-list',
@@ -13,10 +13,10 @@ import { selectStaff, selectStaffIsLoading } from '../../../core/store/staff/sta
 })
 export class StaffList implements OnInit {
   store = inject(Store);
-  staff$ = this.store.select(selectStaff);
-  isLoading$ = this.store.select(selectStaffIsLoading);
+  staff$ = this.store.select(selectAllStaff);
+  isLoading$ = this.store.select(selectStaffLoading);
 
   ngOnInit() {
-    this.store.dispatch(loadStaff());
+    this.store.dispatch(loadStaff({}));
   }
 }

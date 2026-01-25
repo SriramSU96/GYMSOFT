@@ -1,57 +1,705 @@
-<div>
-    <div>
-        <h2>Advanced Analytics</h2>
+<div class="page-container">
+    <!-- ============================================ -->
+    <!-- PAGE HEADER -->
+    <!-- ============================================ -->
+    <div class="page-header">
         <div>
-            <button (click)="onFilterChange('7days')">7
-                Days</button>
-            <button (click)="onFilterChange('30days')">30 Days</button>
-            <button (click)="onFilterChange('year')">Year</button>
+            <h1 class="page-title">Advanced Analytics</h1>
+            <p class="page-subtitle">Deep insights & business intelligence</p>
+        </div>
+
+        <!-- TIME RANGE SELECTOR -->
+        <div class="time-range-selector">
+            <button *ngFor="let range of timeRanges" [class.active]="selectedRange === range.value"
+                (click)="onRangeChange(range.value)" class="range-btn">
+                {{ range.label }}
+            </button>
         </div>
     </div>
 
-    <!-- KPIs -->
-    <div *ngIf="isLoading$ | async">
-        <p>Loading analytics...</p>
+    <!-- ============================================ -->
+    <!-- SECTION 1: CHURN & RETENTION -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Churn & Retention Analysis</h2>
+
+        <!-- Metrics Cards -->
+        <div class="churn-metrics-grid">
+            <!-- Churn Rate Card -->
+            <div class="metric-card card" [ngClass]="getSeverityClass(churnRetentionData.churnRate.severity)">
+                <div class="metric-header">
+                    <span class="metric-label">Churn Rate</span>
+                    <span class="material-icons" [ngClass]="getSeverityClass(churnRetentionData.churnRate.severity)">
+                        {{ getSeverityIcon(churnRetentionData.churnRate.severity) }}
+                    </span>
+                </div>
+                <h3 class="metric-value">{{ formatPercentage(churnRetentionData.churnRate.value) }}</h3>
+                <div class="metric-trend text-success">
+                    <span class="material-icons">trending_down</span>
+                    <span>{{ formatPercentage(Math.abs(churnRetentionData.churnRate.change)) }} improvement</span>
+                </div>
+            </div>
+
+            <!-- Retention Rate Card -->
+            <div class="metric-card card" [ngClass]="getSeverityClass(churnRetentionData.retentionRate.severity)">
+                <div class="metric-header">
+                    <span class="metric-label">Retention Rate</span>
+                    <span class="material-icons"
+                        [ngClass]="getSeverityClass(churnRetentionData.retentionRate.severity)">
+                        {{ getSeverityIcon(churnRetentionData.retentionRate.severity) }}
+                    </span>
+                </div>
+                <h3 class="metric-value">{{ formatPercentage(churnRetentionData.retentionRate.value) }}</h3>
+                <div class="metric-trend" [ngClass]="getTrendClass(churnRetentionData.retentionRate.trend)">
+                    <span class="material-icons">{{ getTrendIcon(churnRetentionData.retentionRate.trend) }}</span>
+                    <span>{{ formatPercentage(churnRetentionData.retentionRate.change) }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- High Risk Members Table -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">High-Risk Churn Members</h3>
+                <span class="badge badge-danger">{{ churnRetentionData.highRiskMembers.length }} at risk</span>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Member ID</th>
+                            <th>Name</th>
+                            <th>Last Visit</th>
+                            <th>Days Inactive</th>
+                            <th>Membership Value</th>
+                            <th>Risk Score</th>
+                            <th>Severity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let member of churnRetentionData.highRiskMembers">
+                            <td><span class="member-id">{{ member.id }}</span></td>
+                            <td><span class="member-name">{{ member.name }}</span></td>
+                            <td>{{ member.lastVisit | date:'mediumDate' }}</td>
+                            <td><span class="days-inactive">{{ member.daysInactive }} days</span></td>
+                            <td><span class="amount">{{ formatCurrency(member.membershipValue) }}</span></td>
+                            <td>
+                                <div class="risk-score-bar">
+                                    <div class="risk-score-fill" [style.width.%]="member.riskScore"
+                                        [ngClass]="'risk-' + member.severity"></div>
+                                    <span class="risk-score-text">{{ member.riskScore }}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge" [ngClass]="'badge-' + member.severity">
+                                    {{ member.severity }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
-    <div *ngIf="error$ | async as error">
-        <p>Error loading analytics: {{ error.message || 'Unknown error' }}</p>
-    </div>
+    <!-- ============================================ -->
+    <!-- SECTION 2: COHORT ANALYSIS -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Cohort Analysis</h2>
 
-    <div *ngIf="kpis$ | async as kpis">
-        <div *ngFor="let kpi of kpis">
-            <p>{{ kpi.label }}</p>
-            <div>
-                <span>{{ kpi.value }}</span>
-                <span>
-                    {{ kpi.change }}
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Retention Heatmap by Join Month</h3>
+                <p class="card-subtitle">Percentage of members retained over time</p>
+            </div>
+            <div class="cohort-table-container">
+                <table class="cohort-table">
+                    <thead>
+                        <tr>
+                            <th class="cohort-month-header">Join Month</th>
+                            <th *ngFor="let month of cohortData.months; let i = index">Month {{ i }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let cohort of cohortData.cohorts">
+                            <td class="cohort-month">{{ cohort.month }}</td>
+                            <td *ngFor="let month of cohortData.months; let i = index" class="cohort-cell"
+                                [style.background-color]="getCohortColor(getCohortValue(cohort, i))"
+                                [style.opacity]="getCohortIntensity(getCohortValue(cohort, i))">
+                                <span *ngIf="getCohortValue(cohort, i) !== null" class="cohort-value">
+                                    {{ getCohortValue(cohort, i) }}%
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="cohort-legend">
+                <span class="legend-item">
+                    <span class="legend-color" style="background-color: #10B981;"></span>
+                    <span>90%+ Excellent</span>
+                </span>
+                <span class="legend-item">
+                    <span class="legend-color" style="background-color: #F59E0B;"></span>
+                    <span>80-89% Good</span>
+                </span>
+                <span class="legend-item">
+                    <span class="legend-color" style="background-color: #EF4444;"></span>
+                    <span>70-79% Fair</span>
+                </span>
+                <span class="legend-item">
+                    <span class="legend-color" style="background-color: #7F1D1D;"></span>
+                    <span>&lt;70% Poor</span>
                 </span>
             </div>
         </div>
     </div>
 
- 
-    <div>
-        <!-- Member Growth Chart Placeholder -->
-        <div>
-            <h3>MEMBER ACQUISITION</h3>
-            <div>
-                <!-- Mock bars -->
-                <div style="height: 40%; opacity: 0.5;"></div>
-                <div style="height: 60%; opacity: 0.6;"></div>
-                <div style="height: 55%; opacity: 0.55;"></div>
-                <div style="height: 75%; opacity: 0.75;"></div>
-                <div style="height: 90%; opacity: 0.9;"></div>
-                <div style="height: 80%; opacity: 0.8;"></div>
+    <!-- ============================================ -->
+    <!-- SECTION 3: ATTENDANCE INTELLIGENCE -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Attendance Intelligence</h2>
+
+        <div class="attendance-grid">
+            <!-- Peak Hours Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Peak Hours</h3>
+                    <p class="card-subtitle">Average daily attendance by hour</p>
+                </div>
+                <div class="peak-hours-chart">
+                    <div *ngFor="let hour of attendanceIntelligence.peakHours" class="peak-hour-bar">
+                        <div class="peak-hour-value">{{ hour.count }}</div>
+                        <div class="peak-hour-fill-container">
+                            <div class="peak-hour-fill" [style.height.%]="getPeakHourHeight(hour.percentage)"></div>
+                        </div>
+                        <div class="peak-hour-label">{{ hour.hour }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Heatmap -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Weekly Attendance Heatmap</h3>
+                    <p class="card-subtitle">Attendance patterns by day & time</p>
+                </div>
+                <div class="weekly-heatmap">
+                    <div class="heatmap-header">
+                        <div class="heatmap-cell header-cell"></div>
+                        <div class="heatmap-cell header-cell">Morning</div>
+                        <div class="heatmap-cell header-cell">Afternoon</div>
+                        <div class="heatmap-cell header-cell">Evening</div>
+                    </div>
+                    <div *ngFor="let day of attendanceIntelligence.weeklyHeatmap" class="heatmap-row">
+                        <div class="heatmap-cell day-cell">{{ day.day }}</div>
+                        <div class="heatmap-cell data-cell" [style.background-color]="getHeatmapColor(day.morning)">
+                            {{ day.morning }}
+                        </div>
+                        <div class="heatmap-cell data-cell" [style.background-color]="getHeatmapColor(day.afternoon)">
+                            {{ day.afternoon }}
+                        </div>
+                        <div class="heatmap-cell data-cell" [style.background-color]="getHeatmapColor(day.evening)">
+                            {{ day.evening }}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Attendance Heatmap Placeholder -->
-        <div>
-            <h3>PEAK HOURS</h3>
-            <div>
-                <div *ngFor="let i of [].constructor(28); let idx = index" [style.opacity]="(idx % 5 + 1) * 0.2">
+        <!-- Low Traffic Alerts -->
+        <div class="card alert-card">
+            <div class="card-header">
+                <h3 class="card-title">Low Traffic Alerts</h3>
+            </div>
+            <div class="alert-list">
+                <div *ngFor="let alert of attendanceIntelligence.lowTrafficAlerts" class="alert-item">
+                    <span class="material-icons alert-icon">warning</span>
+                    <div class="alert-content">
+                        <strong>{{ alert.period }}</strong>
+                        <p>Avg: {{ alert.avgAttendance }} / {{ alert.capacity }} capacity ({{
+                            formatPercentage(alert.utilization) }} utilization)</p>
+                    </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 4: PLAN PERFORMANCE -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Plan Performance</h2>
+
+        <div class="plan-performance-grid">
+            <!-- Workout Plans -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Workout Plan Effectiveness</h3>
+                </div>
+                <div class="plan-list">
+                    <div *ngFor="let plan of planPerformance.workoutPlans" class="plan-item">
+                        <div class="plan-info">
+                            <span class="plan-name">{{ plan.name }}</span>
+                            <span class="plan-members">{{ plan.members }} members</span>
+                        </div>
+                        <div class="plan-metrics">
+                            <div class="plan-metric">
+                                <span class="metric-label-sm">Effectiveness</span>
+                                <div class="progress-bar-sm">
+                                    <div class="progress-fill-sm effectiveness" [style.width.%]="plan.effectiveness">
+                                    </div>
+                                </div>
+                                <span class="metric-value-sm">{{ plan.effectiveness }}%</span>
+                            </div>
+                            <div class="plan-metric">
+                                <span class="metric-label-sm">Retention</span>
+                                <div class="progress-bar-sm">
+                                    <div class="progress-fill-sm retention" [style.width.%]="plan.retention"></div>
+                                </div>
+                                <span class="metric-value-sm">{{ plan.retention }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diet Plans -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Diet Plan Compliance</h3>
+                </div>
+                <div class="plan-list">
+                    <div *ngFor="let plan of planPerformance.dietPlans" class="plan-item">
+                        <div class="plan-info">
+                            <span class="plan-name">{{ plan.name }}</span>
+                            <span class="plan-members">{{ plan.members }} members</span>
+                        </div>
+                        <div class="plan-metrics">
+                            <div class="plan-metric">
+                                <span class="metric-label-sm">Compliance</span>
+                                <div class="progress-bar-sm">
+                                    <div class="progress-fill-sm compliance" [style.width.%]="plan.compliance"></div>
+                                </div>
+                                <span class="metric-value-sm">{{ plan.compliance }}%</span>
+                            </div>
+                            <div class="plan-metric">
+                                <span class="metric-label-sm">Retention</span>
+                                <div class="progress-bar-sm">
+                                    <div class="progress-fill-sm retention" [style.width.%]="plan.retention"></div>
+                                </div>
+                                <span class="metric-value-sm">{{ plan.retention }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 5: REVENUE INTELLIGENCE -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Revenue Intelligence</h2>
+
+        <div class="revenue-grid">
+            <!-- LTV Card -->
+            <div class="card ltv-card">
+                <div class="card-header">
+                    <h3 class="card-title">Lifetime Value per Member</h3>
+                </div>
+                <div class="ltv-content">
+                    <h2 class="ltv-value">{{ formatCurrency(revenueIntelligence.ltvPerMember.value) }}</h2>
+                    <div class="ltv-trend" [ngClass]="getTrendClass(revenueIntelligence.ltvPerMember.trend)">
+                        <span class="material-icons">{{ getTrendIcon(revenueIntelligence.ltvPerMember.trend) }}</span>
+                        <span>{{ formatPercentage(revenueIntelligence.ltvPerMember.change) }} vs last period</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Breakdown -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Revenue Sources</h3>
+                </div>
+                <div class="revenue-breakdown">
+                    <div *ngFor="let source of revenueIntelligence.revenueBreakdown" class="revenue-source">
+                        <div class="source-info">
+                            <span class="source-name">{{ source.source }}</span>
+                            <span class="source-amount">{{ formatCurrency(source.amount) }}</span>
+                        </div>
+                        <div class="source-bar-container">
+                            <div class="source-bar" [style.width.%]="source.percentage"></div>
+                        </div>
+                        <span class="source-percentage">{{ formatPercentage(source.percentage) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Revenue Members -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Top Revenue Members</h3>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Member ID</th>
+                            <th>Name</th>
+                            <th>Total Spent</th>
+                            <th>Avg Monthly</th>
+                            <th>Tier</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let member of revenueIntelligence.topRevenueMembers">
+                            <td><span class="member-id">{{ member.id }}</span></td>
+                            <td><span class="member-name">{{ member.name }}</span></td>
+                            <td><span class="amount-highlight">{{ formatCurrency(member.totalSpent) }}</span></td>
+                            <td><span class="amount">{{ formatCurrency(member.avgMonthly) }}</span></td>
+                            <td><span class="tier-badge" [ngClass]="getTierClass(member.tier)">{{ member.tier }}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 6: STAFF PERFORMANCE -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Staff Performance Ranking</h2>
+
+        <div class="card">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Attendance %</th>
+                            <th>Sales Contribution</th>
+                            <th>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let staff of staffPerformance.staffMetrics" [class.top-performer]="staff.rank <= 3">
+                            <td><span class="rank-badge">{{ getRankBadge(staff.rank) }}</span></td>
+                            <td><span class="staff-name">{{ staff.name }}</span></td>
+                            <td><span class="staff-role">{{ staff.role }}</span></td>
+                            <td><span class="attendance-percent">{{ formatPercentage(staff.attendance) }}</span></td>
+                            <td><span class="amount-highlight">{{ formatCurrency(staff.salesContribution) }}</span></td>
+                            <td>
+                                <div class="rating-display">
+                                    <span class="material-icons rating-star">star</span>
+                                    <span>{{ staff.rating }}</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 7: ACTIONABLE INSIGHTS -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Actionable Insights</h2>
+
+        <div class="insights-grid">
+            <div *ngFor="let insight of actionableInsights" class="insight-card card"
+                [ngClass]="getSeverityClass(insight.severity)">
+                <div class="insight-header">
+                    <span class="material-icons insight-icon" [ngClass]="getSeverityClass(insight.severity)">
+                        {{ getSeverityIcon(insight.severity) }}
+                    </span>
+                    <h3 class="insight-title">{{ insight.title }}</h3>
+                </div>
+                <p class="insight-description">{{ insight.description }}</p>
+                <div class="insight-action">
+                    <span class="material-icons">lightbulb</span>
+                    <strong>Suggested Action:</strong> {{ insight.action }}
+                </div>
+                <div class="insight-impact">
+                    <span class="material-icons">trending_up</span>
+                    <span>{{ insight.impact }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 8: AI PREDICTIONS (Churn Risk) -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">AI-Powered Predictions</h2>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Churn Risk Members</h3>
+                <p class="card-subtitle">Members predicted to cancel based on behavior patterns</p>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Member ID</th>
+                            <th>Name</th>
+                            <th>Risk Score</th>
+                            <th>Risk Level</th>
+                            <th>Reason</th>
+                            <th>What Should I Do?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let member of aiPredictions.churnRiskMembers"
+                            [ngClass]="getRiskLevelClass(member.riskLevel)">
+                            <td><span class="member-id">{{ member.id }}</span></td>
+                            <td><span class="member-name">{{ member.name }}</span></td>
+                            <td>
+                                <div class="risk-score-display">
+                                    <div class="risk-score-circle" [ngClass]="getRiskLevelClass(member.riskLevel)">
+                                        {{ member.riskScore }}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="risk-badge" [ngClass]="getRiskLevelClass(member.riskLevel)">
+                                    {{ getRiskLevelBadge(member.riskLevel) }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="risk-reason" [title]="member.reason">
+                                    {{ member.reason }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="suggested-action">
+                                    <span class="material-icons action-icon">lightbulb</span>
+                                    <span>{{ member.suggestedAction }}</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 9: FORECASTING -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Forecasting & Predictions</h2>
+
+        <div class="forecasting-grid">
+            <!-- Attendance Forecast Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Next 7 Days Attendance Forecast</h3>
+                    <p class="card-subtitle">Predicted vs actual attendance</p>
+                </div>
+                <div class="forecast-chart">
+                    <svg viewBox="0 0 600 200" class="forecast-svg">
+                        <!-- Grid lines -->
+                        <line x1="0" y1="50" x2="600" y2="50" class="grid-line" />
+                        <line x1="0" y1="100" x2="600" y2="100" class="grid-line" />
+                        <line x1="0" y1="150" x2="600" y2="150" class="grid-line" />
+
+                        <!-- Actual line (solid) -->
+                        <path
+                            [attr.d]="getForecastLineChartPath(forecasting.attendanceForecast.actual, forecasting.attendanceForecast.maxValue, 600, 180)"
+                            class="forecast-line-actual" />
+
+                        <!-- Predicted line (dashed) -->
+                        <path
+                            [attr.d]="getForecastLineChartPath(forecasting.attendanceForecast.predicted, forecasting.attendanceForecast.maxValue, 600, 180)"
+                            class="forecast-line-predicted" />
+
+                        <!-- Trend line -->
+                        <path
+                            [attr.d]="getForecastLineChartPath(forecasting.attendanceForecast.trend, forecasting.attendanceForecast.maxValue, 600, 180)"
+                            class="forecast-line-trend" />
+                    </svg>
+                    <div class="forecast-labels">
+                        <span *ngFor="let label of forecasting.attendanceForecast.labels" class="forecast-label">
+                            {{ label }}
+                        </span>
+                    </div>
+                    <div class="forecast-legend">
+                        <span class="legend-item">
+                            <span class="legend-line actual-line"></span>
+                            <span>Actual</span>
+                        </span>
+                        <span class="legend-item">
+                            <span class="legend-line predicted-line"></span>
+                            <span>Predicted</span>
+                        </span>
+                        <span class="legend-item">
+                            <span class="legend-line trend-line"></span>
+                            <span>Trend</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Forecast Card -->
+            <div class="card revenue-forecast-card">
+                <div class="card-header">
+                    <h3 class="card-title">Month-End Revenue Prediction</h3>
+                </div>
+                <div class="revenue-forecast-content">
+                    <div class="forecast-metric">
+                        <span class="forecast-label">Current Month</span>
+                        <h3 class="forecast-value">{{ formatCurrency(forecasting.revenueForecast.currentMonth) }}</h3>
+                    </div>
+                    <div class="forecast-arrow">
+                        <span class="material-icons">arrow_forward</span>
+                    </div>
+                    <div class="forecast-metric predicted">
+                        <span class="forecast-label">Predicted Month-End</span>
+                        <h3 class="forecast-value predicted-value">
+                            {{ formatCurrency(forecasting.revenueForecast.predictedMonthEnd) }}
+                        </h3>
+                        <div class="forecast-change" [ngClass]="getTrendClass(forecasting.revenueForecast.trend)">
+                            <span class="material-icons">{{ getTrendIcon(forecasting.revenueForecast.trend) }}</span>
+                            <span>{{ formatPercentage(forecasting.revenueForecast.change) }}</span>
+                        </div>
+                    </div>
+                    <div class="forecast-confidence">
+                        <span class="material-icons">verified</span>
+                        <span>{{ forecasting.revenueForecast.confidence }}% confidence</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 10: AUTOMATED ALERTS -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Automated Alerts & Notifications</h2>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Recent Alerts</h3>
+                <div class="alert-summary">
+                    <span class="alert-count critical">{{ (automatedAlerts | filter:'severity':'critical').length }}
+                        Critical</span>
+                    <span class="alert-count warning">{{ (automatedAlerts | filter:'severity':'warning').length }}
+                        Warning</span>
+                    <span class="alert-count info">{{ (automatedAlerts | filter:'severity':'info').length }} Info</span>
+                </div>
+            </div>
+            <div class="alerts-container">
+                <div *ngFor="let alert of automatedAlerts" class="alert-card-item"
+                    [ngClass]="getAlertSeverityClass(alert.severity)">
+                    <div class="alert-emoji">{{ alert.emoji }}</div>
+                    <div class="alert-main">
+                        <div class="alert-header-row">
+                            <h4 class="alert-title">{{ alert.title }}</h4>
+                            <span class="alert-status" [ngClass]="getAlertStatusClass(alert.status)">
+                                {{ alert.status }}
+                            </span>
+                        </div>
+                        <p class="alert-message">{{ alert.message }}</p>
+                        <div class="alert-footer">
+                            <div class="alert-action-taken">
+                                <span class="material-icons">check_circle</span>
+                                <span>{{ alert.action }}</span>
+                            </div>
+                            <span class="alert-timestamp">{{ formatTimestamp(alert.timestamp) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 11: MULTI-GYM COMPARISON -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Multi-Gym Comparison</h2>
+
+        <!-- Summary Cards -->
+        <div class="gym-summary-grid">
+            <div class="gym-summary-card card">
+                <span class="summary-label">Total Members</span>
+                <h3 class="summary-value">{{ formatNumber(multiGymComparison.totals.members) }}</h3>
+            </div>
+            <div class="gym-summary-card card">
+                <span class="summary-label">Total Revenue</span>
+                <h3 class="summary-value">{{ formatCurrency(multiGymComparison.totals.revenue) }}</h3>
+            </div>
+            <div class="gym-summary-card card">
+                <span class="summary-label">Avg Attendance</span>
+                <h3 class="summary-value">{{ formatPercentage(multiGymComparison.totals.avgAttendance) }}</h3>
+            </div>
+            <div class="gym-summary-card card">
+                <span class="summary-label">Avg Churn</span>
+                <h3 class="summary-value">{{ formatPercentage(multiGymComparison.totals.avgChurn) }}</h3>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Branch Performance Comparison</h3>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Gym Name</th>
+                            <th>Members</th>
+                            <th>Revenue</th>
+                            <th>Attendance %</th>
+                            <th>Churn %</th>
+                            <th>Performance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let gym of multiGymComparison.gyms"
+                            [ngClass]="getPerformanceClass(gym.performance)">
+                            <td>
+                                <span class="gym-name">{{ gym.name }}</span>
+                            </td>
+                            <td>
+                                <span class="gym-members">{{ formatNumber(gym.members) }}</span>
+                            </td>
+                            <td>
+                                <span class="gym-revenue">{{ formatCurrency(gym.revenue) }}</span>
+                            </td>
+                            <td>
+                                <span class="gym-attendance" [class.high-attendance]="gym.attendanceRate >= 85">
+                                    {{ formatPercentage(gym.attendanceRate) }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="gym-churn" [class.high-churn]="gym.churnRate >= 10">
+                                    {{ formatPercentage(gym.churnRate) }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="performance-badge" [ngClass]="getPerformanceClass(gym.performance)">
+                                    {{ getPerformanceBadge(gym.performance) }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

@@ -6,10 +6,8 @@ import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import {
-    loadPlans,
-    deletePlan,
-    setFilters,
-    clearFilters
+    loadWorkoutPlans,
+    deleteWorkoutPlan
 } from '../../../../core/store/workout-plans/workout-plan.actions';
 import {
     selectPlans,
@@ -56,7 +54,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
     goals = Object.values(WorkoutGoal);
 
     // User permissions
-    currentUser = this.authService.getCurrentUser();
+    currentUser = this.authService.currentUserValue;
     canCreate = this.hasRole(['admin', 'trainer', 'manager']);
     canEdit = this.hasRole(['admin', 'trainer', 'manager']);
     canDelete = this.hasRole(['admin']);
@@ -98,10 +96,12 @@ export class PlanListComponent implements OnInit, OnDestroy {
         console.log('📋 LOADING PLANS with filters:', filters);
         console.log('Page:', this.currentPage, 'PageSize:', this.pageSize);
 
-        this.store.dispatch(loadPlans({
-            filters,
-            pageSize: this.pageSize,
-            pageNumber: this.currentPage
+        this.store.dispatch(loadWorkoutPlans({
+            params: {
+                filters,
+                pageSize: this.pageSize,
+                pageNumber: this.currentPage
+            }
         }));
     }
 
@@ -119,7 +119,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
         this.selectedGoal = '';
         this.searchTerm = '';
         this.currentPage = 1;
-        this.store.dispatch(clearFilters());
+        // this.store.dispatch(clearFilters()); // Removed as it doesn't exist yet, loadPlans handles it by passing new filters
         this.loadPlans();
     }
 
@@ -130,7 +130,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
 
     nextPage() {
         this.pagination$.pipe(take(1)).subscribe(pagination => {
-            if (this.currentPage < pagination.pages) {
+            if (pagination && this.currentPage < pagination.pages) {
                 this.currentPage++;
                 this.loadPlans();
             }
@@ -155,7 +155,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
             type: 'danger'
         }).pipe(take(1)).subscribe(confirmed => {
             if (confirmed) {
-                this.store.dispatch(deletePlan({ planId }));
+                this.store.dispatch(deleteWorkoutPlan({ id: planId }));
             }
         });
     }

@@ -1,94 +1,260 @@
 <div class="page-container fade-in">
-    <div class="page-header mb-lg">
+    <!-- Header -->
+    <div class="page-header flex justify-between items-center mb-lg">
         <div>
-            <h2 class="mb-xs">Inventory Management</h2>
-            <p class="text-secondary">Track stock levels and manage products.</p>
+            <h1 class="page-title">POS Products</h1>
+            <p class="page-subtitle">Manage gym products and inventory</p>
         </div>
-        <button class="btn btn-primary" (click)="openModal()">
-            <span class="material-icons text-sm">add</span> Add New Product
+        <button class="btn btn-primary" (click)="openProductModal()">
+            <span class="material-icons text-sm mr-2">add</span> Add Product
         </button>
     </div>
 
-    <!-- Inventory Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
-        <div *ngFor="let product of products"
-            class="card relative group hover:border-[var(--accent-primary)] transition-colors">
-
-            <button
-                class="absolute top-2 right-2 text-[var(--color-text-secondary)] hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                (click)="openModal(product)">
-                <span class="material-icons text-sm">edit</span>
-            </button>
-
-            <div class="flex justify-between items-start mb-sm">
-                <span class="badge badge-outline text-xs">{{ product.category }}</span>
-                <span *ngIf="product.stock < 5" class="badge badge-danger text-xs animate-pulse">Low Stock</span>
+    <!-- Summary Cards -->
+    <div class="grid grid-3 mb-lg">
+        <!-- Total Products -->
+        <div class="card stat-card">
+            <div class="stat-icon bg-info-soft text-info">
+                <span class="material-icons">inventory_2</span>
             </div>
+            <div>
+                <p class="text-secondary text-sm mb-1">Total Products</p>
+                <h3 class="mb-0">{{ products.length }}</h3>
+            </div>
+        </div>
 
-            <h3 class="text-lg font-bold mb-1 truncate">{{ product.name }}</h3>
+        <!-- Low Stock -->
+        <div class="card stat-card">
+            <div class="stat-icon bg-danger-soft text-danger">
+                <span class="material-icons">warning</span>
+            </div>
+            <div>
+                <p class="text-secondary text-sm mb-1">Low Stock Items</p>
+                <h3 class="mb-0 text-danger">{{ lowStockCount }}</h3>
+            </div>
+        </div>
 
-            <div class="flex justify-between items-end mt-md">
-                <div>
-                    <div class="text-xs text-muted uppercase tracking-wider">Price</div>
-                    <div class="text-xl text-white font-mono">${{ product.price }}</div>
-                </div>
-                <div class="text-right">
-                    <div class="text-xs text-muted uppercase tracking-wider">In Stock</div>
-                    <div class="text-xl font-mono" [class.text-danger]="product.stock < 5"
-                        [class.text-success]="product.stock >= 5">
-                        {{ product.stock }}
-                    </div>
-                </div>
+        <!-- Inventory Value -->
+        <div class="card stat-card">
+            <div class="stat-icon bg-success-soft text-success">
+                <span class="material-icons">attach_money</span>
+            </div>
+            <div>
+                <p class="text-secondary text-sm mb-1">Inventory Value</p>
+                <h3 class="mb-0">{{ totalInventoryValue | currency }}</h3>
             </div>
         </div>
     </div>
 
-    <!-- Empty State -->
-    <div *ngIf="!isLoading && products.length === 0" class="card text-center p-xl mt-lg">
-        <span class="material-icons text-muted text-4xl mb-md">inventory_2</span>
-        <h3>No Products Found</h3>
-        <p>Add products to start tracking your inventory.</p>
+    <!-- Filter Bar -->
+    <div class="card p-md mb-lg flex flex-wrap gap-md items-center justify-between">
+        <div class="flex flex-wrap gap-md items-center flex-1">
+            <div class="form-group mb-0 w-full md:w-64">
+                <input type="text" class="search-input" placeholder="Search product or SKU..." [(ngModel)]="searchQuery"
+                    (input)="applyFilters()">
+            </div>
+
+            <div class="form-group mb-0 w-40">
+                <select [(ngModel)]="filterCategory" (change)="applyFilters()">
+                    <option value="All">All Categories</option>
+                    <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+                </select>
+            </div>
+
+            <div class="flex items-center gap-sm">
+                <input type="checkbox" id="lowStock" class="w-4 h-4 cursor-pointer" [(ngModel)]="showLowStockOnly"
+                    (change)="applyFilters()">
+                <label for="lowStock" class="mb-0 cursor-pointer">Low Stock Only</label>
+            </div>
+        </div>
     </div>
 
-    <!-- Add/Edit Modal -->
-    <div *ngIf="showModal"
-        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm fade-in">
-        <div class="card w-full max-w-md m-md" (click)="$event.stopPropagation()">
-            <h3 class="mb-lg border-b border-[var(--color-border)] pb-sm">
-                {{ isEditing ? 'Edit Product' : 'New Product' }}
-            </h3>
+    <!-- Product Table -->
+    <div class="card p-0 overflow-hidden">
+        <div class="table-container">
+            <table class="w-full">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Reorder Level</th>
+                        <th>Status</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="filteredProducts.length > 0; else emptyTable">
+                    <tr *ngFor="let product of filteredProducts" class="hover:bg-hover transition-colors">
+                        <td>
+                            <div class="flex flex-col">
+                                <span class="font-medium text-white">{{ product.name }}</span>
+                                <span class="text-xs text-secondary">{{ product.sku }}</span>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-neutral">{{ product.category }}</span></td>
+                        <td class="font-mono">{{ product.price | currency }}</td>
+                        <td>
+                            <span class="badge"
+                                [ngClass]="product.stock <= (product.reorderLevel || 5) ? 'badge-danger' : 'badge-success'">
+                                {{ product.stock }} {{ product.unit }}
+                            </span>
+                        </td>
+                        <td class="text-secondary pl-6">{{ product.reorderLevel || 5 }}</td>
+                        <td>
+                            <button class="btn btn-xs"
+                                [ngClass]="product.isActive ? 'btn-success-ghost' : 'btn-danger-ghost'"
+                                (click)="toggleProductStatus(product)">
+                                {{ product.isActive ? 'Active' : 'Inactive' }}
+                            </button>
+                        </td>
+                        <td class="text-right">
+                            <div class="flex justify-end gap-sm">
+                                <button class="btn btn-icon btn-secondary" title="Adjust Stock"
+                                    (click)="openStockModal(product)">
+                                    <span class="material-icons text-sm">swap_vert</span>
+                                </button>
+                                <button class="btn btn-icon btn-primary" title="Edit"
+                                    (click)="openProductModal(product)">
+                                    <span class="material-icons text-sm">edit</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-            <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
-                <div class="form-group">
-                    <label>Product Name</label>
-                    <input type="text" formControlName="name" placeholder="e.g. Whey Protein">
-                </div>
+        <ng-template #emptyTable>
+            <div class="text-center py-xl">
+                <span class="material-icons text-4xl text-muted mb-md">inventory_2</span>
+                <p class="text-secondary">No products found matching your filters.</p>
+            </div>
+        </ng-template>
+    </div>
+</div>
 
-                <div class="form-group">
-                    <label>Category</label>
-                    <select formControlName="category">
-                        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
-                    </select>
-                </div>
+<!-- Add / Edit Product Modal -->
+<div class="modal-backdrop" *ngIf="showProductModal" (click)="closeModals()">
+    <div class="modal-content w-full max-w-2xl" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3 class="modal-title">{{ isEditing ? 'Edit Product' : 'Add New Product' }}</h3>
+            <button class="btn btn-icon" (click)="closeModals()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
 
-                <div class="grid grid-cols-2 gap-md">
+        <div class="modal-body">
+            <form [formGroup]="productForm">
+                <div class="grid grid-2 gap-md mb-md">
                     <div class="form-group">
-                        <label>Price</label>
+                        <label>Product Name*</label>
+                        <input type="text" formControlName="name" placeholder="e.g. Whey Protein Isolate">
+                    </div>
+                    <div class="form-group">
+                        <label>SKU*</label>
+                        <input type="text" formControlName="sku" placeholder="e.g. SUP-WHEY-001">
+                    </div>
+                </div>
+
+                <div class="grid grid-3 gap-md mb-md">
+                    <div class="form-group">
+                        <label>Category*</label>
+                        <select formControlName="category">
+                            <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Selling Price ($)*</label>
                         <input type="number" formControlName="price" min="0">
                     </div>
                     <div class="form-group">
-                        <label>Stock Qty</label>
-                        <input type="number" formControlName="stock" min="0">
+                        <label>Cost Price ($)*</label>
+                        <input type="number" formControlName="costPrice" min="0">
                     </div>
                 </div>
 
-                <div class="flex justify-end gap-md mt-lg">
-                    <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid || isLoading">
-                        {{ isLoading ? 'Saving...' : 'Save Product' }}
-                    </button>
+                <div class="grid grid-3 gap-md mb-md">
+                    <div class="form-group">
+                        <label>Current Stock*</label>
+                        <input type="number" formControlName="stock" [readonly]="isEditing"
+                            title="Use Adjust Stock button to change stock for existing items">
+                        <small *ngIf="isEditing" class="text-muted text-xs">Use Stock Adjustment for existing
+                            items</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Reorder Level</label>
+                        <input type="number" formControlName="reorderLevel">
+                    </div>
+                    <div class="form-group">
+                        <label>Unit</label>
+                        <input type="text" formControlName="unit" placeholder="pcs, kg, box">
+                    </div>
+                </div>
+
+                <div class="form-group mb-0">
+                    <label>Description</label>
+                    <textarea formControlName="description" rows="3" placeholder="Product details..."></textarea>
                 </div>
             </form>
+        </div>
+
+        <div class="modal-footer">
+            <div class="flex-1">
+                <label class="flex items-center gap-sm cursor-pointer" *ngIf="isEditing">
+                    <input type="checkbox" formControlName="isActive">
+                    <span class="text-sm">Active Product</span>
+                </label>
+            </div>
+            <button class="btn btn-secondary" (click)="closeModals()">Cancel</button>
+            <button class="btn btn-primary" (click)="onProductSubmit()"
+                [disabled]="productForm.invalid || isSubmitting">
+                {{ isSubmitting ? 'Saving...' : 'Save Product' }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Stock Adjustment Modal -->
+<div class="modal-backdrop" *ngIf="showStockModal" (click)="closeModals()">
+    <div class="modal-content w-full max-w-md" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3 class="modal-title">Adjust Stock</h3>
+            <button class="btn btn-icon" (click)="closeModals()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="bg-card p-md rounded mb-md border border-subtle">
+                <p class="text-secondary text-sm mb-1">Current Stock</p>
+                <h2 class="mb-0">{{ selectedProduct?.stock }} <span class="text-lg text-muted">{{ selectedProduct?.unit
+                        }}</span></h2>
+                <p class="text-sm text-white mt-1">{{ selectedProduct?.name }}</p>
+            </div>
+
+            <form [formGroup]="stockForm">
+                <div class="form-group">
+                    <label>Adjustment Quantity (+ Add, - Remove)</label>
+                    <input type="number" formControlName="adjustment" placeholder="0" autofocus>
+                    <small class="text-muted">Enter negative number to reduce stock (e.g. -5)</small>
+                </div>
+                <div class="form-group mb-0">
+                    <label>Reason</label>
+                    <select formControlName="reason">
+                        <option value="Restock">Restock / Purchase</option>
+                        <option value="Correction">Inventory Correction</option>
+                        <option value="Damage">Damaged / Expired</option>
+                        <option value="Return">Customer Return</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeModals()">Cancel</button>
+            <button class="btn btn-primary" (click)="onStockSubmit()" [disabled]="stockForm.invalid || isSubmitting">
+                Confirm Adjustment
+            </button>
         </div>
     </div>
 </div>

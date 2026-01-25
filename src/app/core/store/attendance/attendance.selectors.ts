@@ -1,35 +1,34 @@
-
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { AttendanceState } from './attendance.reducer';
+import { AttendanceState, selectAll, selectEntities, selectTotal } from './attendance.reducer';
 
 export const selectAttendanceState = createFeatureSelector<AttendanceState>('attendance');
 
-export const selectAttendanceRecords = createSelector(
+export const selectAllAttendance = createSelector(
     selectAttendanceState,
-    (state) => state.records
+    selectAll
 );
 
-export const selectAttendanceIsLoading = createSelector(
+export const selectAttendanceEntities = createSelector(
     selectAttendanceState,
-    (state) => state.isLoading
+    selectEntities
 );
 
-export const selectIsScanning = createSelector(
+export const selectAttendanceTotal = createSelector(
     selectAttendanceState,
-    (state) => state.isScanning
+    selectTotal
 );
 
-export const selectScanSuccess = createSelector(
+export const selectAttendanceLoading = createSelector(
     selectAttendanceState,
-    (state) => state.scanSuccess
+    (state) => state.loading
 );
 
-export const selectScannedData = createSelector(
+export const selectAttendanceError = createSelector(
     selectAttendanceState,
-    (state) => state.scannedData
+    (state) => state.error
 );
 
-export const selectScannerStatus = createSelector(
+export const selectAttendanceStats = createSelector(
     selectAttendanceState,
-    (state) => state.statusMessage
+    (state) => state.stats
 );

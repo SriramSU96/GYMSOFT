@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DietService } from '../../../../core/services/diet.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { DietPlan } from '../../../../core/models/gym-extensions.model';
+import { DietPlan } from '../../../../core/models/diet.model';
 
 @Component({
     selector: 'app-diet-plan-form',
@@ -114,8 +114,9 @@ export class DietPlanFormComponent implements OnInit {
 
     loadPlan(id: string) {
         this.isLoading = true;
-        this.dietService.getDietPlan(id).subscribe({
-            next: (plan) => {
+        this.dietService.getPlanById(id).subscribe({
+            next: (response: any) => {
+                const plan = response.dietPlan || response; // Handle likely response wrapper or direct object
                 this.planForm.patchValue({
                     title: plan.title,
                     description: plan.description,
@@ -126,7 +127,7 @@ export class DietPlanFormComponent implements OnInit {
                 });
                 this.isLoading = false;
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('Error loading plan', err);
                 this.isLoading = false;
             }
@@ -139,7 +140,7 @@ export class DietPlanFormComponent implements OnInit {
 
         this.isLoading = true;
         const formValue = this.planForm.value;
-        const currentUser = this.authService.getCurrentUser();
+        const currentUser = this.authService.currentUserValue;
 
         const planData: Partial<DietPlan> = {
             ...formValue,
@@ -149,20 +150,21 @@ export class DietPlanFormComponent implements OnInit {
         };
 
         const request$ = this.isEditMode
-            ? this.dietService.updateDietPlan(this.planId!, planData)
-            : this.dietService.createDietPlan(planData as DietPlan);
+            ? this.dietService.updatePlan(this.planId!, planData)
+            : this.dietService.createPlan(planData as DietPlan);
 
         request$.subscribe({
-            next: (res) => {
+            next: (res: any) => {
                 this.isLoading = false;
                 // Redirect to builder if creating, or list if editing
+                const planId = res.dietPlan ? res.dietPlan._id : res._id; // Handle response wrapper
                 if (!this.isEditMode) {
-                    this.router.navigate(['/diets/builder', res._id]);
+                    this.router.navigate(['/diets/builder', planId]);
                 } else {
                     this.router.navigate(['/diets/manage-plans']);
                 }
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('Error saving plan', err);
                 this.isLoading = false;
             }

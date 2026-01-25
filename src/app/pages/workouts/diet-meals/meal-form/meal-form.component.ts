@@ -156,11 +156,11 @@ export class MealFormComponent implements OnInit {
     loadMeal(id: string) {
         this.isLoading = true;
         this.dietService.getMeal(id).subscribe({
-            next: (meal) => {
+            next: (meal: any) => {
                 this.mealForm.patchValue(meal);
                 this.isLoading = false;
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('Error loading meal', err);
                 this.isLoading = false;
                 // Handle error (notification)
@@ -184,7 +184,7 @@ export class MealFormComponent implements OnInit {
                 this.isLoading = false;
                 this.router.navigate(['/diets/meals']);
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('Error saving meal', err);
                 this.isLoading = false;
             }

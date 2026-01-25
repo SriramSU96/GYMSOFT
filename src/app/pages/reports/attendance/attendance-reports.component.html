@@ -1,0 +1,349 @@
+<div class="page-container">
+    <!-- ============================================ -->
+    <!-- PAGE HEADER -->
+    <!-- ============================================ -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Attendance Reports</h1>
+            <p class="page-subtitle">Attendance patterns, risks & insights</p>
+        </div>
+
+        <div class="header-actions">
+            <div class="time-range-selector">
+                <button *ngFor="let range of timeRanges" [class.active]="selectedRange === range.value"
+                    (click)="onRangeChange(range.value)" class="range-btn">
+                    {{ range.label }}
+                </button>
+            </div>
+
+            <div class="export-buttons">
+                <button class="btn btn-secondary" (click)="exportCSV()">
+                    <span class="material-icons">download</span>
+                    CSV
+                </button>
+                <button class="btn btn-secondary" (click)="exportPDF()">
+                    <span class="material-icons">picture_as_pdf</span>
+                    PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 1: SUMMARY CARDS -->
+    <!-- ============================================ -->
+    <div class="summary-grid">
+        <div class="summary-card card">
+            <div class="summary-icon total">
+                <span class="material-icons">groups</span>
+            </div>
+            <div class="summary-content">
+                <span class="summary-label">Total Attendance</span>
+                <h3 class="summary-value">{{ formatNumber(summaryData.totalAttendance) }}</h3>
+            </div>
+        </div>
+
+        <div class="summary-card card">
+            <div class="summary-icon average">
+                <span class="material-icons">trending_up</span>
+            </div>
+            <div class="summary-content">
+                <span class="summary-label">Avg Daily Attendance</span>
+                <h3 class="summary-value">{{ formatNumber(summaryData.avgDailyAttendance) }}</h3>
+            </div>
+        </div>
+
+        <div class="summary-card card">
+            <div class="summary-icon change">
+                <span class="material-icons">{{ summaryData.attendanceChange > 0 ? 'arrow_upward' : 'arrow_downward'
+                    }}</span>
+            </div>
+            <div class="summary-content">
+                <span class="summary-label">Attendance Change</span>
+                <h3 class="summary-value" [class.positive]="summaryData.attendanceChange > 0"
+                    [class.negative]="summaryData.attendanceChange < 0">
+                    {{ summaryData.attendanceChange > 0 ? '+' : '' }}{{ formatPercentage(summaryData.attendanceChange)
+                    }}
+                </h3>
+            </div>
+        </div>
+
+        <div class="summary-card card">
+            <div class="summary-icon inactive">
+                <span class="material-icons">person_off</span>
+            </div>
+            <div class="summary-content">
+                <span class="summary-label">Inactive Members</span>
+                <h3 class="summary-value">{{ formatNumber(summaryData.inactiveMembersCount) }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 2: ATTENDANCE TRENDS -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Attendance Trends</h2>
+
+        <div class="trends-grid">
+            <!-- Daily Attendance Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Daily Attendance (Last 7 Days)</h3>
+                </div>
+                <div class="daily-chart">
+                    <div *ngFor="let day of attendanceTrends.dailyAttendance" class="daily-bar">
+                        <div class="bar-value">{{ day.count }}</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" [style.height.%]="(day.count / getMaxDailyAttendance()) * 100"></div>
+                        </div>
+                        <div class="bar-label">{{ day.date | date:'EEE' }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekday Attendance Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Weekday Attendance Pattern</h3>
+                </div>
+                <div class="weekday-chart">
+                    <div *ngFor="let day of attendanceTrends.weekdayAttendance" class="weekday-bar">
+                        <div class="bar-value">{{ day.count }}</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" [style.height.%]="day.percentage"></div>
+                        </div>
+                        <div class="bar-label">{{ day.day }}</div>
+                        <div class="bar-percentage">{{ day.percentage }}%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 3: PEAK TIME HEATMAP -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Peak Time Heatmap</h2>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Hour vs Day Attendance Pattern</h3>
+                <p class="card-subtitle">Darker = Higher attendance</p>
+            </div>
+            <div class="heatmap-container">
+                <table class="heatmap-table">
+                    <thead>
+                        <tr>
+                            <th class="heatmap-corner">Hour / Day</th>
+                            <th *ngFor="let day of peakTimeHeatmap.days">{{ day }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let hour of peakTimeHeatmap.hours; let i = index">
+                            <td class="heatmap-hour">{{ hour }}</td>
+                            <td *ngFor="let day of peakTimeHeatmap.days; let j = index" class="heatmap-cell"
+                                [style.background-color]="getHeatmapColor(getHeatmapValue(i, j))"
+                                [title]="getHeatmapValue(i, j) + '% capacity'">
+                                <span class="heatmap-value">{{ getHeatmapValue(i, j) }}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="heatmap-legend">
+                <span class="legend-item">
+                    <span class="legend-color" style="background-color: rgba(239, 68, 68, 0.6);"></span>
+                    <span>Low (&lt;45%)</span>
+                </span>
+                <span class="legend-item">
+                    <span class="legend-color" style="background-color: rgba(245, 158, 11, 0.5);"></span>
+                    <span>Medium (45-75%)</span>
+                </span>
+                <span class="legend-item">
+                    <span class="legend-color" style="background-color: rgba(16, 185, 129, 0.5);"></span>
+                    <span>High (75-90%)</span>
+                </span>
+                <span class="legend-item">
+                    <span class="legend-color" style="background-color: rgba(16, 185, 129, 0.8);"></span>
+                    <span>Peak (90%+)</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 4: MEMBER ATTENDANCE TABLE -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Member Attendance</h2>
+
+        <div class="card">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Member Name</th>
+                            <th>Visits</th>
+                            <th>Avg / Week</th>
+                            <th>Last Visit</th>
+                            <th>Consistency Score</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let member of memberAttendance" [ngClass]="getStatusClass(member.status)">
+                            <td>
+                                <div class="member-info">
+                                    <div class="member-avatar">{{ member.name.charAt(0) }}</div>
+                                    <div>
+                                        <div class="member-name">{{ member.name }}</div>
+                                        <div class="member-id">{{ member.id }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="visits-count">{{ member.visits }}</span></td>
+                            <td><span class="avg-week">{{ member.avgPerWeek }}</span></td>
+                            <td>
+                                <div class="last-visit">
+                                    <span>{{ member.lastVisit | date:'mediumDate' }}</span>
+                                    <span class="days-ago">({{ getDaysSinceLastVisit(member.lastVisit) }}d ago)</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="consistency-display">
+                                    <div class="consistency-bar">
+                                        <div class="consistency-fill" [style.width.%]="member.consistencyScore"
+                                            [ngClass]="getConsistencyClass(member.consistencyScore)"></div>
+                                    </div>
+                                    <span class="consistency-value"
+                                        [ngClass]="getConsistencyClass(member.consistencyScore)">
+                                        {{ member.consistencyScore }}%
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status-badge" [ngClass]="getStatusClass(member.status)">
+                                    {{ getStatusLabel(member.status) }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 5: STAFF ATTENDANCE TABLE -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Staff Attendance</h2>
+
+        <div class="card">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Staff Name</th>
+                            <th>Role</th>
+                            <th>Attendance %</th>
+                            <th>Present Days</th>
+                            <th>Absent Days</th>
+                            <th>Performance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let staff of staffAttendance">
+                            <td>
+                                <div class="staff-info">
+                                    <div class="staff-avatar">{{ staff.name.charAt(0) }}</div>
+                                    <span class="staff-name">{{ staff.name }}</span>
+                                </div>
+                            </td>
+                            <td><span class="staff-role">{{ staff.role }}</span></td>
+                            <td>
+                                <span class="attendance-percentage" [ngClass]="getPerformanceClass(staff.performance)">
+                                    {{ formatPercentage(staff.attendancePercentage) }}
+                                </span>
+                            </td>
+                            <td><span class="present-days">{{ staff.presentDays }}</span></td>
+                            <td><span class="absent-days">{{ staff.absentDays }}</span></td>
+                            <td>
+                                <span class="performance-badge" [ngClass]="getPerformanceClass(staff.performance)">
+                                    {{ getPerformanceBadge(staff.performance) }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 6: INACTIVE & RISK MEMBERS -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Inactive & Risk Members</h2>
+
+        <div class="risk-grid">
+            <div *ngFor="let member of riskMembers" class="risk-card card"
+                [ngClass]="getSeverityClass(member.severity)">
+                <div class="risk-header">
+                    <div class="risk-member-info">
+                        <div class="risk-avatar">{{ member.name.charAt(0) }}</div>
+                        <div>
+                            <h4 class="risk-member-name">{{ member.name }}</h4>
+                            <span class="risk-member-id">{{ member.id }}</span>
+                        </div>
+                    </div>
+                    <span class="risk-badge" [ngClass]="getSeverityClass(member.severity)">
+                        {{ getRiskSeverityBadge(member.severity) }}
+                    </span>
+                </div>
+                <div class="risk-details">
+                    <div class="risk-detail-item">
+                        <span class="material-icons">event</span>
+                        <span>Last visit: {{ member.lastVisit | date:'mediumDate' }}</span>
+                    </div>
+                    <div class="risk-detail-item">
+                        <span class="material-icons">schedule</span>
+                        <span>{{ member.daysInactive }} days inactive</span>
+                    </div>
+                </div>
+                <div class="risk-action">
+                    <button class="btn btn-primary btn-sm">
+                        <span class="material-icons">{{ getActionIcon(member.suggestedAction) }}</span>
+                        {{ member.actionLabel }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 7: INSIGHTS PANEL -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Key Insights & Recommendations</h2>
+
+        <div class="insights-grid">
+            <div *ngFor="let insight of insights" class="insight-card card"
+                [ngClass]="getSeverityClass(insight.severity)">
+                <div class="insight-header">
+                    <span class="material-icons insight-icon" [ngClass]="getSeverityClass(insight.severity)">
+                        {{ getSeverityIcon(insight.severity) }}
+                    </span>
+                    <h4 class="insight-title">{{ insight.title }}</h4>
+                </div>
+                <p class="insight-description">{{ insight.description }}</p>
+                <div class="insight-action">
+                    <span class="material-icons">lightbulb</span>
+                    <span>{{ insight.action }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

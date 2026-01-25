@@ -1,72 +1,78 @@
-
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { Member, MemberProgress, Achievement } from '../models/member.model';
-import { Workout, DietPlan } from '../models/gym-extensions.model';
 import { environment } from '../../../environments/environment';
+import { Member, MemberResponse, MembersResponse, Achievement } from '../models/member.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class MemberService {
-    private http = inject(HttpClient);
     private apiUrl = `${environment.apiUrl}/members`;
 
-    registerMember(member: Member): Observable<Member> {
-        return this.http.post<Member>(`${this.apiUrl}`, member);
+    constructor(private http: HttpClient) { }
+
+    getMembers(params: any = {}): Observable<MembersResponse> {
+        let httpParams = new HttpParams();
+        Object.keys(params).forEach(key => {
+            if (params[key]) {
+                httpParams = httpParams.append(key, params[key]);
+            }
+        });
+        // Default params if not provided
+        if (!params.pageNumber) httpParams = httpParams.append('pageNumber', '1');
+        if (!params.pageSize) httpParams = httpParams.append('pageSize', '10');
+
+        return this.http.get<MembersResponse>(this.apiUrl, { params: httpParams });
     }
 
-    getMember(id: string): Observable<Member> {
-        return this.http.get<Member>(`${this.apiUrl}/${id}`);
+    getMemberById(id: string): Observable<MemberResponse> {
+        return this.http.get<MemberResponse>(`${this.apiUrl}/${id}`);
     }
 
-    getMembers(keyword?: string, pageNumber: number = 1): Observable<Member[]> {
+    createMember(memberData: Partial<Member>): Observable<MemberResponse> {
+        return this.http.post<MemberResponse>(this.apiUrl, memberData);
+    }
+
+    updateMember(id: string, memberData: Partial<Member>): Observable<MemberResponse> {
+        return this.http.put<MemberResponse>(`${this.apiUrl}/${id}`, memberData);
+    }
+
+    deleteMember(id: string): Observable<{ success: boolean; message: string }> {
+        return this.http.delete<{ success: boolean; message: string }>(`${this.apiUrl}/${id}`);
+    }
+
+    // QR Code Operations
+    generateQr(id: string): Observable<{ success: boolean; qrToken: string; qrGeneratedAt: Date }> {
+        return this.http.post<{ success: boolean; qrToken: string; qrGeneratedAt: Date }>(`${this.apiUrl}/${id}/qr-generate`, {});
+    }
+
+    refreshQr(id: string): Observable<{ success: boolean; qrToken: string; qrGeneratedAt: Date }> {
+        return this.http.patch<{ success: boolean; qrToken: string; qrGeneratedAt: Date }>(`${this.apiUrl}/${id}/qr-refresh`, {});
+    }
+
+    // Related Data Fetching
+    getMemberWorkoutPlan(id: string): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/${id}/workout`);
+    }
+
+    getMemberDietPlan(id: string): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/${id}/diet`);
+    }
+
+    getMemberAttendance(id: string, startDate?: string, endDate?: string): Observable<any> {
         let params = new HttpParams();
-        if (keyword) params = params.set('keyword', keyword);
-        params = params.set('pageNumber', pageNumber);
-
-        // Spec says GET /api/members (Search/Pagination)
-        // Backend filters by gymId automatically from token.
-        return this.http.get<{ members: Member[], total: number }>(`${this.apiUrl}`, { params }).pipe(
-            map(response => response.members)
-        );
+        if (startDate) params = params.append('startDate', startDate);
+        if (endDate) params = params.append('endDate', endDate);
+        return this.http.get<any>(`${this.apiUrl}/${id}/attendance`, { params });
     }
 
-    updateMember(id: string, changes: Partial<Member>): Observable<Member> {
-        return this.http.put<Member>(`${this.apiUrl}/${id}`, changes);
+    // Achievements
+    addAchievement(achievement: Partial<Achievement>): Observable<{ success: boolean; achievement: Achievement }> {
+        return this.http.post<{ success: boolean; achievement: Achievement }>(`${this.apiUrl}/achievements`, achievement);
     }
 
-    addProgress(record: MemberProgress): Observable<MemberProgress> {
-        return this.http.post<MemberProgress>(`${this.apiUrl}/progress`, record);
-    }
-
-    getProgress(memberId: string): Observable<MemberProgress[]> {
-        return this.http.get<MemberProgress[]>(`${this.apiUrl}/progress/${memberId}`);
-    }
-
-    assignAchievement(achievement: Achievement): Observable<Achievement> {
-        return this.http.post<Achievement>(`${this.apiUrl}/achievements`, achievement);
-    }
-
-    getAchievements(memberId: string): Observable<Achievement[]> {
-        return this.http.get<Achievement[]>(`${this.apiUrl}/achievements/${memberId}`);
-    }
-
-    getMemberWorkout(memberId: string): Observable<Workout> {
-        return this.http.get<Workout>(`${this.apiUrl}/${memberId}/workout`);
-    }
-
-    getMemberDiet(memberId: string): Observable<DietPlan> {
-        return this.http.get<DietPlan>(`${this.apiUrl}/${memberId}/diet`);
-    }
-
-    getMemberBookings(memberId: string): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/${memberId}/bookings`);
-    }
-
-    deleteMember(id: string): Observable<any> {
-        return this.http.delete(`${this.apiUrl}/${id}`);
+    getAchievements(memberId: string): Observable<{ success: boolean; achievements: Achievement[] }> {
+        return this.http.get<{ success: boolean; achievements: Achievement[] }>(`${this.apiUrl}/achievements/${memberId}`);
     }
 }

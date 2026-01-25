@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
-import { selectNotifications } from '../../../core/store/notifications/notification.selectors';
+import { selectAllNotifications } from '../../../core/store/notifications/notification.selectors';
 import * as NotificationActions from '../../../core/store/notifications/notification.actions';
 
 @Component({
@@ -16,12 +16,12 @@ export class NotificationCenterComponent implements OnInit {
     private store = inject(Store);
 
     // Data Observables
-    allNotifications$ = this.store.select(selectNotifications);
+    allNotifications$ = this.store.select(selectAllNotifications);
     filter = 'all';
 
     // Filtered stream
     notifications$ = this.allNotifications$.pipe(
-        map(notifications => {
+        map((notifications: any[]) => {
             if (this.filter === 'unread') {
                 return notifications.filter(n => !n.isRead);
             }
@@ -30,14 +30,14 @@ export class NotificationCenterComponent implements OnInit {
     );
 
     ngOnInit() {
-        this.store.dispatch(NotificationActions.loadNotifications());
+        this.store.dispatch(NotificationActions.loadNotifications({}));
     }
 
     setFilter(filter: string) {
         this.filter = filter;
         // Re-assign notifications$ to trigger steam update (simpler for this case)
         this.notifications$ = this.allNotifications$.pipe(
-            map(notifications => {
+            map((notifications: any[]) => {
                 if (this.filter === 'unread') {
                     return notifications.filter(n => !n.isRead);
                 }

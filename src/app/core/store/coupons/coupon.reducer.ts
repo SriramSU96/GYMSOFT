@@ -1,56 +1,58 @@
-
 import { createReducer, on } from '@ngrx/store';
+import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+import { Coupon } from '../../models/coupon.model';
 import * as CouponActions from './coupon.actions';
-import { Coupon } from '../../models/payment.model';
 
-export interface CouponState {
-    coupons: Coupon[];
-    validationResult: any | null;
-    isLoading: boolean;
+export interface CouponState extends EntityState<Coupon> {
+    loading: boolean;
     error: any;
+    validationResult: { valid: boolean; discount: number; coupon?: Coupon } | null;
 }
 
-export const initialState: CouponState = {
-    coupons: [],
-    validationResult: null,
-    isLoading: false,
-    error: null
-};
+export const adapter: EntityAdapter<Coupon> = createEntityAdapter<Coupon>({
+    selectId: (c: Coupon) => c._id || '',
+    sortComparer: (a: Coupon, b: Coupon) => (b.expiryDate ? new Date(b.expiryDate).getTime() : 0) - (a.expiryDate ? new Date(a.expiryDate).getTime() : 0)
+});
+
+export const initialState: CouponState = adapter.getInitialState({
+    loading: false,
+    error: null,
+    validationResult: null
+});
 
 export const couponReducer = createReducer(
     initialState,
-    on(CouponActions.loadCoupons, CouponActions.createCoupon, CouponActions.validateCoupon, CouponActions.applyCoupon, CouponActions.deleteCoupon, (state) => ({
+
+    on(CouponActions.loadCoupons, (state) => ({ ...state, loading: true, error: null })),
+    on(CouponActions.loadCouponsSuccess, (state, { coupons }) =>
+        adapter.setAll(coupons, { ...state, loading: false })
+    ),
+    on(CouponActions.loadCouponsFailure, (state, { error }) => ({ ...state, loading: false, error })),
+
+    on(CouponActions.createCoupon, (state) => ({ ...state, loading: true, error: null })),
+    on(CouponActions.createCouponSuccess, (state, { coupon }) =>
+        adapter.addOne(coupon, { ...state, loading: false })
+    ),
+    on(CouponActions.createCouponFailure, (state, { error }) => ({ ...state, loading: false, error })),
+
+    on(CouponActions.validateCoupon, (state) => ({ ...state, loading: true, error: null, validationResult: null })),
+    on(CouponActions.validateCouponSuccess, (state, { valid, discount, coupon }) => ({
         ...state,
-        isLoading: true,
-        error: null
+        loading: false,
+        validationResult: { valid, discount, coupon }
     })),
-    on(CouponActions.loadCouponsSuccess, (state, { coupons }) => ({
-        ...state,
-        coupons,
-        isLoading: false
-    })),
-    on(CouponActions.createCouponSuccess, (state, { coupon }) => ({
-        ...state,
-        coupons: [coupon, ...state.coupons],
-        isLoading: false
-    })),
-    on(CouponActions.deleteCouponSuccess, (state, { id }) => ({
-        ...state,
-        coupons: state.coupons.filter(c => c._id !== id),
-        isLoading: false
-    })),
-    on(CouponActions.validateCouponSuccess, (state, { result }) => ({
-        ...state,
-        validationResult: result,
-        isLoading: false
-    })),
-    on(CouponActions.applyCouponSuccess, (state) => ({
-        ...state,
-        isLoading: false
-    })),
-    on(CouponActions.loadCouponsFailure, CouponActions.createCouponFailure, CouponActions.validateCouponFailure, CouponActions.applyCouponFailure, CouponActions.deleteCouponFailure, (state, { error }) => ({
-        ...state,
-        isLoading: false,
-        error
-    }))
+    on(CouponActions.validateCouponFailure, (state, { error }) => ({ ...state, loading: false, error })),
+
+    on(CouponActions.updateCoupon, (state) => ({ ...state, loading: true, error: null })),
+    on(CouponActions.updateCouponSuccess, (state, { update }) =>
+        adapter.updateOne(update, { ...state, loading: false })
+    ),
+    on(CouponActions.updateCouponFailure, (state, { error }) => ({ ...state, loading: false, error }))
 );
+
+export const {
+    selectIds,
+    selectEntities,
+    selectAll,
+    selectTotal,
+} = adapter.getSelectors();

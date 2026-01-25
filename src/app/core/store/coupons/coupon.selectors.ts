@@ -1,25 +1,19 @@
-
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { CouponState } from './coupon.reducer';
+import { CouponState, selectAll } from './coupon.reducer';
 
 export const selectCouponState = createFeatureSelector<CouponState>('coupons');
 
-export const selectCoupons = createSelector(
+export const selectAllCoupons = createSelector(
     selectCouponState,
-    (state) => state.coupons
+    selectAll
 );
 
-export const selectValidationResult = createSelector(
+export const selectCouponLoading = createSelector(
+    selectCouponState,
+    (state) => state.loading
+);
+
+export const selectCouponValidationResult = createSelector(
     selectCouponState,
     (state) => state.validationResult
-);
-
-export const selectCouponIsLoading = createSelector(
-    selectCouponState,
-    (state) => state.isLoading
-);
-
-export const selectCouponError = createSelector(
-    selectCouponState,
-    (state) => state.error
 );

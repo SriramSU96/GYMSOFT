@@ -1,1 +1,113 @@
-/* CSS reused from global styles */
+/* Page Specific Styles */
+
+/* Stat Icon Backgrounds */
+.bg-info-soft {
+    background-color: rgba(59, 130, 246, 0.15);
+}
+
+.bg-danger-soft {
+    background-color: rgba(239, 68, 68, 0.15);
+}
+
+.bg-success-soft {
+    background-color: rgba(16, 185, 129, 0.15);
+}
+
+/* Material Icons Alignment */
+.material-icons {
+    font-size: 20px;
+    vertical-align: middle;
+}
+
+.text-4xl {
+    font-size: 2.25rem;
+}
+
+/* Table Specifics */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    background-color: var(--bg-hover);
+    padding: 1rem;
+    text-align: left;
+    white-space: nowrap;
+}
+
+td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    vertical-align: middle;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Badges */
+.badge-danger {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge-success {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Ghost Buttons */
+.btn-xs {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 4px;
+}
+
+.btn-success-ghost {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    border: 1px solid transparent;
+}
+
+.btn-danger-ghost {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid transparent;
+}
+
+/* Modal sizing override for forms */
+.modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Responsive Grid Overrides */
+@media (max-width: 768px) {
+    .grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+}

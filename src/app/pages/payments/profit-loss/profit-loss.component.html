@@ -1,112 +1,191 @@
-<div>
-
-    <!-- Header & Controls -->
-    <div>
+<div class="page-container fade-in">
+    <!-- Header -->
+    <div class="page-header">
         <div>
-            <h2>Profit & Loss Report</h2>
-            <p>Financial overview for your gym</p>
+            <h1 class="page-title">Profit & Loss</h1>
+            <p class="page-subtitle">Financial performance overview</p>
         </div>
-        <div>
-            <select (change)="onMonthChange($event)">
-                <option *ngFor="let m of months" [value]="m.value" [selected]="m.value === selectedMonth">
-                    {{ m.label }}
-                </option>
-            </select>
-            <button (click)="downloadPdf()">
-                ⬇ PDF
+
+        <div class="flex items-center gap-md">
+            <div class="form-group mb-0">
+                <input type="month" class="form-control bg-card border-subtle text-white" [(ngModel)]="selectedMonth"
+                    (change)="onMonthChange()" style="width: auto; display: inline-block;">
+            </div>
+            <button class="btn btn-primary" (click)="openAddExpenseModal()">
+                <i class="fas fa-plus mr-2"></i> Add Expense
             </button>
         </div>
     </div>
 
-    <div *ngIf="isLoading$ | async">
-        <div></div>
-        <p>Loading financial report...</p>
-    </div>
-
-    <div *ngIf="error$ | async as error">
-        <h3>Error Loading Report</h3>
-        <p>{{ error.message || 'Something went wrong while fetching the financial report.' }}</p>
-        <button (click)="fetchData(selectedMonth)">Try Again</button>
-    </div>
-
-    <ng-container *ngIf="report$ | async as report">
-        <!-- Key Metrics Cards -->
-        <div>
-
-            <!-- Revenue -->
-            <div>
-                <h3>Total Revenue</h3>
-                <div>₹{{ report.revenue | number }}</div>
-                <div>▲ 12% vs last month</div>
+    <!-- Summary Cards -->
+    <div class="grid grid-3 mb-lg">
+        <!-- Revenue -->
+        <div class="card stat-card">
+            <div class="stat-icon bg-success-soft text-success">
+                <i class="fas fa-arrow-up"></i>
             </div>
-
-            <!-- Expenses -->
             <div>
-                <h3>Total Expenses</h3>
-                <div>₹{{ report.expenses | number }}</div>
-                <div>▼ 5% vs last month</div>
-            </div>
-
-            <!-- Net Profit -->
-            <div>
-                <h3>Net Profit</h3>
-                <div>₹{{ report.netProfit | number }}
-                </div>
-                <div>Margin: {{ (report.netProfit /
-                    report.revenue * 100) | number:'1.0-1' }}%</div>
+                <p class="text-secondary text-sm mb-1">Total Revenue</p>
+                <h3 class="mb-0">{{ totalRevenue | currency }}</h3>
             </div>
         </div>
 
-        <!-- Charts Section -->
-        <div>
-            <div>
-                <h3>CASH FLOW TREND
-                </h3>
-
-                <!-- CSS-only Bar Chart -->
-                <div>
-                    <div *ngFor="let data of report.chartData">
-                        <div>
-                            <!-- Expense Bar -->
-                            <div [style.height.%]="(data.expense / 40000) * 100"></div>
-                            <!-- Revenue Bar -->
-                            <div [style.height.%]="(data.revenue / 40000) * 100"></div>
-                        </div>
-                        <span>{{ data.label }}</span>
-                    </div>
-                </div>
-
-                <!-- Legend -->
-                <div>
-                    <div>
-                        <span></span> Revenue
-                    </div>
-                    <div>
-                        <span></span> Expense
-                    </div>
-                </div>
-
+        <!-- Expenses -->
+        <div class="card stat-card">
+            <div class="stat-icon bg-danger-soft text-danger">
+                <i class="fas fa-arrow-down"></i>
             </div>
-
             <div>
-                <h3>EXPENSE BREAKDOWN
-                </h3>
-                <!-- Pie Chart CSS Placeholder -->
-                <div>
-                </div>
-
-                <ul>
-                    <li>
-                        <span>Rent & Utilities</span>
-                        <span>40%</span>
-                    </li>
-                    <li>
-                        <span>Staff Salaries</span>
-                        <span>35%</span>
-                    </li>
-                </ul>
+                <p class="text-secondary text-sm mb-1">Total Expenses</p>
+                <h3 class="mb-0">{{ totalExpenses | currency }}</h3>
             </div>
         </div>
-    </ng-container>
 
+        <!-- Net Profit -->
+        <div class="card stat-card">
+            <div class="stat-icon bg-accent-soft text-accent">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div>
+                <p class="text-secondary text-sm mb-1">Net Profit</p>
+                <h3 class="mb-0" [ngClass]="getNetProfitClass()">{{ netProfit | currency }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-2 mb-lg gap-lg">
+        <!-- Bar Chart -->
+        <div class="card chart-card">
+            <div class="card-header">
+                <h4 class="card-title">Revenue vs Expenses</h4>
+            </div>
+            <div class="chart-container">
+                <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="barChartType">
+                </canvas>
+            </div>
+        </div>
+
+        <!-- Pie Chart -->
+        <div class="card chart-card">
+            <div class="card-header">
+                <h4 class="card-title">Expense Breakdown</h4>
+            </div>
+            <div class="chart-container">
+                <canvas baseChart [data]="pieChartData" [options]="pieChartOptions" [type]="pieChartType">
+                </canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Net Profit Trend (Full Width) -->
+    <div class="card mb-lg">
+        <div class="card-header">
+            <h4 class="card-title">Net Profit Trend (6 Months)</h4>
+        </div>
+        <div class="chart-container" style="height: 300px;">
+            <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="lineChartType">
+            </canvas>
+        </div>
+    </div>
+
+    <!-- Expense Management Section -->
+    <div class="card">
+        <div class="card-header flex justify-between items-center">
+            <h4 class="card-title">Expense List</h4>
+            <!-- Optional: Search or Filter implementation could go here -->
+        </div>
+
+        <div class="table-container" *ngIf="expenses.length > 0; else emptyState">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                        <th class="text-right">Amount</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let expense of expenses">
+                        <td>
+                            <span class="font-medium text-white">{{ expense.title }}</span>
+                        </td>
+                        <td>
+                            <span class="badge badge-neutral">{{ expense.category }}</span>
+                        </td>
+                        <td class="text-secondary">{{ expense.date | date:'mediumDate' }}</td>
+                        <td class="text-right font-mono text-danger">-{{ expense.amount | currency }}</td>
+                        <td class="text-center">
+                            <button class="btn btn-icon btn-danger-ghost" (click)="deleteExpense(expense.id)"
+                                title="Delete">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <ng-template #emptyState>
+            <div class="empty-state text-center py-5">
+                <div class="text-4xl text-muted mb-3">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <h4 class="text-muted">No financial data available</h4>
+                <p class="text-secondary">Add an expense to get started.</p>
+                <button class="btn btn-secondary mt-3" (click)="openAddExpenseModal()">Add Expense</button>
+            </div>
+        </ng-template>
+    </div>
+</div>
+
+<!-- Add Expense Modal -->
+<div class="modal-backdrop" *ngIf="showAddExpenseModal" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3 class="modal-title">Add New Expense</h3>
+            <button class="btn btn-icon" (click)="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Expense Title</label>
+                <input type="text" [(ngModel)]="newExpense.title" placeholder="e.g. Server Costs" autofocus>
+            </div>
+
+            <div class="grid grid-2 gap-md">
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" [(ngModel)]="newExpense.amount" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select [(ngModel)]="newExpense.category">
+                        <option value="Rent">Rent</option>
+                        <option value="Salaries">Salaries</option>
+                        <option value="Equipment">Equipment</option>
+                        <option value="Utilities">Utilities</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group mb-0">
+                <label>Date</label>
+                <input type="date" [(ngModel)]="newExpense.date">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+            <button class="btn btn-primary" (click)="saveExpense()"
+                [disabled]="!newExpense.title || !newExpense.amount">
+                Save Expense
+            </button>
+        </div>
+    </div>
 </div>

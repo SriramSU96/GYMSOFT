@@ -125,7 +125,7 @@ export class AddProgressDialogComponent implements OnInit {
 
         console.log('Sending progress data:', progressData);
 
-        this.progressService.createProgress(progressData).subscribe({
+        this.progressService.addProgress(progressData).subscribe({
             next: () => {
                 this.toastService.success('Progress entry added successfully');
                 this.saving = false;

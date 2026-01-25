@@ -1,87 +1,211 @@
-<div class="page-container fade-in flex flex-col lg:flex-row gap-lg h-[calc(100vh-100px)]">
+<div class="pos-layout fade-in">
+    <!-- LEFT PANEL: Product Selection -->
+    <div class="product-panel">
+        <!-- Header & Search -->
+        <div class="pos-header">
+            <div class="flex justify-between items-center mb-md">
+                <h1 class="page-title mb-0 text-xl">POS Terminal</h1>
+                <div class="text-sm text-secondary">{{ today | date:'mediumDate' }}</div>
+            </div>
 
-    <!-- Product Grid (Left Side) -->
-    <div class="lg:w-2/3 flex flex-col">
-        <div class="page-header mb-md">
-            <h2 class="mb-0">POS Terminal</h2>
+            <!-- Search Bar -->
+            <div class="relative mb-md">
+                <span class="material-icons absolute left-3 top-2.5 text-muted">search</span>
+                <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()"
+                    class="search-input w-full pl-10 h-10 rounded-lg" placeholder="Search product name or SKU...">
+            </div>
+
+            <!-- Categories -->
+            <div class="category-pills flex gap-sm overflow-x-auto pb-2 custom-scrollbar">
+                <button *ngFor="let cat of categories" class="btn btn-sm whitespace-nowrap"
+                    [ngClass]="selectedCategory === cat ? 'btn-primary' : 'btn-secondary'" (click)="setCategory(cat)">
+                    {{ cat }}
+                </button>
+            </div>
         </div>
 
-        <!-- Search/Filter could go here -->
+        <!-- Product Grid -->
+        <div class="product-grid p-md custom-scrollbar">
+            <div *ngFor="let product of filteredProducts"
+                class="product-card card p-sm cursor-pointer hover:border-primary transition-all active:scale-95"
+                [class.opacity-50]="product.stock === 0" [class.pointer-events-none]="product.stock === 0"
+                (click)="addToCart(product)">
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-md overflow-y-auto pr-sm custom-scrollbar">
-            <div *ngFor="let product of products"
-                class="card cursor-pointer hover:border-[var(--accent-primary)] transition-all active:scale-95"
-                (click)="addToCart(product)" [class.opacity-50]="product.stock === 0"
-                [class.pointer-events-none]="product.stock === 0">
-
-                <div class="text-xs text-muted mb-1">{{ product.category }}</div>
-                <h4 class="font-bold text-sm mb-2 truncate">{{ product.name }}</h4>
-                <div class="flex justify-between items-end">
-                    <span class="text-accent font-mono font-bold">${{ product.price }}</span>
-                    <span class="text-xs badge" [ngClass]="product.stock > 0 ? 'badge-success' : 'badge-danger'">
-                        {{ product.stock > 0 ? product.stock : 'Out of Stock' }}
+                <div class="flex justify-between items-start mb-2">
+                    <span class="badge text-[10px]" [ngClass]="product.stock > 5 ? 'badge-neutral' : 'badge-danger'">
+                        {{ product.stock > 0 ? product.stock + ' left' : 'Out of Stock' }}
                     </span>
+                    <span class="text-xs text-muted font-mono uppercase">{{ product.category }}</span>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Cart & Checkout (Right Side) -->
-    <div class="lg:w-1/3 card flex flex-col h-full bg-[var(--bg-secondary)] border-l border-[var(--color-border)]">
-        <h3 class="border-b border-[var(--color-border)] pb-md mb-md">Current Sale</h3>
+                <h4 class="font-bold text-sm mb-2 line-clamp-2 h-10">{{ product.name }}</h4>
 
-        <!-- Cart Items -->
-        <div class="flex-1 overflow-y-auto custom-scrollbar mb-md">
-            <div *ngIf="cart.length === 0" class="text-center text-muted py-xl">
-                <span class="material-icons text-4xl mb-sm">shopping_cart</span>
-                <p>Cart is empty</p>
-            </div>
-
-            <div *ngFor="let item of cart"
-                class="flex justify-between items-center p-sm border-b border-[var(--color-border)] hover:bg-[var(--bg-app)] transition-colors">
-                <div class="flex-1">
-                    <div class="font-bold text-sm">{{ item.productName }}</div>
-                    <div class="text-xs text-muted">${{ item.price }} x {{ item.quantity }}</div>
-                </div>
-                <div class="flex items-center gap-sm">
-                    <button class="btn btn-icon btn-sm" (click)="updateQuantity(item.productId, -1)">-</button>
-                    <span class="font-mono">{{ item.quantity }}</span>
-                    <button class="btn btn-icon btn-sm" (click)="updateQuantity(item.productId, 1)">+</button>
-                    <button class="text-danger ml-sm hover:text-red-400" (click)="removeFromCart(item.productId)">
-                        <span class="material-icons text-sm">delete</span>
+                <div class="flex justify-between items-end mt-auto">
+                    <div class="text-accent font-bold text-lg font-mono">{{ product.price | currency }}</div>
+                    <button
+                        class="btn btn-icon btn-xs btn-primary-ghost rounded-full w-8 h-8 flex items-center justify-center">
+                        <span class="material-icons text-sm">add</span>
                     </button>
                 </div>
             </div>
+
+            <div *ngIf="filteredProducts.length === 0" class="col-span-full text-center py-xl text-muted">
+                <span class="material-icons text-4xl mb-2">inventory_2</span>
+                <p>No products found.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: Cart & Checkout -->
+    <div class="cart-panel bg-card border-l border-subtle flex flex-col h-full shadow-xl relative z-10">
+        <!-- Cart Header -->
+        <div class="p-md border-b border-subtle flex justify-between items-center bg-card">
+            <h3 class="font-bold text-lg m-0 flex items-center gap-2">
+                <span class="material-icons text-primary">shopping_cart</span>
+                Current Sale
+            </h3>
+            <button class="btn btn-xs btn-danger-ghost" (click)="clearCart()" *ngIf="cart.length > 0">
+                Clear
+            </button>
         </div>
 
-        <!-- Checkout Form -->
-        <form [formGroup]="saleForm" (ngSubmit)="processSale()" class="mt-auto">
-            <div class="bg-[var(--bg-app)] p-md rounded-md mb-md">
-                <div class="flex justify-between text-lg font-bold mb-sm">
-                    <span>Total</span>
-                    <span class="text-success font-mono">${{ totalAmount.toFixed(2) }}</span>
+        <!-- Cart Items List -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar p-sm bg-main">
+            <div *ngIf="cart.length === 0"
+                class="flex flex-col items-center justify-center h-full text-muted opacity-50">
+                <span class="material-icons text-6xl mb-4">point_of_sale</span>
+                <p class="text-lg">Scan or select items</p>
+            </div>
+
+            <div *ngFor="let item of cart"
+                class="cart-item bg-card p-sm rounded-lg mb-sm border border-subtle animate-slide-in">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="font-medium text-sm w-2/3 truncate">{{ item.productName }}</span>
+                    <span class="font-bold font-mono">{{ item.price * item.quantity | currency }}</span>
                 </div>
 
-                <div class="grid grid-cols-1 gap-sm">
-                    <input type="text" formControlName="customerName" placeholder="Customer Name (Optional)"
-                        class="p-sm text-sm">
-                    <select formControlName="paymentMethod" class="p-sm text-sm">
-                        <option value="Cash">Cash</option>
-                        <option value="Card">Card</option>
-                        <option value="Online">Online</option>
-                    </select>
+                <div class="flex justify-between items-center">
+                    <div class="text-xs text-muted font-mono">
+                        {{ item.price | currency }} / unit
+                    </div>
+
+                    <div class="qty-controls bg-main rounded-full flex items-center p-0.5 border border-subtle">
+                        <button class="btn btn-icon w-7 h-7 rounded-full hover:bg-hover active:bg-subtle text-danger"
+                            (click)="updateQuantity(item.productId, -1)">
+                            <span class="material-icons text-sm">remove</span>
+                        </button>
+                        <span class="w-8 text-center font-bold text-sm">{{ item.quantity }}</span>
+                        <button class="btn btn-icon w-7 h-7 rounded-full hover:bg-hover active:bg-subtle text-success"
+                            (click)="updateQuantity(item.productId, 1)">
+                            <span class="material-icons text-sm">add</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout Section -->
+        <div class="checkout-footer bg-card border-t border-subtle p-md shadow-up" [formGroup]="saleForm">
+            <!-- Calcs -->
+            <div class="space-y-2 mb-md text-sm">
+                <div class="flex justify-between text-secondary">
+                    <span>Subtotal</span>
+                    <span>{{ subTotal | currency }}</span>
+                </div>
+                <div class="flex justify-between items-center text-secondary">
+                    <span>Discount</span>
+                    <input type="number" formControlName="discount"
+                        class="w-20 text-right bg-main border border-subtle rounded px-1 py-0.5 text-xs">
+                </div>
+                <div class="flex justify-between text-secondary" *ngIf="taxAmount > 0">
+                    <span>Tax ({{taxRate * 100}}%)</span>
+                    <span>{{ taxAmount | currency }}</span>
+                </div>
+                <div class="flex justify-between text-lg font-bold text-white pt-2 border-t border-subtle mt-2">
+                    <span>Grand Total</span>
+                    <span class="text-primary">{{ grandTotal | currency }}</span>
                 </div>
             </div>
 
-            <div *ngIf="successMessage"
-                class="text-success text-center text-sm mb-sm bg-[var(--success-dim)] p-xs rounded">
-                {{ successMessage }}
+            <!-- Customer & Payment -->
+            <div class="mb-md grid grid-cols-2 gap-2">
+                <input type="text" formControlName="customerName" placeholder="Customer Name"
+                    class="w-full text-xs p-2 bg-main rounded border border-subtle col-span-2">
+
+                <!-- Payment Method Pills -->
+                <div class="col-span-2 grid grid-cols-4 gap-1">
+                    <button *ngFor="let method of paymentMethods" type="button"
+                        class="btn btn-xs flex flex-col items-center justify-center p-2 h-14 border border-subtle"
+                        [ngClass]="saleForm.get('paymentMethod')?.value === method.id ? 'bg-primary text-black border-primary' : 'bg-main text-secondary'"
+                        (click)="setPaymentMethod(method.id)">
+                        <span class="material-icons text-lg mb-1">{{ method.icon }}</span>
+                        <span class="text-[9px]">{{ method.label }}</span>
+                    </button>
+                </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block py-md text-lg font-bold shadow-lg shadow-red-900/20"
-                [disabled]="cart.length === 0 || isLoading">
-                {{ isLoading ? 'Processing...' : 'Checkout' }}
+            <!-- Action Button -->
+            <button
+                class="btn btn-primary w-full py-3 text-lg font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-transform"
+                (click)="processSale()" [disabled]="cart.length === 0 || isLoading">
+                <span *ngIf="!isLoading">CHARGE {{ grandTotal | currency }}</span>
+                <span *ngIf="isLoading" class="flex items-center justify-center gap-2">
+                    <span class="material-icons animate-spin text-sm">refresh</span> Processing...
+                </span>
             </button>
-        </form>
+        </div>
     </div>
 </div>
+
+<!-- Receipt Modal -->
+<div class="modal-backdrop" *ngIf="showReceipt" (click)="closeReceipt()">
+    <div class="modal-content w-full max-w-sm bg-white text-black p-0" (click)="$event.stopPropagation()">
+        <!-- Receipt Content (Light Theme for print logic usually, keeping simple) -->
+        <div class="receipt-body p-lg bg-white text-black font-mono text-sm">
+            <div class="text-center mb-md border-b border-gray-200 pb-md">
+                <h2 class="font-bold text-xl mb-1 text-black">GYM SOFT</h2>
+                <p class="text-gray-500 text-xs">Payment Receipt</p>
+                <div class="text-xs text-gray-400 mt-2">{{ currentSale?.date | date:'medium' }}</div>
+                <div class="text-xs text-gray-400">Ref: {{ currentSale?._id }}</div>
+            </div>
+
+            <div class="mb-md">
+                <div *ngFor="let item of currentSale?.products" class="flex justify-between mb-1">
+                    <span>{{ item.quantity }}x Item {{item.productId | slice:0:4}}...</span>
+                    <span>{{ item.price * item.quantity | currency }}</span>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-200 pt-sm space-y-1">
+                <div class="flex justify-between font-bold text-lg">
+                    <span>Total</span>
+                    <span>{{ currentSale?.totalAmount | currency }}</span>
+                </div>
+                <div class="flex justify-between text-xs text-gray-500">
+                    <span>Payment Method</span>
+                    <span>{{ currentSale?.paymentMethod }}</span>
+                </div>
+                <div class="flex justify-between text-xs text-gray-500">
+                    <span>Customer</span>
+                    <span>{{ saleForm.get('customerName')?.value }}</span>
+                </div>
+            </div>
+
+            <div class="text-center mt-lg text-xs text-gray-400">
+                <p>Thank you for your business!</p>
+            </div>
+        </div>
+
+        <div class="p-md bg-gray-100 flex gap-2">
+            <button class="btn btn-secondary w-full text-black border-gray-300 hover:bg-gray-200"
+                (click)="closeReceipt()">
+                Close
+            </button>
+            <button class="btn btn-primary w-full" (click)="printReceipt()">
+                <span class="material-icons text-sm mr-1">print</span> Print
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Define 'today' property in TS for date pipe -->

@@ -45,7 +45,7 @@ export class SecurityComponent {
                 this.isSubmitting = false;
                 this.passwordForm.reset();
             },
-            error: (err) => {
+            error: (err: any) => {
                 this.message = err.error?.message || 'Failed to update password';
                 this.messageType = 'error';
                 this.isSubmitting = false;

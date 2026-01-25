@@ -1,4 +1,3 @@
-
 export enum MuscleGroup {
     Chest = 'Chest',
     Back = 'Back',
@@ -26,43 +25,42 @@ export enum Difficulty {
 export interface Exercise {
     _id: string;
     name: string;
-    muscleGroup: MuscleGroup;
-    equipment: Equipment;
-    difficulty: Difficulty;
+    muscleGroup: MuscleGroup | 'Chest' | 'Back' | 'Legs' | 'Arms' | 'Shoulders' | 'Core' | 'Full Body';
+    equipment: Equipment | 'Bodyweight' | 'Dumbbell' | 'Barbell' | 'Machine' | 'Resistance Band';
+    difficulty: Difficulty | 'Beginner' | 'Intermediate' | 'Advanced';
     description?: string;
     videoUrl?: string;
     imageUrl?: string;
-    createdBy: {
-        _id: string;
-        name: string;
-        email?: string;
-    };
+    createdBy?: string;
     gymId: string;
     isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface ExerciseFilters {
-    muscleGroup?: MuscleGroup;
-    difficulty?: Difficulty;
-    equipment?: Equipment;
+    muscleGroup?: string;
+    equipment?: string;
+    difficulty?: string;
     search?: string;
     includeInactive?: boolean;
 }
 
-export interface ExerciseListResponse {
+export interface ExerciseResponse {
+    success: boolean;
+    exercise: Exercise;
+}
+
+export interface ExercisesResponse {
+    success: boolean;
     exercises: Exercise[];
-    page: number;
-    pages: number;
-    total: number;
 }
 
 export interface CreateExerciseDto {
     name: string;
-    muscleGroup: MuscleGroup;
-    equipment: Equipment;
-    difficulty: Difficulty;
+    muscleGroup: MuscleGroup | string;
+    equipment: Equipment | string;
+    difficulty: Difficulty | string;
     description?: string;
     videoUrl?: string;
     imageUrl?: string;
@@ -70,9 +68,9 @@ export interface CreateExerciseDto {
 
 export interface UpdateExerciseDto {
     name?: string;
-    muscleGroup?: MuscleGroup;
-    equipment?: Equipment;
-    difficulty?: Difficulty;
+    muscleGroup?: MuscleGroup | string;
+    equipment?: Equipment | string;
+    difficulty?: Difficulty | string;
     description?: string;
     videoUrl?: string;
     imageUrl?: string;

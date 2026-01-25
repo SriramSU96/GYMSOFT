@@ -31,9 +31,8 @@ export class AuthEffects {
             tap(({ response }) => {
                 // Store token
                 localStorage.setItem('token', response.token);
-                // Store user object (excluding token)
-                const { token, ...user } = response;
-                localStorage.setItem('user', JSON.stringify(user));
+                // Store user object
+                localStorage.setItem('user', JSON.stringify(response.user));
                 // Navigate to dashboard
                 this.router.navigate(['/']);
             })
@@ -46,7 +45,16 @@ export class AuthEffects {
             ofType(AuthActions.register),
             mergeMap((action) =>
                 this.authService.register(action.userData).pipe(
-                    map((user) => AuthActions.registerSuccess({ user })),
+                    map((response: any) => {
+                        // Handle possible different response structure or just user
+                        const user = response.user || response;
+                        // If registration also logs in (returns token)
+                        if (response.token) {
+                            localStorage.setItem('token', response.token);
+                            localStorage.setItem('user', JSON.stringify(user));
+                        }
+                        return AuthActions.registerSuccess({ user });
+                    }),
                     catchError((error) => of(AuthActions.registerFailure({ error })))
                 )
             )
@@ -58,7 +66,7 @@ export class AuthEffects {
             ofType(AuthActions.loadUser),
             mergeMap(() =>
                 this.authService.getMe().pipe(
-                    map(user => AuthActions.loadUserSuccess({ user })),
+                    map(response => AuthActions.loadUserSuccess({ user: response.user })),
                     catchError(error => of(AuthActions.loadUserFailure({ error })))
                 )
             )
@@ -70,7 +78,7 @@ export class AuthEffects {
             ofType(AuthActions.logout),
             tap(() => {
                 this.authService.logout();
-                this.router.navigate(['/login']);
+                this.router.navigate(['/auth/login']);
             })
         ),
         { dispatch: false }

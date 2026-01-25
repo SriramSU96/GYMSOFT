@@ -1,2 +1,89 @@
-/* Component specific styles if any */
-/* Mostly relying on global utility classes */
+/* Component-specific styles */
+
+/* Chart Containers - Critical for Chart.js responsiveness */
+.chart-container {
+    position: relative;
+    height: 300px; /* Fixed height for charts */
+    width: 100%;
+}
+
+/* Stat Cards override/additions */
+.stat-card {
+    transition: transform 0.2sease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Background Soft Variants using variables with opacity */
+.bg-success-soft {
+    background-color: rgba(16, 185, 129, 0.15);
+}
+
+.bg-danger-soft {
+    background-color: rgba(239, 68, 68, 0.15);
+}
+
+.bg-accent-soft {
+    background-color: rgba(212, 175, 55, 0.15);
+}
+
+/* Table Specifics */
+.table-container {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* Ghost Button for Delete */
+.btn-danger-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    transition: all 0.2s;
+}
+
+.btn-danger-ghost:hover {
+    color: var(--danger);
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Font Monospace for numbers */
+.font-mono {
+    font-family: 'SF Mono', 'Roboto Mono', 'Menlo', monospace;
+    letter-spacing: -0.5px;
+}
+
+/* Modal overrides if necessary */
+.modal-content {
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .grid-2 {
+        grid-template-columns: 1fr; /* Stack charts on smaller tablets */
+    }
+}
+
+@media (max-width: 640px) {
+    .grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .page-header > div:last-child {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

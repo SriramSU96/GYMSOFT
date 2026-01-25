@@ -99,9 +99,9 @@
                 <div class="form-group">
                     <label>Day Focus <span class="help-text">(e.g., Chest Day, Leg Day, Full Body)</span></label>
                     <div class="input-with-button">
-                        <input type="text" [(ngModel)]="newDayFocus" (keyup.enter)="addDay()"
+                        <input type="text" [(ngModel)]="newDayTitle" (keyup.enter)="addDay()"
                             placeholder="Enter day focus...">
-                        <button type="button" (click)="addDay()" [disabled]="!newDayFocus.trim()" class="btn-add-day">
+                        <button type="button" (click)="addDay()" [disabled]="!newDayTitle.trim()" class="btn-add-day">
                             <span class="material-icons">add</span>
                             Add Day
                         </button>
@@ -115,7 +115,7 @@
                 <div class="day-card" *ngFor="let day of days; let i = index">
                     <div class="day-info">
                         <span class="day-number">Day {{ day.dayNumber }}</span>
-                        <span class="day-focus">{{ day.focus }}</span>
+                        <span class="day-focus">{{ day.title }}</span>
                     </div>
                     <button type="button" (click)="removeDay(i)" class="btn-remove-day">
                         <span class="material-icons">delete</span>
@@ -152,7 +152,7 @@
             <div class="day-tabs">
                 <button *ngFor="let day of builderDays$ | async" type="button" (click)="selectDay(day._id!)"
                     [class.active]="selectedDayId === day._id" class="day-tab">
-                    Day {{ day.dayNumber }}: {{ day.focus }}
+                    Day {{ day.dayNumber }}: {{ day.title }}
                     <span class="exercise-count" *ngIf="getDayExercises(day._id!).length > 0">
                         {{ getDayExercises(day._id!).length }}
                     </span>

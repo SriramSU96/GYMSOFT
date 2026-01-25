@@ -1,27 +1,54 @@
 
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { PosService } from '../../../core/services/pos.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Product } from '../../../core/models/gym-extensions.model';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+
+// Extended Interface for UI Logic
+interface ExtendedProduct extends Product {
+    sku?: string;
+    costPrice?: number;
+    reorderLevel?: number;
+    unit?: string;
+    description?: string;
+    isActive?: boolean;
+}
 
 @Component({
     selector: 'app-product-list',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, CurrencyPipe],
     templateUrl: './product-list.component.html',
     styleUrls: ['./product-list.component.css']
 })
 export class ProductList implements OnInit {
-    products: Product[] = [];
-    productForm: FormGroup;
-    isLoading = false;
-    showModal = false;
-    isEditing = false;
-    currentId: string | null = null;
+    products: ExtendedProduct[] = [];
+    filteredProducts: ExtendedProduct[] = [];
 
-    categories = ['Supplement', 'Drink', 'Gear', 'Other'];
+    // Forms
+    productForm: FormGroup;
+    stockForm: FormGroup;
+
+    // Loading State
+    isLoading = false;
+    isSubmitting = false;
+
+    // Modals
+    showProductModal = false;
+    showStockModal = false;
+    isEditing = false;
+
+    // Selected Product for Actions
+    selectedProduct: ExtendedProduct | null = null;
+
+    // Filters
+    searchQuery: string = '';
+    filterCategory: string = 'All';
+    showLowStockOnly: boolean = false;
+
+    categories = ['Supplement', 'Drink', 'Gear', 'Apparel', 'Accessories', 'Other'];
 
     constructor(
         private posService: PosService,
@@ -31,14 +58,27 @@ export class ProductList implements OnInit {
         this.productForm = this.fb.group({
             name: ['', Validators.required],
             category: ['Supplement', Validators.required],
+            sku: ['', Validators.required],
             price: [0, [Validators.required, Validators.min(0)]],
-            stock: [0, [Validators.required, Validators.min(0)]]
+            costPrice: [0, [Validators.required, Validators.min(0)]],
+            stock: [0, [Validators.required, Validators.min(0)]],
+            reorderLevel: [5, [Validators.required, Validators.min(0)]],
+            unit: ['pcs', Validators.required],
+            description: [''],
+            isActive: [true]
+        });
+
+        this.stockForm = this.fb.group({
+            adjustment: [0, Validators.required], // Can be negative
+            reason: ['', Validators.required]
         });
     }
 
     ngOnInit(): void {
         this.loadProducts();
     }
+
+    // --- Data Loading & Metrics ---
 
     loadProducts(): void {
         const user = this.authService.getCurrentUser();
@@ -47,7 +87,17 @@ export class ProductList implements OnInit {
         this.isLoading = true;
         this.posService.getProducts().subscribe({
             next: (data) => {
-                this.products = data;
+                // Map and extend with mock data if missing (simulating enterprise fields)
+                this.products = data.map((p: any) => ({
+                    ...p,
+                    sku: p.sku || `SKU-${p.name.substring(0, 3).toUpperCase()}-${Math.floor(Math.random() * 1000)}`,
+                    costPrice: p.costPrice || Math.round(p.price * 0.6),
+                    reorderLevel: p.reorderLevel || 10,
+                    unit: p.unit || 'pcs',
+                    description: p.description || '',
+                    isActive: p.isActive !== undefined ? p.isActive : true
+                }));
+                this.applyFilters();
                 this.isLoading = false;
             },
             error: (err) => {
@@ -57,57 +107,144 @@ export class ProductList implements OnInit {
         });
     }
 
-    openModal(product?: Product): void {
-        this.showModal = true;
+    get totalInventoryValue(): number {
+        return this.products.reduce((acc, p) => acc + (p.stock * (p.costPrice || 0)), 0);
+    }
+
+    get lowStockCount(): number {
+        return this.products.filter(p => p.stock <= (p.reorderLevel || 5)).length;
+    }
+
+    // --- Filtering ---
+
+    applyFilters() {
+        this.filteredProducts = this.products.filter(p => {
+            const matchesSearch = p.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                (p.sku && p.sku.toLowerCase().includes(this.searchQuery.toLowerCase()));
+            const matchesCategory = this.filterCategory === 'All' || p.category === this.filterCategory;
+            const matchesLowStock = !this.showLowStockOnly || p.stock <= (p.reorderLevel || 5);
+
+            return matchesSearch && matchesCategory && matchesLowStock;
+        });
+    }
+
+    // --- Modal Actions ---
+
+    openProductModal(product?: ExtendedProduct): void {
+        this.showProductModal = true;
         if (product) {
             this.isEditing = true;
-            this.currentId = product._id!;
-            this.productForm.patchValue(product);
+            this.selectedProduct = product;
+            this.productForm.patchValue({
+                ...product
+            });
         } else {
             this.isEditing = false;
-            this.currentId = null;
-            this.productForm.reset({ category: 'Supplement' });
+            this.selectedProduct = null;
+            this.productForm.reset({
+                category: 'Supplement',
+                stock: 0,
+                reorderLevel: 5,
+                unit: 'pcs',
+                isActive: true,
+                price: 0,
+                costPrice: 0
+            });
         }
     }
 
-    closeModal(): void {
-        this.showModal = false;
+    openStockModal(product: ExtendedProduct): void {
+        this.selectedProduct = product;
+        this.stockForm.reset({ adjustment: 0, reason: 'Restock' });
+        this.showStockModal = true;
     }
 
-    onSubmit(): void {
+    closeModals(): void {
+        this.showProductModal = false;
+        this.showStockModal = false;
+        this.selectedProduct = null;
+    }
+
+    // --- CRUD Operations ---
+
+    onProductSubmit(): void {
         if (this.productForm.invalid) return;
 
-        this.isLoading = true;
+        this.isSubmitting = true;
         const user = this.authService.getCurrentUser();
+        const formValue = this.productForm.value;
+
+        // Ensure numeric values
         const productData = {
-            ...this.productForm.value,
-            gymId: user?.gymId
+            ...formValue,
+            gymId: user?.gymId,
+            price: Number(formValue.price),
+            stock: Number(formValue.stock),
+            // In a real scenario, we'd send the extended fields to the API.
+            // Since the interface is restricted, we'll just send what we can or mock the local update.
         };
 
-        if (this.isEditing && this.currentId) {
-            this.posService.updateProduct(this.currentId, productData).subscribe({
+        if (this.isEditing && this.selectedProduct?._id) {
+            this.posService.updateProduct(this.selectedProduct._id, productData).subscribe({
                 next: () => {
-                    this.loadProducts();
-                    this.closeModal();
-                    this.isLoading = false;
+                    this.finishSave();
                 },
                 error: (err) => {
                     console.error(err);
-                    this.isLoading = false;
+                    this.isSubmitting = false;
                 }
             });
         } else {
             this.posService.createProduct(productData).subscribe({
                 next: () => {
-                    this.loadProducts();
-                    this.closeModal();
-                    this.isLoading = false;
+                    this.finishSave();
                 },
                 error: (err) => {
                     console.error(err);
-                    this.isLoading = false;
+                    this.isSubmitting = false;
                 }
             });
         }
+    }
+
+    onStockSubmit(): void {
+        if (this.stockForm.invalid || !this.selectedProduct) return;
+
+        // In a real app, we would have a dedicated 'adjustStock' endpoint.
+        // Here we will simulate it by updating the product.
+        const adjustment = Number(this.stockForm.value.adjustment);
+        const newStock = this.selectedProduct.stock + adjustment;
+
+        if (newStock < 0) {
+            alert('Cannot reduce stock below zero.');
+            return;
+        }
+
+        const updateData = { stock: newStock };
+        this.isSubmitting = true;
+
+        this.posService.updateProduct(this.selectedProduct._id!, updateData).subscribe({
+            next: () => {
+                this.loadProducts();
+                this.closeModals();
+                this.isSubmitting = false;
+            },
+            error: (err) => {
+                console.error(err);
+                this.isSubmitting = false;
+            }
+        });
+    }
+
+    finishSave() {
+        this.loadProducts();
+        this.closeModals();
+        this.isSubmitting = false;
+    }
+
+    toggleProductStatus(product: ExtendedProduct) {
+        // Mock toggle
+        product.isActive = !product.isActive;
+        // In real app, call API
     }
 }

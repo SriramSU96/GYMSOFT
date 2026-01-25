@@ -1,25 +1,43 @@
 import { createReducer, on } from '@ngrx/store';
+import { AuditLog, SecurityStats, Role } from '../../models/security.model';
 import * as SecurityActions from './security.actions';
-import { AuditLog, Role } from '../../models/security.model';
 
 export interface SecurityState {
     logs: AuditLog[];
+    stats: SecurityStats | null;
     roles: Role[];
-    isLoading: boolean;
+    loading: boolean;
     error: any;
 }
 
 export const initialState: SecurityState = {
     logs: [],
+    stats: null,
     roles: [],
-    isLoading: false,
+    loading: false,
     error: null
 };
 
 export const securityReducer = createReducer(
     initialState,
-    on(SecurityActions.loadLogs, SecurityActions.loadRoles, (state) => ({ ...state, isLoading: true })),
-    on(SecurityActions.loadLogsSuccess, (state, { logs }) => ({ ...state, logs, isLoading: false })),
-    on(SecurityActions.loadRolesSuccess, (state, { roles }) => ({ ...state, roles, isLoading: false })),
-    on(SecurityActions.loadLogsFailure, SecurityActions.loadRolesFailure, (state, { error }) => ({ ...state, isLoading: false, error }))
+
+    // Logs
+    on(SecurityActions.loadAuditLogs, (state) => ({ ...state, loading: true, error: null })),
+    on(SecurityActions.loadAuditLogsSuccess, (state, { logs }) => ({ ...state, logs, loading: false })),
+    on(SecurityActions.loadAuditLogsFailure, (state, { error }) => ({ ...state, loading: false, error })),
+
+    // Stats
+    on(SecurityActions.loadSecurityStats, (state) => ({ ...state, loading: true, error: null })),
+    on(SecurityActions.loadSecurityStatsSuccess, (state, { stats }) => ({ ...state, stats, loading: false })),
+    on(SecurityActions.loadSecurityStatsFailure, (state, { error }) => ({ ...state, loading: false, error })),
+
+    // Roles
+    on(SecurityActions.loadRoles, (state) => ({ ...state, loading: true, error: null })),
+    on(SecurityActions.loadRolesSuccess, (state, { roles }) => ({ ...state, roles, loading: false })),
+    on(SecurityActions.loadRolesFailure, (state, { error }) => ({ ...state, loading: false, error })),
+
+    // Session
+    on(SecurityActions.revokeSession, (state) => ({ ...state, loading: true, error: null })),
+    on(SecurityActions.revokeSessionSuccess, (state) => ({ ...state, loading: false })), // Stats might need refresh
+    on(SecurityActions.revokeSessionFailure, (state, { error }) => ({ ...state, loading: false, error }))
 );

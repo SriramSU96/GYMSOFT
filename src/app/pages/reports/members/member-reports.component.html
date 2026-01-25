@@ -1,0 +1,359 @@
+<div class="page-container">
+    <!-- ============================================ -->
+    <!-- PAGE HEADER -->
+    <!-- ============================================ -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Member Reports</h1>
+            <p class="page-subtitle">Detailed member performance & insights</p>
+        </div>
+
+        <!-- TIME RANGE SELECTOR -->
+        <div class="header-actions">
+            <div class="time-range-selector">
+                <button *ngFor="let range of timeRanges" [class.active]="selectedRange === range.value"
+                    (click)="onRangeChange(range.value)" class="range-btn">
+                    {{ range.label }}
+                </button>
+            </div>
+
+            <!-- EXPORT BUTTONS -->
+            <div class="export-buttons">
+                <button class="btn btn-secondary" (click)="exportCSV()">
+                    <span class="material-icons">download</span>
+                    Export CSV
+                </button>
+                <button class="btn btn-secondary" (click)="exportPDF()">
+                    <span class="material-icons">picture_as_pdf</span>
+                    Export PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 1: SUMMARY CARDS -->
+    <!-- ============================================ -->
+    <div class="summary-grid">
+        <div class="summary-card card">
+            <div class="summary-icon total">
+                <span class="material-icons">people</span>
+            </div>
+            <div class="summary-content">
+                <span class="summary-label">Total Members</span>
+                <h3 class="summary-value">{{ formatNumber(summaryData.totalMembers) }}</h3>
+            </div>
+        </div>
+
+        <div class="summary-card card">
+            <div class="summary-icon active">
+                <span class="material-icons">how_to_reg</span>
+            </div>
+            <div class="summary-content">
+                <span class="summary-label">Active Members</span>
+                <h3 class="summary-value">{{ formatNumber(summaryData.activeMembers) }}</h3>
+                <span class="summary-percentage">{{ formatPercentage((summaryData.activeMembers /
+                    summaryData.totalMembers * 100).toFixed(0)) }}</span>
+            </div>
+        </div>
+
+        <div class="summary-card card">
+            <div class="summary-icon inactive">
+                <span class="material-icons">person_off</span>
+            </div>
+            <div class="summary-content">
+                <span class="summary-label">Inactive Members</span>
+                <h3 class="summary-value">{{ formatNumber(summaryData.inactiveMembers) }}</h3>
+                <span class="summary-percentage">{{ formatPercentage((summaryData.inactiveMembers /
+                    summaryData.totalMembers * 100).toFixed(0)) }}</span>
+            </div>
+        </div>
+
+        <div class="summary-card card">
+            <div class="summary-icon risk">
+                <span class="material-icons">warning</span>
+            </div>
+            <div class="summary-content">
+                <span class="summary-label">High Risk Members</span>
+                <h3 class="summary-value">{{ formatNumber(summaryData.highRiskMembers) }}</h3>
+                <span class="summary-percentage">{{ formatPercentage((summaryData.highRiskMembers /
+                    summaryData.totalMembers * 100).toFixed(0)) }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 3: FILTERS -->
+    <!-- ============================================ -->
+    <div class="filters-section card">
+        <div class="filters-row">
+            <input type="text" placeholder="Search members..." [(ngModel)]="filters.searchQuery"
+                (input)="applyFilters()" class="search-input" />
+
+            <select [(ngModel)]="filters.status" (change)="applyFilters()" class="filter-select">
+                <option value="all">All Status</option>
+                <option value="active">Active Only</option>
+                <option value="inactive">Inactive Only</option>
+            </select>
+
+            <select [(ngModel)]="filters.churnRisk" (change)="applyFilters()" class="filter-select">
+                <option value="all">All Risk Levels</option>
+                <option value="low">Low Risk</option>
+                <option value="medium">Medium Risk</option>
+                <option value="high">High Risk</option>
+            </select>
+
+            <label class="filter-checkbox">
+                <input type="checkbox" [(ngModel)]="filters.highValue" (change)="applyFilters()" />
+                <span>High Value Only</span>
+            </label>
+
+            <label class="filter-checkbox">
+                <input type="checkbox" [(ngModel)]="filters.pendingDues" (change)="applyFilters()" />
+                <span>Pending Dues</span>
+            </label>
+
+            <button class="btn btn-secondary" (click)="clearFilters()">
+                <span class="material-icons">clear</span>
+                Clear
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 2: MEMBER INTELLIGENCE TABLE -->
+    <!-- ============================================ -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Member Intelligence</h3>
+            <span class="member-count">{{ filteredMembers.length }} members</span>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Member Name</th>
+                        <th>Attendance Score</th>
+                        <th>Last Visit</th>
+                        <th>Revenue (LTV)</th>
+                        <th>Engagement %</th>
+                        <th>Churn Risk</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let member of filteredMembers" [class.high-value]="member.isHighValue"
+                        [class.high-risk]="member.churnRisk === 'high'">
+                        <td>
+                            <div class="member-info">
+                                <div class="member-avatar">{{ member.name.charAt(0) }}</div>
+                                <div>
+                                    <div class="member-name">{{ member.name }}</div>
+                                    <div class="member-id">{{ member.id }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="score-display">
+                                <div class="score-bar">
+                                    <div class="score-fill" [style.width.%]="member.attendanceScore"
+                                        [ngClass]="getScoreClass(member.attendanceScore)"></div>
+                                </div>
+                                <span class="score-value" [ngClass]="getScoreClass(member.attendanceScore)">
+                                    {{ member.attendanceScore }}%
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="last-visit">
+                                <span>{{ member.lastVisit | date:'mediumDate' }}</span>
+                                <span class="days-ago">({{ getDaysSinceLastVisit(member.lastVisit) }}d ago)</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="ltv-value" [class.high-ltv]="member.isHighValue">
+                                {{ formatCurrency(member.ltv) }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="engagement-value" [ngClass]="getScoreClass(member.engagement)">
+                                {{ member.engagement }}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="risk-badge" [ngClass]="getChurnRiskClass(member.churnRisk)">
+                                {{ getChurnRiskLabel(member.churnRisk) }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge" [ngClass]="getStatusClass(member.status)">
+                                {{ getStatusLabel(member.status) }}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn-icon btn-secondary" (click)="openMemberDetails(member)"
+                                title="View Details">
+                                <span class="material-icons">visibility</span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 5: INSIGHTS PANEL -->
+    <!-- ============================================ -->
+    <div class="insights-section">
+        <h2 class="section-title">Key Insights & Actions</h2>
+        <div class="insights-grid">
+            <div *ngFor="let insight of insights" class="insight-card card"
+                [ngClass]="getSeverityClass(insight.severity)">
+                <div class="insight-header">
+                    <span class="material-icons insight-icon" [ngClass]="getSeverityClass(insight.severity)">
+                        {{ getSeverityIcon(insight.severity) }}
+                    </span>
+                    <h4 class="insight-title">{{ insight.title }}</h4>
+                </div>
+                <p class="insight-description">{{ insight.description }}</p>
+                <button class="btn btn-primary insight-action-btn">
+                    <span class="material-icons">{{ insight.action === 'Call' ? 'phone' : insight.action === 'Offer' ?
+                        'local_offer' : 'notifications' }}</span>
+                    {{ insight.actionLabel }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 4: DETAILED MEMBER VIEW (MODAL) -->
+<!-- ============================================ -->
+<div *ngIf="showMemberModal" class="modal-backdrop" (click)="closeMemberModal()">
+    <div class="modal-content member-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div class="member-modal-header">
+                <div class="member-avatar-large">{{ selectedMember?.name.charAt(0) }}</div>
+                <div>
+                    <h3>{{ selectedMember?.name }}</h3>
+                    <p class="member-modal-id">{{ selectedMember?.id }}</p>
+                </div>
+            </div>
+            <button class="btn-icon btn-secondary" (click)="closeMemberModal()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+
+        <!-- TABS -->
+        <div class="modal-tabs">
+            <button class="tab-btn" [class.active]="selectedTab === 'attendance'" (click)="selectTab('attendance')">
+                Attendance History
+            </button>
+            <button class="tab-btn" [class.active]="selectedTab === 'payments'" (click)="selectTab('payments')">
+                Payment History
+            </button>
+            <button class="tab-btn" [class.active]="selectedTab === 'engagement'" (click)="selectTab('engagement')">
+                Engagement
+            </button>
+            <button class="tab-btn" [class.active]="selectedTab === 'progress'" (click)="selectTab('progress')">
+                Fitness Progress
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <!-- ATTENDANCE TAB -->
+            <div *ngIf="selectedTab === 'attendance'" class="tab-content">
+                <table class="modal-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Duration (min)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let record of memberDetails.attendanceHistory">
+                            <td>{{ record.date | date:'mediumDate' }}</td>
+                            <td>{{ record.checkIn }}</td>
+                            <td>{{ record.checkOut }}</td>
+                            <td>{{ record.duration }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PAYMENTS TAB -->
+            <div *ngIf="selectedTab === 'payments'" class="tab-content">
+                <table class="modal-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let payment of memberDetails.paymentHistory">
+                            <td>{{ payment.date | date:'mediumDate' }}</td>
+                            <td>{{ formatCurrency(payment.amount) }}</td>
+                            <td>{{ payment.method }}</td>
+                            <td>{{ payment.type }}</td>
+                            <td><span class="badge badge-success">{{ payment.status }}</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ENGAGEMENT TAB -->
+            <div *ngIf="selectedTab === 'engagement'" class="tab-content">
+                <div class="engagement-grid">
+                    <div class="engagement-item">
+                        <h4>Workout Plan</h4>
+                        <p>Assigned: <span class="badge badge-success">Yes</span></p>
+                        <p>Completion: <strong>{{ memberDetails.engagement.workoutPlan.completion }}%</strong></p>
+                        <p>Last Updated: {{ memberDetails.engagement.workoutPlan.lastUpdated | date:'mediumDate' }}</p>
+                    </div>
+                    <div class="engagement-item">
+                        <h4>Diet Plan</h4>
+                        <p>Assigned: <span class="badge badge-success">Yes</span></p>
+                        <p>Compliance: <strong>{{ memberDetails.engagement.dietPlan.compliance }}%</strong></p>
+                        <p>Last Updated: {{ memberDetails.engagement.dietPlan.lastUpdated | date:'mediumDate' }}</p>
+                    </div>
+                    <div class="engagement-item">
+                        <h4>PT Sessions</h4>
+                        <p>Total: <strong>{{ memberDetails.engagement.ptSessions.total }}</strong></p>
+                        <p>Completed: <strong>{{ memberDetails.engagement.ptSessions.completed }}</strong></p>
+                        <p>Remaining: <strong>{{ memberDetails.engagement.ptSessions.remaining }}</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROGRESS TAB -->
+            <div *ngIf="selectedTab === 'progress'" class="tab-content">
+                <div class="progress-section">
+                    <h4>Goals</h4>
+                    <ul class="goals-list">
+                        <li *ngFor="let goal of memberDetails.fitnessProgress.goals">{{ goal }}</li>
+                    </ul>
+
+                    <h4>Weight Progress</h4>
+                    <div *ngFor="let record of memberDetails.fitnessProgress.weight" class="progress-record">
+                        <span>{{ record.date | date:'mediumDate' }}</span>
+                        <span class="progress-value">{{ record.value }} kg</span>
+                    </div>
+
+                    <h4>Body Fat %</h4>
+                    <div *ngFor="let record of memberDetails.fitnessProgress.bodyFat" class="progress-record">
+                        <span>{{ record.date | date:'mediumDate' }}</span>
+                        <span class="progress-value">{{ record.value }}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

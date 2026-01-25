@@ -1,69 +1,22 @@
 import { createAction, props } from '@ngrx/store';
-import { Workout } from '../../models/gym-extensions.model';
+import { Exercise, ExercisesResponse } from '../../models/exercise.model';
 
-// Load Workouts
-export const loadWorkouts = createAction('[Workout] Load Workouts');
-export const loadWorkoutsSuccess = createAction(
-    '[Workout] Load Workouts Success',
-    props<{ workouts: Workout[] }>()
-);
-export const loadWorkoutsFailure = createAction(
-    '[Workout] Load Workouts Failure',
-    props<{ error: any }>()
-);
+// Load Exercises
+export const loadExercises = createAction('[Exercises] Load Exercises', props<{ params: any }>());
+export const loadExercisesSuccess = createAction('[Exercises] Load Exercises Success', props<{ response: ExercisesResponse }>());
+export const loadExercisesFailure = createAction('[Exercises] Load Exercises Failure', props<{ error: any }>());
 
-// Load Single Workout
-export const loadWorkout = createAction(
-    '[Workout] Load Workout',
-    props<{ id: string }>()
-);
-export const loadWorkoutSuccess = createAction(
-    '[Workout] Load Workout Success',
-    props<{ workout: Workout }>()
-);
-export const loadWorkoutFailure = createAction(
-    '[Workout] Load Workout Failure',
-    props<{ error: any }>()
-);
+// Initialize Exercises (if used for lazy loading or single create needed separately)
+export const createExercise = createAction('[Exercises] Create Exercise', props<{ exercise: Partial<Exercise> }>());
+export const createExerciseSuccess = createAction('[Exercises] Create Exercise Success', props<{ exercise: Exercise }>());
+export const createExerciseFailure = createAction('[Exercises] Create Exercise Failure', props<{ error: any }>());
 
-// Create Workout
-export const createWorkout = createAction(
-    '[Workout] Create Workout',
-    props<{ workout: Workout }>()
-);
-export const createWorkoutSuccess = createAction(
-    '[Workout] Create Workout Success',
-    props<{ workout: Workout }>()
-);
-export const createWorkoutFailure = createAction(
-    '[Workout] Create Workout Failure',
-    props<{ error: any }>()
-);
+// Update Exercise
+export const updateExercise = createAction('[Exercises] Update Exercise', props<{ id: string, exercise: Partial<Exercise> }>());
+export const updateExerciseSuccess = createAction('[Exercises] Update Exercise Success', props<{ exercise: Exercise }>());
+export const updateExerciseFailure = createAction('[Exercises] Update Exercise Failure', props<{ error: any }>());
 
-// Update Workout
-export const updateWorkout = createAction(
-    '[Workout] Update Workout',
-    props<{ id: string; workout: Partial<Workout> }>()
-);
-export const updateWorkoutSuccess = createAction(
-    '[Workout] Update Workout Success',
-    props<{ workout: Workout }>()
-);
-export const updateWorkoutFailure = createAction(
-    '[Workout] Update Workout Failure',
-    props<{ error: any }>()
-);
-
-// Delete Workout
-export const deleteWorkout = createAction(
-    '[Workout] Delete Workout',
-    props<{ id: string }>()
-);
-export const deleteWorkoutSuccess = createAction(
-    '[Workout] Delete Workout Success',
-    props<{ id: string }>()
-);
-export const deleteWorkoutFailure = createAction(
-    '[Workout] Delete Workout Failure',
-    props<{ error: any }>()
-);
+// Delete Exercise
+export const deleteExercise = createAction('[Exercises] Delete Exercise', props<{ id: string }>());
+export const deleteExerciseSuccess = createAction('[Exercises] Delete Exercise Success', props<{ id: string }>());
+export const deleteExerciseFailure = createAction('[Exercises] Delete Exercise Failure', props<{ error: any }>());

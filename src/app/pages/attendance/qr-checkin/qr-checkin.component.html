@@ -1,47 +1,521 @@
-<div>
+<div class="scanner-container">
+    <!-- HEADER -->
+    <div class="scanner-header">
+        <button class="btn-icon btn-secondary" (click)="goBack()">
+            <span class="material-icons">arrow_back</span>
+        </button>
+        <h2>QR Scanner</h2>
+        <div class="header-spacer"></div>
+    </div>
 
-    <h2>QR Check-In Scanner</h2>
+    <!-- CAMERA VIEW / SCANNER -->
+    <div class="scanner-section">
+        <!-- Camera Active State -->
+        <div *ngIf="isScannerActive && !scanResult" class="camera-view">
+            <!-- Video element for camera feed -->
+            <video #videoElement autoplay playsinline></video>
 
-    <div>
-
-        <!-- Camera Placeholder -->
-        <div *ngIf="isScanning$ | async">
-            <div>
+            <!-- Scan Frame Overlay -->
+            <div class="scan-frame">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="scan-line"></div>
             </div>
-            <p>Scanning...</p>
+
+            <!-- Scanning Indicator -->
+            <div class="scanning-indicator" *ngIf="isProcessing">
+                <div class="pulse-ring"></div>
+                <span class="material-icons">qr_code_scanner</span>
+            </div>
         </div>
 
-        <!-- Idle State -->
-        <div *ngIf="!(isScanning$ | async) && !(scanSuccess$ | async)">
-            <span>📷</span>
-            <p>Point camera at member's QR code</p>
+        <!-- Idle State (Scanner Not Active) -->
+        <div *ngIf="!isScannerActive && !scanResult" class="idle-state">
+            <div class="idle-icon">
+                <span class="material-icons">qr_code_scanner</span>
+            </div>
+            <h3>Ready to Scan</h3>
+            <p>Position the QR code within the frame</p>
         </div>
 
         <!-- Success State -->
-        <div *ngIf="scanSuccess$ | async">
-            <div>
-                <span>✓</span>
+        <div *ngIf="scanResult && scanResult.success" class="result-state success-state">
+            <div class="result-icon success-icon">
+                <span class="material-icons">check_circle</span>
             </div>
-            <h3>Checked In!</h3>
-            <p>{{ scannedData$ | async }}</p>
+            <h3>Check-In Successful!</h3>
+            <div class="member-info-result">
+                <p class="member-name-result">{{ scanResult.memberName }}</p>
+                <p class="check-in-time">Checked in at {{ scanResult.checkInTime }}</p>
+            </div>
+            <div class="success-details">
+                <div class="detail-item">
+                    <span class="material-icons">badge</span>
+                    <span>{{ scanResult.memberId }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="material-icons">event</span>
+                    <span>{{ scanResult.date | date:'mediumDate' }}</span>
+                </div>
+            </div>
         </div>
 
+        <!-- Error State -->
+        <div *ngIf="scanResult && !scanResult.success" class="result-state error-state">
+            <div class="result-icon error-icon">
+                <span class="material-icons">cancel</span>
+            </div>
+            <h3>{{ scanResult.errorTitle }}</h3>
+            <p class="error-message">{{ scanResult.errorMessage }}</p>
+        </div>
     </div>
 
-    <div>
-        <p>
-            {{ statusMessage$ | async }}
+    <!-- STATUS MESSAGE -->
+    <div class="status-section" *ngIf="statusMessage">
+        <p class="status-message" [class.status-error]="hasError">
+            {{ statusMessage }}
         </p>
+    </div>
 
-        <button *ngIf="!(isScanning$ | async)" (click)="startScanning()">
-            <span *ngIf="!(scanSuccess$ | async)">Start Scanner</span>
-            <span *ngIf="scanSuccess$ | async">Scan Another</span>
+    <!-- ACTION BUTTONS -->
+    <div class="actions-section">
+        <button *ngIf="!isScannerActive && !scanResult" class="btn btn-primary btn-large" (click)="startScanner()">
+            <span class="material-icons">videocam</span>
+            Start Scanner
+        </button>
+
+        <button *ngIf="isScannerActive && !scanResult" class="btn btn-secondary btn-large" (click)="stopScanner()">
+            <span class="material-icons">stop</span>
+            Stop Scanner
+        </button>
+
+        <button *ngIf="scanResult" class="btn btn-primary btn-large" (click)="resetScanner()">
+            <span class="material-icons">qr_code_scanner</span>
+            Scan Another
         </button>
     </div>
 
-    <!-- Offline Indicator -->
-    <div *ngIf="isOffline">
-        ⚠ You are Offline. Attendance will be synced later.
+    <!-- INSTRUCTIONS -->
+    <div class="instructions-section">
+        <div class="instruction-item">
+            <span class="material-icons">info</span>
+            <p>Ensure good lighting for best results</p>
+        </div>
+        <div class="instruction-item">
+            <span class="material-icons">center_focus_strong</span>
+            <p>Hold steady and center the QR code</p>
+        </div>
     </div>
-
 </div>
+
+<!-- SUCCESS TOAST (Auto-dismiss) -->
+<div *ngIf="showToast" class="toast-notification" [class.toast-success]="toastType === 'success'"
+    [class.toast-error]="toastType === 'error'">
+    <span class="material-icons">{{ toastType === 'success' ? 'check_circle' : 'error' }}</span>
+    <span>{{ toastMessage }}</span>
+</div>
+
+<!-- CUSTOM STYLES -->
+<style>
+    /* Container */
+    .scanner-container {
+        min-height: 100vh;
+        background: var(--bg-main);
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Header */
+    .scanner-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--space-md) var(--space-lg);
+        background-color: var(--bg-card);
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .scanner-header h2 {
+        margin: 0;
+        font-size: var(--font-size-xl);
+        color: var(--text-primary);
+    }
+
+    .header-spacer {
+        width: 40px;
+    }
+
+    /* Scanner Section */
+    .scanner-section {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-lg);
+        position: relative;
+    }
+
+    /* Camera View */
+    .camera-view {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        aspect-ratio: 1;
+        background-color: #000;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+    }
+
+    .camera-view video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Scan Frame Overlay */
+    .scan-frame {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 70%;
+        aspect-ratio: 1;
+        pointer-events: none;
+    }
+
+    .corner {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--accent-primary);
+    }
+
+    .corner-tl {
+        top: 0;
+        left: 0;
+        border-right: none;
+        border-bottom: none;
+    }
+
+    .corner-tr {
+        top: 0;
+        right: 0;
+        border-left: none;
+        border-bottom: none;
+    }
+
+    .corner-bl {
+        bottom: 0;
+        left: 0;
+        border-right: none;
+        border-top: none;
+    }
+
+    .corner-br {
+        bottom: 0;
+        right: 0;
+        border-left: none;
+        border-top: none;
+    }
+
+    .scan-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+        animation: scan 2s linear infinite;
+    }
+
+    @keyframes scan {
+
+        0%,
+        100% {
+            top: 0;
+        }
+
+        50% {
+            top: calc(100% - 2px);
+        }
+    }
+
+    /* Scanning Indicator */
+    .scanning-indicator {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .pulse-ring {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        border: 3px solid var(--accent-primary);
+        border-radius: var(--radius-full);
+        animation: pulse 1.5s ease-out infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(0.8);
+            opacity: 1;
+        }
+
+        100% {
+            transform: scale(1.5);
+            opacity: 0;
+        }
+    }
+
+    .scanning-indicator .material-icons {
+        font-size: 3rem;
+        color: var(--accent-primary);
+        z-index: 1;
+    }
+
+    /* Idle State */
+    .idle-state {
+        text-align: center;
+        padding: var(--space-2xl);
+    }
+
+    .idle-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto var(--space-xl);
+        background: linear-gradient(135deg, var(--accent-soft), rgba(212, 175, 55, 0.05));
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .idle-icon .material-icons {
+        font-size: 4rem;
+        color: var(--accent-primary);
+    }
+
+    .idle-state h3 {
+        margin: 0 0 var(--space-sm);
+        color: var(--text-primary);
+    }
+
+    .idle-state p {
+        margin: 0;
+        color: var(--text-muted);
+    }
+
+    /* Result State */
+    .result-state {
+        text-align: center;
+        padding: var(--space-2xl);
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .result-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto var(--space-xl);
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: scaleIn 0.5s ease-out;
+    }
+
+    @keyframes scaleIn {
+        from {
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .success-icon {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05));
+    }
+
+    .success-icon .material-icons {
+        font-size: 5rem;
+        color: var(--success);
+    }
+
+    .error-icon {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.05));
+    }
+
+    .error-icon .material-icons {
+        font-size: 5rem;
+        color: var(--danger);
+    }
+
+    .result-state h3 {
+        margin: 0 0 var(--space-md);
+        font-size: var(--font-size-2xl);
+        color: var(--text-primary);
+    }
+
+    .member-info-result {
+        margin-bottom: var(--space-lg);
+    }
+
+    .member-name-result {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--accent-primary);
+        margin: 0 0 var(--space-xs);
+    }
+
+    .check-in-time {
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .success-details {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+        background-color: var(--bg-hover);
+        border-radius: var(--radius-md);
+        padding: var(--space-md);
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        color: var(--text-secondary);
+    }
+
+    .detail-item .material-icons {
+        font-size: 1.25rem;
+    }
+
+    .error-message {
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    /* Status Section */
+    .status-section {
+        padding: 0 var(--space-lg);
+        margin-bottom: var(--space-md);
+    }
+
+    .status-message {
+        text-align: center;
+        padding: var(--space-sm);
+        background-color: var(--bg-hover);
+        border-radius: var(--radius-md);
+        color: var(--text-secondary);
+        margin: 0;
+        font-size: var(--font-size-sm);
+    }
+
+    .status-error {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+    }
+
+    /* Actions Section */
+    .actions-section {
+        padding: 0 var(--space-lg) var(--space-lg);
+    }
+
+    .btn-large {
+        width: 100%;
+        padding: var(--space-md) var(--space-xl);
+        font-size: var(--font-size-lg);
+    }
+
+    /* Instructions */
+    .instructions-section {
+        padding: var(--space-lg);
+        background-color: var(--bg-card);
+        border-top: 1px solid var(--border-subtle);
+    }
+
+    .instruction-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        margin-bottom: var(--space-sm);
+    }
+
+    .instruction-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .instruction-item .material-icons {
+        color: var(--accent-primary);
+        font-size: 1.25rem;
+    }
+
+    .instruction-item p {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: var(--font-size-sm);
+    }
+
+    /* Toast Notification */
+    .toast-notification {
+        position: fixed;
+        top: var(--space-lg);
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-md) var(--space-xl);
+        border-radius: var(--radius-full);
+        box-shadow: var(--shadow-hover);
+        animation: slideDown 0.3s ease-out;
+        z-index: 1000;
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .toast-success {
+        background-color: var(--success);
+        color: white;
+    }
+
+    .toast-error {
+        background-color: var(--danger);
+        color: white;
+    }
+
+    @keyframes slideDown {
+        from {
+            transform: translateX(-50%) translateY(-100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .scanner-section {
+            padding: var(--space-md);
+        }
+
+        .camera-view {
+            max-width: 100%;
+        }
+    }
+</style>

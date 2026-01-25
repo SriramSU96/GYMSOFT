@@ -27,15 +27,15 @@
             <div class="max-h-64 overflow-y-auto custom-scrollbar">
                 <button *ngFor="let gym of gyms" (click)="selectGym(gym)"
                     class="w-full flex items-center gap-md p-md hover:bg-white/5 transition-all text-left border-none group cursor-pointer"
-                    [class.bg-accent-soft]="selectedGym.id === gym.id">
-                    <div class="w-2 h-2 rounded-full" [class.bg-accent]="selectedGym.id === gym.id"
-                        [class.bg-subtle]="selectedGym.id !== gym.id"></div>
+                    [class.bg-accent-soft]="selectedGym._id === gym._id">
+                    <div class="w-2 h-2 rounded-full" [class.bg-accent]="selectedGym._id === gym._id"
+                        [class.bg-subtle]="selectedGym._id !== gym._id"></div>
                     <div class="flex-1">
-                        <div class="text-sm font-bold" [class.text-accent]="selectedGym.id === gym.id">{{ gym.name }}
+                        <div class="text-sm font-bold" [class.text-accent]="selectedGym._id === gym._id">{{ gym.name }}
                         </div>
                         <div class="text-[11px] text-muted">{{ gym.address }}</div>
                     </div>
-                    <span *ngIf="selectedGym.id === gym.id" class="material-icons text-accent"
+                    <span *ngIf="selectedGym._id === gym._id" class="material-icons text-accent"
                         style="font-size: 1.1rem;">check_circle</span>
                 </button>
 

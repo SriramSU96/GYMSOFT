@@ -1,77 +1,749 @@
-<div>
-    <div>
+<div class="page-container">
+    <!-- PAGE HEADER -->
+    <div class="page-header">
         <div>
-            <h2>Financial Transactions</h2>
-            <p>Track and manage all revenue and payment history.</p>
+            <h1 class="page-title">Payments</h1>
+            <p class="page-subtitle">Track member payments and dues</p>
         </div>
-        <a routerLink="/payments/invoice-generator">
-            <span>add</span>
-            <span>New Invoice</span>
-        </a>
+        <button class="btn btn-primary" (click)="openAddPaymentModal()">
+            <span class="material-icons">add</span>
+            Add Payment
+        </button>
     </div>
 
-    <div>
-        <div>
-            <table>
+    <!-- STATS CARDS -->
+    <div class="stats-grid">
+        <div class="stat-card glass">
+            <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.15); color: var(--success);">
+                <span class="material-icons">payments</span>
+            </div>
+            <div>
+                <p class="stat-label">Total Collected</p>
+                <h2 class="stat-value">₹{{ getTotalCollected() | number:'1.2-2' }}</h2>
+            </div>
+        </div>
+        <div class="stat-card glass">
+            <div class="stat-icon" style="background-color: rgba(245, 158, 11, 0.15); color: var(--warning);">
+                <span class="material-icons">pending</span>
+            </div>
+            <div>
+                <p class="stat-label">Pending Dues</p>
+                <h2 class="stat-value">₹{{ getTotalDues() | number:'1.2-2' }}</h2>
+            </div>
+        </div>
+        <div class="stat-card glass">
+            <div class="stat-icon" style="background-color: rgba(59, 130, 246, 0.15); color: var(--info);">
+                <span class="material-icons">receipt_long</span>
+            </div>
+            <div>
+                <p class="stat-label">Total Transactions</p>
+                <h2 class="stat-value">{{ payments.length }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filters-section">
+        <div class="filters-row">
+            <input type="text" placeholder="Search by member name or phone..." [(ngModel)]="searchQuery"
+                (input)="applyFilters()" class="search-input" />
+
+            <div class="date-range-picker">
+                <input type="date" [(ngModel)]="startDate" (change)="applyFilters()" class="date-input"
+                    placeholder="Start Date" />
+                <span class="date-separator">to</span>
+                <input type="date" [(ngModel)]="endDate" (change)="applyFilters()" class="date-input"
+                    placeholder="End Date" />
+            </div>
+        </div>
+
+        <div class="filters-row">
+            <select [(ngModel)]="statusFilter" (change)="applyFilters()" class="filter-select">
+                <option value="">All Status</option>
+                <option value="Paid">Paid</option>
+                <option value="Pending">Pending</option>
+                <option value="Partial">Partial</option>
+            </select>
+
+            <select [(ngModel)]="methodFilter" (change)="applyFilters()" class="filter-select">
+                <option value="">All Methods</option>
+                <option value="Cash">Cash</option>
+                <option value="Card">Card</option>
+                <option value="UPI">UPI</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+
+            <button class="btn btn-secondary" (click)="clearFilters()">
+                <span class="material-icons">clear</span>
+                Clear Filters
+            </button>
+        </div>
+    </div>
+
+    <!-- PAYMENTS TABLE -->
+    <div class="card">
+        <div class="table-container">
+            <table *ngIf="filteredPayments.length > 0; else emptyState">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Member ID</th>
+                        <th>Invoice No</th>
+                        <th>Member Name</th>
                         <th>Amount</th>
-                        <th>Payment Type</th>
+                        <th>Paid</th>
+                        <th>Due</th>
+                        <th>Method</th>
                         <th>Status</th>
+                        <th>Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let payment of payments$ | async">
+                    <tr *ngFor="let payment of filteredPayments" [class.highlight-due]="payment.dueAmount > 0">
+                        <!-- Invoice No -->
                         <td>
-                            <div>{{ payment.paymentDate | date:'mediumDate' }}
+                            <span class="invoice-number">{{ payment.invoiceNo }}</span>
+                        </td>
+
+                        <!-- Member Name -->
+                        <td>
+                            <div class="member-info">
+                                <div class="member-avatar-small">{{ getInitials(payment.memberName) }}</div>
+                                <div>
+                                    <div class="member-name">{{ payment.memberName }}</div>
+                                    <div class="member-phone">{{ payment.phone }}</div>
+                                </div>
                             </div>
                         </td>
+
+                        <!-- Amount -->
                         <td>
-                            <div>
-                                <span>account_balance_wallet</span>
-                                <span>{{ payment.memberId }}</span>
-                            </div>
+                            <span class="amount-total">₹{{ payment.totalAmount | number:'1.2-2' }}</span>
                         </td>
+
+                        <!-- Paid -->
                         <td>
-                            <div>${{ payment.amount }}</div>
+                            <span class="amount-paid">₹{{ payment.paidAmount | number:'1.2-2' }}</span>
                         </td>
+
+                        <!-- Due -->
                         <td>
-                            <div>{{ payment.paymentMethod }}</div>
-                        </td>
-                        <td>
-                            <span [ngClass]="{
-                                'badge-success': payment.status === 'Paid',
-                                'badge-warning': payment.status === 'Pending',
-                                'badge-danger': payment.status === 'Failed',
-                                'badge-info': payment.status === 'Partial'
-                            }">
-                                {{ payment.status | uppercase }}
+                            <span class="amount-due" [class.text-danger]="payment.dueAmount > 0">
+                                ₹{{ payment.dueAmount | number:'1.2-2' }}
                             </span>
                         </td>
+
+                        <!-- Method -->
                         <td>
-                            <a [routerLink]="['/payments/invoice', payment._id]">
-                                <span>visibility</span>
-                            </a>
+                            <span class="method-badge" [class]="getMethodBadgeClass(payment.paymentMethod)">
+                                <span class="material-icons">{{ getMethodIcon(payment.paymentMethod) }}</span>
+                                {{ payment.paymentMethod }}
+                            </span>
                         </td>
-                    </tr>
-                    <tr *ngIf="(payments$ | async)?.length === 0 && !(isLoading$ | async)">
-                        <td colspan="6">
-                            <div>
-                                <span>receipt_long</span>
-                                <h3>No transactions found</h3>
-                                <p>Financial records will appear here after invoicing.</p>
+
+                        <!-- Status -->
+                        <td>
+                            <span class="badge" [class]="getStatusBadgeClass(payment.status)">
+                                {{ payment.status }}
+                            </span>
+                        </td>
+
+                        <!-- Date -->
+                        <td>
+                            <span class="payment-date">{{ payment.paymentDate | date:'mediumDate' }}</span>
+                        </td>
+
+                        <!-- Actions -->
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon btn-secondary" (click)="viewPayment(payment)"
+                                    title="View Details">
+                                    <span class="material-icons">visibility</span>
+                                </button>
+                                <button class="btn-icon btn-secondary" (click)="viewInvoice(payment)"
+                                    title="View Invoice">
+                                    <span class="material-icons">receipt</span>
+                                </button>
+                                <button *ngIf="payment.status === 'Paid'" class="btn-icon btn-secondary"
+                                    (click)="initiateRefund(payment)" title="Refund">
+                                    <span class="material-icons">undo</span>
+                                </button>
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
 
-            <div *ngIf="isLoading$ | async">
-                <div>refresh</div>
-            </div>
+            <!-- EMPTY STATE -->
+            <ng-template #emptyState>
+                <div class="empty-state">
+                    <span class="material-icons empty-icon">receipt_long</span>
+                    <h3>No payments found</h3>
+                    <p>{{ searchQuery || statusFilter || methodFilter ? 'Try adjusting your filters' : 'Add your first
+                        payment to get started' }}</p>
+                </div>
+            </ng-template>
         </div>
     </div>
 </div>
+
+<!-- ADD/EDIT PAYMENT MODAL -->
+<div *ngIf="showPaymentModal" class="modal-backdrop" (click)="closePaymentModal()">
+    <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>{{ editingPayment ? 'Edit Payment' : 'Add New Payment' }}</h3>
+            <button class="btn-icon btn-secondary" (click)="closePaymentModal()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Member *</label>
+                    <select [(ngModel)]="paymentForm.memberId" required>
+                        <option value="">Select Member</option>
+                        <option *ngFor="let member of membersList" [value]="member.id">
+                            {{ member.name }} - {{ member.phone }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Plan Type *</label>
+                    <select [(ngModel)]="paymentForm.planType" (change)="onPlanTypeChange()" required>
+                        <option value="">Select Plan</option>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Quarterly">Quarterly</option>
+                        <option value="Half-Yearly">Half-Yearly</option>
+                        <option value="Yearly">Yearly</option>
+                        <option value="Personal Training">Personal Training</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Total Amount *</label>
+                    <input type="number" [(ngModel)]="paymentForm.totalAmount" (input)="calculateDue()"
+                        placeholder="Enter total amount" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Paid Amount *</label>
+                    <input type="number" [(ngModel)]="paymentForm.paidAmount" (input)="calculateDue()"
+                        placeholder="Enter paid amount" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Due Amount</label>
+                    <input type="number" [value]="paymentForm.dueAmount" disabled class="calculated-field" />
+                </div>
+
+                <div class="form-group">
+                    <label>Payment Method *</label>
+                    <select [(ngModel)]="paymentForm.paymentMethod" required>
+                        <option value="">Select Method</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Card">Card</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                    </select>
+                </div>
+
+                <div class="form-group" *ngIf="paymentForm.paymentMethod !== 'Cash'">
+                    <label>Transaction ID</label>
+                    <input type="text" [(ngModel)]="paymentForm.transactionId" placeholder="Enter transaction ID" />
+                </div>
+
+                <div class="form-group">
+                    <label>Payment Date *</label>
+                    <input type="date" [(ngModel)]="paymentForm.paymentDate" required />
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Notes</label>
+                    <textarea [(ngModel)]="paymentForm.notes" placeholder="Add any notes..." rows="3"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closePaymentModal()">Cancel</button>
+            <button class="btn btn-primary" (click)="savePayment()">
+                <span class="material-icons">save</span>
+                {{ editingPayment ? 'Update Payment' : 'Add Payment' }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- INVOICE VIEW MODAL -->
+<div *ngIf="showInvoiceModal" class="modal-backdrop" (click)="closeInvoiceModal()">
+    <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Invoice - {{ selectedPayment?.invoiceNo }}</h3>
+            <button class="btn-icon btn-secondary" (click)="closeInvoiceModal()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <!-- Invoice Preview -->
+            <div class="invoice-preview" id="invoiceContent">
+                <div class="invoice-header">
+                    <div class="invoice-logo">
+                        <span class="material-icons">fitness_center</span>
+                        <h2>GYM SOFT</h2>
+                    </div>
+                    <div class="invoice-details">
+                        <h3>INVOICE</h3>
+                        <p><strong>Invoice No:</strong> {{ selectedPayment?.invoiceNo }}</p>
+                        <p><strong>Date:</strong> {{ selectedPayment?.paymentDate | date:'mediumDate' }}</p>
+                    </div>
+                </div>
+
+                <div class="invoice-section">
+                    <h4>Bill To:</h4>
+                    <p><strong>{{ selectedPayment?.memberName }}</strong></p>
+                    <p>{{ selectedPayment?.phone }}</p>
+                </div>
+
+                <div class="invoice-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ selectedPayment?.planType }} Membership</td>
+                                <td>₹{{ selectedPayment?.totalAmount | number:'1.2-2' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="invoice-summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span>₹{{ selectedPayment?.totalAmount | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="summary-row total-row">
+                        <span><strong>Total:</strong></span>
+                        <span><strong>₹{{ selectedPayment?.totalAmount | number:'1.2-2' }}</strong></span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Paid:</span>
+                        <span class="text-success">₹{{ selectedPayment?.paidAmount | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="summary-row"
+                        *ngIf="selectedPayment?.dueAmount && (selectedPayment?.dueAmount || 0) > 0">
+                        <span>Due:</span>
+                        <span class="text-danger">₹{{ selectedPayment?.dueAmount | number:'1.2-2' }}</span>
+                    </div>
+                </div>
+
+                <div class="invoice-footer">
+                    <p><strong>Payment Method:</strong> {{ selectedPayment?.paymentMethod }}</p>
+                    <p *ngIf="selectedPayment?.transactionId"><strong>Transaction ID:</strong> {{
+                        selectedPayment?.transactionId }}</p>
+                    <p class="thank-you">Thank you for your business!</p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeInvoiceModal()">Close</button>
+            <button class="btn btn-secondary" (click)="printInvoice()">
+                <span class="material-icons">print</span>
+                Print
+            </button>
+            <button class="btn btn-primary" (click)="downloadInvoice()">
+                <span class="material-icons">download</span>
+                Download PDF
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- CUSTOM STYLES -->
+<style>
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--space-lg);
+        margin-bottom: var(--space-lg);
+    }
+
+    .stat-card {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-lg);
+        border-radius: var(--radius-lg);
+    }
+
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+    }
+
+    .stat-label {
+        font-size: var(--font-size-sm);
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .stat-value {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        margin: 0;
+    }
+
+    /* Filters Section */
+    .filters-section {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: var(--space-lg);
+        margin-bottom: var(--space-lg);
+    }
+
+    .filters-row {
+        display: flex;
+        gap: var(--space-md);
+        margin-bottom: var(--space-md);
+    }
+
+    .filters-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .date-range-picker {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    .date-input {
+        padding: 0.625rem 1rem;
+        background-color: var(--bg-input);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        font-size: var(--font-size-sm);
+    }
+
+    .date-separator {
+        color: var(--text-muted);
+        font-size: var(--font-size-sm);
+    }
+
+    .filter-select {
+        min-width: 150px;
+    }
+
+    /* Invoice Number */
+    .invoice-number {
+        font-family: 'Courier New', monospace;
+        font-weight: var(--font-weight-semibold);
+        color: var(--accent-primary);
+    }
+
+    /* Member Info */
+    .member-info {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    .member-avatar-small {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-full);
+        background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+        color: var(--text-inverse);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-size-xs);
+        flex-shrink: 0;
+    }
+
+    .member-name {
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+    }
+
+    .member-phone {
+        font-size: var(--font-size-xs);
+        color: var(--text-muted);
+    }
+
+    /* Amounts */
+    .amount-total,
+    .amount-paid,
+    .amount-due {
+        font-weight: var(--font-weight-semibold);
+        font-family: 'Courier New', monospace;
+    }
+
+    .amount-total {
+        color: var(--text-primary);
+    }
+
+    .amount-paid {
+        color: var(--success);
+    }
+
+    .amount-due {
+        color: var(--text-secondary);
+    }
+
+    /* Method Badge */
+    .method-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-xs);
+        padding: 0.25rem 0.75rem;
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .method-badge .material-icons {
+        font-size: 1rem;
+    }
+
+    .method-cash {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+    }
+
+    .method-card {
+        background-color: rgba(59, 130, 246, 0.15);
+        color: var(--info);
+    }
+
+    .method-upi {
+        background-color: rgba(212, 175, 55, 0.15);
+        color: var(--accent-primary);
+    }
+
+    .method-bank {
+        background-color: rgba(139, 92, 246, 0.15);
+        color: #8B5CF6;
+    }
+
+    /* Status Badges */
+    .badge-paid {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+    }
+
+    .badge-pending {
+        background-color: rgba(245, 158, 11, 0.15);
+        color: var(--warning);
+    }
+
+    .badge-partial {
+        background-color: rgba(59, 130, 246, 0.15);
+        color: var(--info);
+    }
+
+    /* Payment Date */
+    .payment-date {
+        color: var(--text-secondary);
+        font-size: var(--font-size-sm);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: var(--space-xs);
+    }
+
+    /* Highlight Due */
+    .highlight-due {
+        background-color: rgba(245, 158, 11, 0.03);
+        border-left: 3px solid var(--warning);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: var(--space-2xl);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        color: var(--text-muted);
+        margin-bottom: var(--space-md);
+    }
+
+    /* Form Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-md);
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .calculated-field {
+        background-color: var(--bg-hover);
+        cursor: not-allowed;
+    }
+
+    /* Invoice Preview */
+    .invoice-preview {
+        background: white;
+        color: #000;
+        padding: var(--space-2xl);
+        border-radius: var(--radius-md);
+    }
+
+    .invoice-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: var(--space-xl);
+        padding-bottom: var(--space-lg);
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .invoice-logo {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    .invoice-logo .material-icons {
+        font-size: 2.5rem;
+        color: #D4AF37;
+    }
+
+    .invoice-logo h2 {
+        margin: 0;
+        color: #000;
+    }
+
+    .invoice-details {
+        text-align: right;
+    }
+
+    .invoice-details h3 {
+        margin: 0 0 var(--space-sm);
+        color: #000;
+    }
+
+    .invoice-details p {
+        margin: var(--space-xs) 0;
+        color: #6b7280;
+    }
+
+    .invoice-section {
+        margin-bottom: var(--space-lg);
+    }
+
+    .invoice-section h4 {
+        margin: 0 0 var(--space-sm);
+        color: #000;
+    }
+
+    .invoice-section p {
+        margin: var(--space-xs) 0;
+        color: #6b7280;
+    }
+
+    .invoice-table {
+        margin: var(--space-xl) 0;
+    }
+
+    .invoice-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .invoice-table thead th {
+        background-color: #f3f4f6;
+        color: #000;
+        padding: var(--space-md);
+        text-align: left;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .invoice-table tbody td {
+        padding: var(--space-md);
+        color: #000;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .invoice-summary {
+        margin: var(--space-xl) 0;
+        padding: var(--space-lg);
+        background-color: #f9fafb;
+        border-radius: var(--radius-md);
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: var(--space-sm) 0;
+        color: #000;
+    }
+
+    .summary-row.total-row {
+        border-top: 2px solid #e5e7eb;
+        padding-top: var(--space-md);
+        margin-top: var(--space-sm);
+        font-size: var(--font-size-lg);
+    }
+
+    .invoice-footer {
+        margin-top: var(--space-xl);
+        padding-top: var(--space-lg);
+        border-top: 2px solid #e5e7eb;
+    }
+
+    .invoice-footer p {
+        margin: var(--space-xs) 0;
+        color: #6b7280;
+    }
+
+    .thank-you {
+        margin-top: var(--space-lg);
+        text-align: center;
+        font-weight: var(--font-weight-semibold);
+        color: #D4AF37 !important;
+    }
+
+    /* Modal Large */
+    .modal-large {
+        max-width: 900px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filters-row {
+            flex-direction: column;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+    }
+</style>

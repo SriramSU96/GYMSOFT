@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { WorkoutLevel, WorkoutGoal } from '../../../../core/models/workout-plan.model';
-import { createPlan, setBuilderStep, resetBuilder, addDaysToPlan, addExercisesToDay, loadPlans } from '../../../../core/store/workout-plans/workout-plan.actions';
+import { WorkoutLevel, WorkoutGoal, WorkoutDay } from '../../../../core/models/workout-plan.model';
+import { createWorkoutPlan as createPlan, setBuilderStep, resetBuilder, addWorkoutDays as addDaysToPlan, addExercisesToDay, loadWorkoutPlans as loadPlans } from '../../../../core/store/workout-plans/workout-plan.actions';
 import { selectBuilderStep, selectBuilderPlanId, selectBuilderDays } from '../../../../core/store/workout-plans/workout-plan.selectors';
 import { take } from 'rxjs/operators';
 import { loadExercises } from '../../../../core/store/exercises/exercise.actions';
@@ -31,8 +31,8 @@ export class PlanBuilderComponent implements OnInit {
     planForm: FormGroup;
 
     // Step 2: Workout Days
-    days: { dayNumber: number; focus: string }[] = [];
-    newDayFocus: string = '';
+    days: { dayNumber: number; title: string }[] = [];
+    newDayTitle: string = '';
 
     // Step 3: Add Exercises
     selectedDayId: string | null = null;
@@ -69,19 +69,19 @@ export class PlanBuilderComponent implements OnInit {
 
     onSubmitPlanDetails() {
         if (this.planForm.valid) {
-            this.store.dispatch(createPlan({ dto: this.planForm.value }));
+            this.store.dispatch(createPlan({ plan: this.planForm.value }));
             // The effect will handle moving to step 2
         }
     }
 
     // Step 2: Day Management
     addDay() {
-        if (this.newDayFocus.trim()) {
+        if (this.newDayTitle.trim()) {
             this.days.push({
                 dayNumber: this.days.length + 1,
-                focus: this.newDayFocus.trim()
+                title: this.newDayTitle.trim()
             });
-            this.newDayFocus = '';
+            this.newDayTitle = '';
         }
     }
 
@@ -99,7 +99,7 @@ export class PlanBuilderComponent implements OnInit {
                 if (planId) {
                     this.store.dispatch(addDaysToPlan({
                         planId,
-                        dto: { days: this.days }
+                        daysStructure: { days: this.days }
                     }));
                 }
             });
@@ -187,11 +187,11 @@ export class PlanBuilderComponent implements OnInit {
                 let submittedCount = 0;
                 let skippedCount = 0;
 
-                builderDays.forEach((day, index) => {
+                builderDays.forEach((day: WorkoutDay, index: number) => {
                     console.log(`\n--- Processing Day ${index + 1} ---`);
                     console.log(`Day Number: ${day.dayNumber}`);
                     console.log(`Day ID: ${day._id}`);
-                    console.log(`Day Focus: ${day.focus}`);
+                    console.log(`Day Focus: ${day.title}`);
 
                     const exercises = this.dayExercises.get(day._id!);
                     console.log(`Exercises for this day:`, exercises);
@@ -229,7 +229,7 @@ export class PlanBuilderComponent implements OnInit {
                     console.log('🚀 Navigating to /workouts/plans');
                     this.router.navigate(['/workouts/plans']).then(() => {
                         // Reload plans list to show the newly created plan
-                        this.store.dispatch(loadPlans({ pageNumber: 1, pageSize: 20 }));
+                        this.store.dispatch(loadPlans({ params: { pageNumber: 1, pageSize: 20 } }));
                     });
                 }, 1500);
             },

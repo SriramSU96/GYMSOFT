@@ -1,27 +1,26 @@
-
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { PaymentState } from './payment.reducer';
+import { PaymentState, selectAll } from './payment.reducer';
 
 export const selectPaymentState = createFeatureSelector<PaymentState>('payments');
 
-export const selectPayments = createSelector(
+export const selectAllPayments = createSelector(
     selectPaymentState,
-    (state) => state.pendingPayments
+    selectAll
 );
 
-export const selectPendingPayments = createSelector(
+export const selectPaymentLoading = createSelector(
     selectPaymentState,
-    (state) => state.pendingPayments
-);
-
-export const selectPaymentIsLoading = createSelector(
-    selectPaymentState,
-    (state) => state.isLoading
+    (state) => state.loading
 );
 
 export const selectPaymentError = createSelector(
     selectPaymentState,
     (state) => state.error
+);
+
+export const selectTotalPayments = createSelector(
+    selectPaymentState,
+    (state) => state.total
 );
 
 export const selectSelectedInvoice = createSelector(

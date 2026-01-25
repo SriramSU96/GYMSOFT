@@ -1,17 +1,12 @@
-
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { AnalyticsState } from './analytics.reducer';
 
 export const selectAnalyticsState = createFeatureSelector<AnalyticsState>('analytics');
-export const selectAnalytics = createSelector(selectAnalyticsState, (state) => state.kpis);
-export const selectOverview = createSelector(selectAnalyticsState, (state) => state.kpis);
 
-// Advanced Analytics Selectors
-export const selectAdvancedAnalytics = createSelector(selectAnalyticsState, (state) => state.advancedAnalytics);
-export const selectAdvancedAnalyticsLoading = createSelector(selectAnalyticsState, (state) => state.advancedAnalyticsLoading);
-export const selectAdvancedAnalyticsError = createSelector(selectAnalyticsState, (state) => state.advancedAnalyticsError);
+export const selectOverview = createSelector(selectAnalyticsState, state => state.overview);
+export const selectRetention = createSelector(selectAnalyticsState, state => state.retention);
+export const selectPeakHours = createSelector(selectAnalyticsState, state => state.peakHours);
+export const selectTrainerPerformance = createSelector(selectAnalyticsState, state => state.trainerPerformance);
+export const selectAdvancedAnalytics = createSelector(selectAnalyticsState, state => state.advancedAnalytics);
 
-// Financial Report Selectors
-export const selectFinancialReport = createSelector(selectAnalyticsState, (state) => state.financialReport);
-export const selectFinancialReportLoading = createSelector(selectAnalyticsState, (state) => state.financialReportLoading);
-export const selectFinancialReportError = createSelector(selectAnalyticsState, (state) => state.financialReportError);
+export const selectAnalyticsLoading = createSelector(selectAnalyticsState, state => state.loading);

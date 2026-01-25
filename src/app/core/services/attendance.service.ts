@@ -1,13 +1,21 @@
-
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Attendance } from '../models/attendance.model';
+import { Attendance, AttendanceStats, AttendanceResponse } from '../models/attendance.model';
 import { environment } from '../../../environments/environment';
 
 export interface CheckInPayload {
     memberId: string;
-    checkInTime?: string; // Optional, backend handles time if missing usually, but we send it
+    checkInTime?: Date;
+    source?: 'QR' | 'Manual' | 'Offline';
+}
+
+export interface AttendanceFilter {
+    memberId?: string;
+    date?: string; // YYYY-MM-DD
+    startDate?: string;
+    endDate?: string;
+    gymId?: string;
 }
 
 @Injectable({
@@ -15,17 +23,47 @@ export interface CheckInPayload {
 })
 export class AttendanceService {
     private http = inject(HttpClient);
-    private apiUrl = `${environment.apiUrl}/attendance`;
+    private apiUrl = `${environment.apiUrl}/attendance/members`;
 
-    qrCheckIn(data: CheckInPayload): Observable<Attendance> {
-        return this.http.post<Attendance>(`${this.apiUrl}/qr`, data);
+    // Manual Add (Backdated or Admin override)
+    markAttendance(data: Partial<Attendance>): Observable<{ success: boolean; data: Attendance }> {
+        return this.http.post<{ success: boolean; data: Attendance }>(this.apiUrl, data);
     }
 
+    // List Attendance with Filters
+    getAttendance(filter: AttendanceFilter = {}): Observable<AttendanceResponse> {
+        let params = new HttpParams();
+        Object.keys(filter).forEach(key => {
+            if (filter[key as keyof AttendanceFilter]) {
+                params = params.set(key, filter[key as keyof AttendanceFilter] as string);
+            }
+        });
+        return this.http.get<AttendanceResponse>(this.apiUrl, { params });
+    }
+
+    // Manual Check-In (Real-time)
+    checkIn(data: CheckInPayload): Observable<{ success: boolean; data: Attendance }> {
+        return this.http.post<{ success: boolean; data: Attendance }>(`${this.apiUrl}/check-in`, data);
+    }
+
+    // QR Check-In
+    qrCheckIn(token: string): Observable<{ success: boolean; data: Attendance }> {
+        return this.http.post<{ success: boolean; data: Attendance }>(`${this.apiUrl}/qr-checkin`, { token });
+    }
+
+    // Check-Out
+    checkOut(id: string, checkOutTime: Date = new Date()): Observable<{ success: boolean; data: Attendance }> {
+        return this.http.patch<{ success: boolean; data: Attendance }>(`${this.apiUrl}/${id}/check-out`, { checkOutTime });
+    }
+
+    // Get Summary/Stats
+    getAttendanceSummary(date: string): Observable<{ success: boolean; data: AttendanceStats }> {
+        const params = new HttpParams().set('date', date);
+        return this.http.get<{ success: boolean; data: AttendanceStats }>(`${this.apiUrl}/summary`, { params });
+    }
+
+    // Legacy sync method if still needed, or remove if deprecated by new API
     syncAttendance(records: Attendance[]): Observable<any> {
-        return this.http.post(`${this.apiUrl}/sync`, { records });
-    }
-
-    getMemberAttendance(memberId: string): Observable<Attendance[]> {
-        return this.http.get<Attendance[]>(`${this.apiUrl}/member/${memberId}`);
+        return this.http.post(`${environment.apiUrl}/attendance/sync`, { records });
     }
 }

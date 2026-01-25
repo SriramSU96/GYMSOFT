@@ -39,8 +39,8 @@ export class ExerciseEffects {
         this.actions$.pipe(
             ofType(ExerciseActions.loadExercise),
             mergeMap(({ id }) =>
-                this.exerciseService.getExercise(id).pipe(
-                    map((exercise) => ExerciseActions.loadExerciseSuccess({ exercise })),
+                this.exerciseService.getExerciseById(id).pipe(
+                    map((response) => ExerciseActions.loadExerciseSuccess({ exercise: response.exercise })),
                     catchError((error) => {
                         this.toastService.error('Failed to load exercise');
                         return of(ExerciseActions.loadExerciseFailure({ error }));
@@ -54,7 +54,7 @@ export class ExerciseEffects {
         this.actions$.pipe(
             ofType(ExerciseActions.createExercise),
             mergeMap(({ exercise }) =>
-                this.exerciseService.createExercise(exercise).pipe(
+                this.exerciseService.createExercise(exercise as any).pipe(
                     map((newExercise) => {
                         this.toastService.success('Exercise created successfully');
                         return ExerciseActions.createExerciseSuccess({ exercise: newExercise });
@@ -82,7 +82,7 @@ export class ExerciseEffects {
         this.actions$.pipe(
             ofType(ExerciseActions.updateExercise),
             mergeMap(({ id, changes }) =>
-                this.exerciseService.updateExercise(id, changes).pipe(
+                this.exerciseService.updateExercise(id, changes as any).pipe(
                     map((exercise) => {
                         this.toastService.success('Exercise updated successfully');
                         return ExerciseActions.updateExerciseSuccess({ exercise });

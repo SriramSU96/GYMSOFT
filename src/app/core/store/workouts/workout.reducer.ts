@@ -1,108 +1,53 @@
 import { createReducer, on } from '@ngrx/store';
-import { Workout } from '../../models/gym-extensions.model';
-import * as WorkoutActions from './workout.actions';
+import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+import * as ExerciseActions from './workout.actions';
+import { Exercise } from '../../models/exercise.model';
 
-export interface WorkoutState {
-  workouts: Workout[];
-  selectedWorkout: Workout | null;
-  loading: boolean;
+export interface ExercisesState extends EntityAdapter<Exercise> {
+  isLoading: boolean;
   error: any;
 }
 
-export const initialState: WorkoutState = {
-  workouts: [],
-  selectedWorkout: null,
-  loading: false,
-  error: null
-};
+export const adapter: EntityAdapter<Exercise> = createEntityAdapter<Exercise>({
+  selectId: (exercise: Exercise) => exercise._id,
+  sortComparer: false
+});
 
-export const workoutReducer = createReducer(
+export const initialState: ExercisesState = adapter.getInitialState({
+  isLoading: false,
+  error: null
+});
+
+export const exerciseReducer = createReducer(
   initialState,
 
-  // Load Workouts
-  on(WorkoutActions.loadWorkouts, (state) => ({
+  // Load
+  on(ExerciseActions.loadExercises, (state) => ({
     ...state,
-    loading: true,
+    isLoading: true,
     error: null
   })),
-  on(WorkoutActions.loadWorkoutsSuccess, (state, { workouts }) => ({
+  on(ExerciseActions.loadExercisesSuccess, (state, { response }) => {
+    return adapter.setAll(response.exercises, {
+      ...state,
+      isLoading: false
+    });
+  }),
+  on(ExerciseActions.loadExercisesFailure, (state, { error }) => ({
     ...state,
-    workouts,
-    loading: false
-  })),
-  on(WorkoutActions.loadWorkoutsFailure, (state, { error }) => ({
-    ...state,
-    loading: false,
+    isLoading: false,
     error
   })),
 
-  // Load Single Workout
-  on(WorkoutActions.loadWorkout, (state) => ({
-    ...state,
-    loading: true,
-    error: null
-  })),
-  on(WorkoutActions.loadWorkoutSuccess, (state, { workout }) => ({
-    ...state,
-    selectedWorkout: workout,
-    loading: false
-  })),
-  on(WorkoutActions.loadWorkoutFailure, (state, { error }) => ({
-    ...state,
-    loading: false,
-    error
-  })),
-
-  // Create Workout
-  on(WorkoutActions.createWorkout, (state) => ({
-    ...state,
-    loading: true,
-    error: null
-  })),
-  on(WorkoutActions.createWorkoutSuccess, (state, { workout }) => ({
-    ...state,
-    workouts: [...state.workouts, workout],
-    loading: false
-  })),
-  on(WorkoutActions.createWorkoutFailure, (state, { error }) => ({
-    ...state,
-    loading: false,
-    error
-  })),
-
-  // Update Workout
-  on(WorkoutActions.updateWorkout, (state) => ({
-    ...state,
-    loading: true,
-    error: null
-  })),
-  on(WorkoutActions.updateWorkoutSuccess, (state, { workout }) => ({
-    ...state,
-    workouts: state.workouts.map(w => w._id === workout._id ? workout : w),
-    selectedWorkout: state.selectedWorkout?._id === workout._id ? workout : state.selectedWorkout,
-    loading: false
-  })),
-  on(WorkoutActions.updateWorkoutFailure, (state, { error }) => ({
-    ...state,
-    loading: false,
-    error
-  })),
-
-  // Delete Workout
-  on(WorkoutActions.deleteWorkout, (state) => ({
-    ...state,
-    loading: true,
-    error: null
-  })),
-  on(WorkoutActions.deleteWorkoutSuccess, (state, { id }) => ({
-    ...state,
-    workouts: state.workouts.filter(w => w._id !== id),
-    selectedWorkout: state.selectedWorkout?._id === id ? null : state.selectedWorkout,
-    loading: false
-  })),
-  on(WorkoutActions.deleteWorkoutFailure, (state, { error }) => ({
-    ...state,
-    loading: false,
-    error
-  }))
+  // CRUD
+  on(ExerciseActions.createExerciseSuccess, (state, { exercise }) => adapter.addOne(exercise, state)),
+  on(ExerciseActions.updateExerciseSuccess, (state, { exercise }) => adapter.updateOne({ id: exercise._id, changes: exercise }, state)),
+  on(ExerciseActions.deleteExerciseSuccess, (state, { id }) => adapter.removeOne(id, state))
 );
+
+export const {
+  selectIds,
+  selectEntities,
+  selectAll,
+  selectTotal,
+} = adapter.getSelectors();

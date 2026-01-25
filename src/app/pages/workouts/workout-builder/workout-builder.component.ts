@@ -104,7 +104,7 @@ export class WorkoutBuilder implements OnInit {
         if (this.workoutForm.invalid) return;
 
         this.isLoading = true;
-        const currentUser = this.authService.getCurrentUser();
+        const currentUser = this.authService.currentUserValue;
         const workoutData = {
             ...this.workoutForm.value,
             exercises: this.workoutForm.value.exercises.map((ex: any) => ({

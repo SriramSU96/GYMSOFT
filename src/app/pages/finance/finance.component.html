@@ -1,0 +1,434 @@
+<div class="page-container">
+    <!-- ============================================ -->
+    <!-- PAGE HEADER -->
+    <!-- ============================================ -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Finance Management</h1>
+            <p class="page-subtitle">Complete financial control panel</p>
+        </div>
+
+        <div class="header-actions">
+            <div class="time-range-selector">
+                <button *ngFor="let range of timeRanges" [class.active]="selectedRange === range.value"
+                    (click)="onRangeChange(range.value)" class="range-btn">
+                    {{ range.label }}
+                </button>
+            </div>
+
+            <div class="export-buttons">
+                <button class="btn btn-secondary" (click)="exportPDF()">
+                    <span class="material-icons">picture_as_pdf</span>
+                    PDF
+                </button>
+                <button class="btn btn-secondary" (click)="exportExcel()">
+                    <span class="material-icons">table_chart</span>
+                    Excel
+                </button>
+                <button class="btn btn-secondary" (click)="printSummary()">
+                    <span class="material-icons">print</span>
+                    Print
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 1: FINANCE OVERVIEW -->
+    <!-- ============================================ -->
+    <div class="finance-overview-grid">
+        <div class="overview-card card revenue">
+            <div class="overview-icon">
+                <span class="material-icons">trending_up</span>
+            </div>
+            <div class="overview-content">
+                <span class="overview-label">Total Revenue</span>
+                <h3 class="overview-value">{{ formatCurrency(financeOverview.totalRevenue) }}</h3>
+            </div>
+        </div>
+
+        <div class="overview-card card expense">
+            <div class="overview-icon">
+                <span class="material-icons">trending_down</span>
+            </div>
+            <div class="overview-content">
+                <span class="overview-label">Total Expenses</span>
+                <h3 class="overview-value">{{ formatCurrency(financeOverview.totalExpenses) }}</h3>
+            </div>
+        </div>
+
+        <div class="overview-card card" [ngClass]="getProfitClass()">
+            <div class="overview-icon">
+                <span class="material-icons">account_balance_wallet</span>
+            </div>
+            <div class="overview-content">
+                <span class="overview-label">Net Profit</span>
+                <h3 class="overview-value">{{ formatCurrency(financeOverview.netProfit) }}</h3>
+            </div>
+        </div>
+
+        <div class="overview-card card dues">
+            <div class="overview-icon">
+                <span class="material-icons">receipt_long</span>
+            </div>
+            <div class="overview-content">
+                <span class="overview-label">Pending Dues</span>
+                <h3 class="overview-value">{{ formatCurrency(financeOverview.pendingDues) }}</h3>
+            </div>
+        </div>
+
+        <div class="overview-card card cash">
+            <div class="overview-icon">
+                <span class="material-icons">account_balance</span>
+            </div>
+            <div class="overview-content">
+                <span class="overview-label">Cash Balance</span>
+                <h3 class="overview-value">{{ formatCurrency(financeOverview.cashBalance) }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 2: INCOME BREAKDOWN -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Income Breakdown</h2>
+
+        <div class="income-grid">
+            <!-- Income Sources -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Revenue by Source</h3>
+                </div>
+                <div class="income-sources">
+                    <div class="income-source">
+                        <div class="source-info">
+                            <span class="source-dot membership"></span>
+                            <span class="source-name">Membership</span>
+                        </div>
+                        <span class="source-amount">{{ formatCurrency(incomeBreakdown.membership) }}</span>
+                    </div>
+                    <div class="income-source">
+                        <div class="source-info">
+                            <span class="source-dot pos"></span>
+                            <span class="source-name">POS Sales</span>
+                        </div>
+                        <span class="source-amount">{{ formatCurrency(incomeBreakdown.pos) }}</span>
+                    </div>
+                    <div class="income-source">
+                        <div class="source-info">
+                            <span class="source-dot training"></span>
+                            <span class="source-name">Personal Training</span>
+                        </div>
+                        <span class="source-amount">{{ formatCurrency(incomeBreakdown.personalTraining) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Revenue -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Daily Revenue (Last 7 Days)</h3>
+                </div>
+                <div class="revenue-chart">
+                    <div *ngFor="let day of incomeBreakdown.dailyRevenue" class="revenue-bar">
+                        <div class="bar-value">{{ formatCurrency(day.amount) }}</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" [style.height.%]="(day.amount / getMaxDailyRevenue()) * 100"></div>
+                        </div>
+                        <div class="bar-label">{{ day.date | date:'EEE' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Revenue Trend -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Monthly Revenue Trend</h3>
+            </div>
+            <div class="monthly-chart">
+                <div *ngFor="let month of incomeBreakdown.monthlyRevenue" class="monthly-bar">
+                    <div class="bar-value">{{ formatCurrency(month.amount) }}</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" [style.height.%]="(month.amount / getMaxMonthlyRevenue()) * 100"></div>
+                    </div>
+                    <div class="bar-label">{{ month.month }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 3: EXPENSE MANAGEMENT -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Expense Management</h2>
+
+        <div class="expense-controls">
+            <select [(ngModel)]="selectedExpenseCategory" class="filter-select">
+                <option *ngFor="let cat of expenseCategories" [value]="cat">{{ cat }}</option>
+            </select>
+            <button class="btn btn-primary" (click)="openAddExpenseModal()">
+                <span class="material-icons">add</span>
+                Add Expense
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Payment Method</th>
+                            <th>Description</th>
+                            <th>Added By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let expense of filterExpensesByCategory()">
+                            <td><span class="expense-id">{{ expense.id }}</span></td>
+                            <td>{{ expense.date | date:'mediumDate' }}</td>
+                            <td><span class="category-badge">{{ expense.category }}</span></td>
+                            <td><span class="expense-amount">{{ formatCurrency(expense.amount) }}</span></td>
+                            <td>{{ expense.paymentMethod }}</td>
+                            <td>{{ expense.description }}</td>
+                            <td>{{ expense.addedBy }}</td>
+                            <td>
+                                <button class="btn-icon btn-secondary" (click)="openEditExpenseModal(expense)"
+                                    title="Edit">
+                                    <span class="material-icons">edit</span>
+                                </button>
+                                <button class="btn-icon btn-danger" (click)="deleteExpense(expense.id)" title="Delete">
+                                    <span class="material-icons">delete</span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 4: PAYROLL SUMMARY -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Payroll Summary</h2>
+
+        <div class="payroll-overview">
+            <div class="payroll-card card">
+                <span class="payroll-label">Total Salary Cost</span>
+                <h3 class="payroll-value">{{ formatCurrency(payrollSummary.totalSalaryCost) }}</h3>
+            </div>
+            <div class="payroll-card card">
+                <span class="payroll-label">Paid</span>
+                <h3 class="payroll-value paid">{{ formatCurrency(payrollSummary.paid) }}</h3>
+            </div>
+            <div class="payroll-card card">
+                <span class="payroll-label">Pending</span>
+                <h3 class="payroll-value pending">{{ formatCurrency(payrollSummary.pending) }}</h3>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Staff-wise Breakdown</h3>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Salary</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let staff of payrollSummary.staffBreakdown">
+                            <td>{{ staff.name }}</td>
+                            <td>{{ staff.role }}</td>
+                            <td><span class="salary-amount">{{ formatCurrency(staff.salary) }}</span></td>
+                            <td><span class="status-badge" [ngClass]="getPayrollStatusClass(staff.status)">{{
+                                    staff.status }}</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 5: CASH FLOW -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Cash Flow Analysis</h2>
+
+        <div class="cash-flow-summary card">
+            <h3>Net Cash Position</h3>
+            <h2 class="net-cash" [ngClass]="getProfitClass()">{{ formatCurrency(cashFlow.netCashPosition) }}</h2>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Cash Inflow vs Outflow</h3>
+            </div>
+            <div class="cashflow-chart">
+                <div *ngFor="let month of cashFlow.inflow; let i = index" class="cashflow-group">
+                    <div class="cashflow-bars">
+                        <div class="cashflow-bar inflow">
+                            <div class="bar-fill" [style.height.%]="(month.amount / getMaxCashFlow()) * 100"></div>
+                            <span class="bar-value">{{ formatCurrency(month.amount) }}</span>
+                        </div>
+                        <div class="cashflow-bar outflow">
+                            <div class="bar-fill"
+                                [style.height.%]="(cashFlow.outflow[i].amount / getMaxCashFlow()) * 100"></div>
+                            <span class="bar-value">{{ formatCurrency(cashFlow.outflow[i].amount) }}</span>
+                        </div>
+                    </div>
+                    <div class="cashflow-label">{{ month.month }}</div>
+                </div>
+            </div>
+            <div class="cashflow-legend">
+                <span class="legend-item"><span class="legend-dot inflow"></span> Inflow</span>
+                <span class="legend-item"><span class="legend-dot outflow"></span> Outflow</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 6: REFUNDS -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Refund History</h2>
+
+        <div class="card">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Member Name</th>
+                            <th>Amount</th>
+                            <th>Reason</th>
+                            <th>Processed By</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let refund of refunds">
+                            <td><span class="refund-id">{{ refund.id }}</span></td>
+                            <td>{{ refund.date | date:'mediumDate' }}</td>
+                            <td>{{ refund.memberName }}</td>
+                            <td><span class="refund-amount">{{ formatCurrency(refund.amount) }}</span></td>
+                            <td>{{ refund.reason }}</td>
+                            <td>{{ refund.processedBy }}</td>
+                            <td><span class="status-badge" [ngClass]="getRefundStatusClass(refund.status)">{{
+                                    refund.status }}</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION 7: FINANCIAL FORECAST -->
+    <!-- ============================================ -->
+    <div class="section-container">
+        <h2 class="section-title">Financial Forecast (Next 3 Months)</h2>
+
+        <div class="forecast-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Revenue Prediction</h3>
+                </div>
+                <div class="forecast-list">
+                    <div *ngFor="let item of forecast.revenueNext3Months" class="forecast-item">
+                        <div class="forecast-month">{{ item.month }}</div>
+                        <div class="forecast-value">{{ formatCurrency(item.predicted) }}</div>
+                        <div class="forecast-confidence">{{ item.confidence }}% confidence</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Expense Trend</h3>
+                </div>
+                <div class="forecast-list">
+                    <div *ngFor="let item of forecast.expenseTrend" class="forecast-item">
+                        <div class="forecast-month">{{ item.month }}</div>
+                        <div class="forecast-value expense">{{ formatCurrency(item.predicted) }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Profit Prediction</h3>
+                </div>
+                <div class="forecast-list">
+                    <div *ngFor="let item of forecast.profitPrediction" class="forecast-item">
+                        <div class="forecast-month">{{ item.month }}</div>
+                        <div class="forecast-value profit">{{ formatCurrency(item.predicted) }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- EXPENSE MODAL -->
+<!-- ============================================ -->
+<div *ngIf="showExpenseModal" class="modal-backdrop" (click)="closeExpenseModal()">
+    <div class="modal-content expense-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>{{ isEditMode ? 'Edit Expense' : 'Add Expense' }}</h3>
+            <button class="btn-icon btn-secondary" (click)="closeExpenseModal()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" [(ngModel)]="expenseForm.date" class="form-input" />
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select [(ngModel)]="expenseForm.category" class="form-input">
+                    <option *ngFor="let cat of expenseCategories.slice(1)" [value]="cat">{{ cat }}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Amount (₹)</label>
+                <input type="number" [(ngModel)]="expenseForm.amount" class="form-input" />
+            </div>
+            <div class="form-group">
+                <label>Payment Method</label>
+                <select [(ngModel)]="expenseForm.paymentMethod" class="form-input">
+                    <option value="Cash">Cash</option>
+                    <option value="Card">Card</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea [(ngModel)]="expenseForm.description" class="form-input" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeExpenseModal()">Cancel</button>
+            <button class="btn btn-primary" (click)="saveExpense()">Save</button>
+        </div>
+    </div>
+</div>

@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DietService } from '../../../../core/services/diet.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { DietPlan } from '../../../../core/models/gym-extensions.model';
+import { DietPlan } from '../../../../core/models/diet.model';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -237,7 +237,7 @@ export class DietPlanListComponent implements OnInit {
 
     loadPlans() {
         this.isLoading = true;
-        const gymId = this.authService.getCurrentUser()?.gymId;
+        const gymId = this.authService.currentUserValue?.gymId;
 
         if (!gymId) {
             this.isLoading = false;
@@ -245,13 +245,13 @@ export class DietPlanListComponent implements OnInit {
         }
 
         // Fetch all plans and filter client-side for now as the API support for filter params is basic
-        this.dietService.getDietPlansByGym(gymId).subscribe({
-            next: (plans) => {
-                this.plans = plans;
+        this.dietService.getPlans({ gymId }).subscribe({
+            next: (response) => {
+                this.plans = response.dietPlans || [];
                 this.applyFilters();
                 this.isLoading = false;
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('Error loading diet plans', err);
                 this.isLoading = false;
             }
@@ -284,11 +284,11 @@ export class DietPlanListComponent implements OnInit {
     deletePlan(plan: DietPlan) {
         if (!confirm(`Are you sure you want to delete "${plan.title}"?`)) return;
 
-        this.dietService.deleteDietPlan(plan._id!).subscribe({
+        this.dietService.deletePlan(plan._id!).subscribe({
             next: () => {
                 this.loadPlans();
             },
-            error: (err) => console.error(err)
+            error: (err: any) => console.error(err)
         });
     }
 }

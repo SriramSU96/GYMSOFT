@@ -1,59 +1,60 @@
-
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, map, mergeMap } from 'rxjs/operators';
-import { PaymentService } from '../../services/payment.service';
+import { map, mergeMap, catchError, tap } from 'rxjs/operators';
 import * as PaymentActions from './payment.actions';
+import { PaymentService } from '../../services/payment.service';
+import { ToastService } from '../../services/toast.service';
 
 @Injectable()
 export class PaymentEffects {
     private actions$ = inject(Actions);
     private paymentService = inject(PaymentService);
+    private toast = inject(ToastService);
 
-    loadPendingPayments$ = createEffect(() =>
+    loadPayments$ = createEffect(() =>
         this.actions$.pipe(
-            ofType(PaymentActions.loadPendingPayments),
-            mergeMap(() =>
-                this.paymentService.getPendingPayments().pipe(
-                    map((payments) => PaymentActions.loadPendingPaymentsSuccess({ payments })),
-                    catchError((error) => of(PaymentActions.loadPendingPaymentsFailure({ error })))
+            ofType(PaymentActions.loadPayments),
+            mergeMap(action =>
+                this.paymentService.getPayments(action.filter).pipe(
+                    map(response => PaymentActions.loadPaymentsSuccess({ response })),
+                    catchError(error => of(PaymentActions.loadPaymentsFailure({ error })))
                 )
             )
         )
     );
 
-    sendReminder$ = createEffect(() =>
+    processPayment$ = createEffect(() =>
         this.actions$.pipe(
-            ofType(PaymentActions.sendReminder),
-            mergeMap(({ memberId }) =>
-                this.paymentService.sendReminder(memberId).pipe(
-                    map(() => PaymentActions.sendReminderSuccess()),
-                    catchError((error) => of(PaymentActions.sendReminderFailure({ error })))
+            ofType(PaymentActions.processPayment),
+            mergeMap(action =>
+                this.paymentService.processPayment(action.payment).pipe(
+                    map(response => {
+                        this.toast.success('Payment Processed Successfully');
+                        return PaymentActions.processPaymentSuccess({ payment: response.data });
+                    }),
+                    catchError(error => {
+                        this.toast.error('Payment Failed');
+                        return of(PaymentActions.processPaymentFailure({ error }));
+                    })
                 )
             )
         )
     );
 
-    recordPartialPayment$ = createEffect(() =>
+    refundPayment$ = createEffect(() =>
         this.actions$.pipe(
-            ofType(PaymentActions.recordPartialPayment),
-            mergeMap(({ payment }) =>
-                this.paymentService.recordPartialPayment(payment).pipe(
-                    map((newPayment) => PaymentActions.recordPartialPaymentSuccess({ payment: newPayment })),
-                    catchError((error) => of(PaymentActions.recordPartialPaymentFailure({ error })))
-                )
-            )
-        )
-    );
-
-    loadInvoice$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(PaymentActions.loadInvoice),
-            mergeMap(({ id }) =>
-                this.paymentService.getInvoiceDownload(id).pipe(
-                    map(() => PaymentActions.loadInvoiceSuccess({ invoice: {} as any })), // Placeholder if we just download
-                    catchError((error) => of(PaymentActions.loadInvoiceFailure({ error })))
+            ofType(PaymentActions.refundPayment),
+            mergeMap(action =>
+                this.paymentService.refundPayment(action.id, action.reason).pipe(
+                    map(response => {
+                        this.toast.success('Refund Processed');
+                        return PaymentActions.refundPaymentSuccess({ payment: response.data });
+                    }),
+                    catchError(error => {
+                        this.toast.error('Refund Failed');
+                        return of(PaymentActions.refundPaymentFailure({ error }));
+                    })
                 )
             )
         )

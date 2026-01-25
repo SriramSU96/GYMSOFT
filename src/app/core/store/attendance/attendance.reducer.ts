@@ -1,87 +1,69 @@
 import { createReducer, on } from '@ngrx/store';
+import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+import { Attendance, AttendanceStats } from '../../models/attendance.model';
 import * as AttendanceActions from './attendance.actions';
-import { Attendance } from '../../models/attendance.model';
 
-export interface AttendanceState {
-    records: Attendance[];
-    isLoading: boolean;
-    isScanning: boolean;
-    scanSuccess: boolean;
-    scannedData: string | null;
-    statusMessage: string;
+export interface AttendanceState extends EntityState<Attendance> {
+    loading: boolean;
     error: any;
+    stats: AttendanceStats | null;
+    total: number;
 }
 
-export const initialState: AttendanceState = {
-    records: [],
-    isLoading: false,
-    isScanning: false,
-    scanSuccess: false,
-    scannedData: null,
-    statusMessage: 'Ready to Scan',
-    error: null
-};
+export const adapter: EntityAdapter<Attendance> = createEntityAdapter<Attendance>({
+    selectId: (a) => a._id || ''
+});
+
+export const initialState: AttendanceState = adapter.getInitialState({
+    loading: false,
+    error: null,
+    stats: null,
+    total: 0
+});
 
 export const attendanceReducer = createReducer(
     initialState,
-    on(AttendanceActions.qrCheckIn, AttendanceActions.syncAttendance, AttendanceActions.loadMemberAttendance, AttendanceActions.loadAllAttendance, (state) => ({
-        ...state,
-        isLoading: true,
-        error: null
-    })),
-    on(AttendanceActions.loadMemberAttendanceSuccess, AttendanceActions.loadAllAttendanceSuccess, (state, { records }) => ({
-        ...state,
-        records,
-        isLoading: false
-    })),
-    on(AttendanceActions.qrCheckInSuccess, (state, { record }) => ({
-        ...state,
-        records: [...state.records, record],
-        isLoading: false,
-        isScanning: false,
-        scanSuccess: true,
-        statusMessage: `Check-in Successful for ${record.memberId}`
-    })),
-    on(AttendanceActions.syncAttendanceSuccess, (state) => ({
-        ...state,
-        isLoading: false
-    })),
-    on(
-        AttendanceActions.qrCheckInFailure,
-        AttendanceActions.syncAttendanceFailure,
-        AttendanceActions.loadMemberAttendanceFailure,
-        AttendanceActions.loadAllAttendanceFailure,
-        (state, { error }) => ({
-            ...state,
-            isLoading: false,
-            isScanning: false,
-            scanSuccess: false,
-            statusMessage: typeof error === 'string' ? error : 'Check-in Failed. Please try again.',
-            error
-        })
+
+    // Load
+    on(AttendanceActions.loadAttendance, (state) => ({ ...state, loading: true, error: null })),
+    on(AttendanceActions.loadAttendanceSuccess, (state, { response }) =>
+        adapter.setAll(response.data, { ...state, loading: false, total: response.count || 0 })
     ),
-    // Scanner handling
-    on(AttendanceActions.startScan, (state) => ({
-        ...state,
-        isScanning: true,
-        scanSuccess: false,
-        statusMessage: 'Camera Active...'
-    })),
-    on(AttendanceActions.scanSuccess, (state, { data }) => ({
-        ...state,
-        // We don't set scanSuccess true here anymore, wait for qrCheckInSuccess
-        scannedData: data,
-        statusMessage: `Scanned member: ${data}. Verifying...`
-    })),
-    on(AttendanceActions.scanFailure, (state, { error }) => ({
-        ...state,
-        isScanning: false,
-        scanSuccess: false,
-        statusMessage: error
-    })),
-    on(AttendanceActions.stopScan, (state) => ({
-        ...state,
-        isScanning: false,
-        statusMessage: 'Ready to Scan'
-    }))
+    on(AttendanceActions.loadAttendanceFailure, (state, { error }) => ({ ...state, loading: false, error })),
+
+    // Add / Mark / Check-In
+    on(AttendanceActions.markAttendance,
+        AttendanceActions.checkIn,
+        AttendanceActions.qrCheckIn,
+        (state) => ({ ...state, loading: true, error: null })),
+
+    on(AttendanceActions.markAttendanceSuccess,
+        AttendanceActions.checkInSuccess,
+        AttendanceActions.qrCheckInSuccess,
+        (state, { attendance }) => adapter.addOne(attendance, { ...state, loading: false })
+    ),
+
+    on(AttendanceActions.markAttendanceFailure,
+        AttendanceActions.checkInFailure,
+        AttendanceActions.qrCheckInFailure,
+        (state, { error }) => ({ ...state, loading: false, error })),
+
+    // Check-Out
+    on(AttendanceActions.checkOut, (state) => ({ ...state, loading: true, error: null })),
+    on(AttendanceActions.checkOutSuccess, (state, { update }) =>
+        adapter.updateOne(update, { ...state, loading: false })
+    ),
+    on(AttendanceActions.checkOutFailure, (state, { error }) => ({ ...state, loading: false, error })),
+
+    // Stats
+    on(AttendanceActions.loadAttendanceStats, (state) => ({ ...state, loading: true })),
+    on(AttendanceActions.loadAttendanceStatsSuccess, (state, { stats }) => ({ ...state, loading: false, stats })),
+    on(AttendanceActions.loadAttendanceStatsFailure, (state, { error }) => ({ ...state, loading: false, error }))
 );
+
+export const {
+    selectIds,
+    selectEntities,
+    selectAll,
+    selectTotal,
+} = adapter.getSelectors();

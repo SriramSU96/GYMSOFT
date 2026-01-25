@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { addStaff } from '../../../core/store/staff/staff.actions';
+import { createStaff } from '../../../core/store/staff/staff.actions';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -28,7 +28,7 @@ export class StaffAdd {
 
   onSubmit() {
     if (this.staffForm.valid) {
-      this.store.dispatch(addStaff({ staff: this.staffForm.value as any }));
+      this.store.dispatch(createStaff({ staff: this.staffForm.value as any }));
     }
   }
 }

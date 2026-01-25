@@ -1,79 +1,661 @@
-<div>
-    <div>
+<div class="page-container">
+    <!-- PAGE HEADER -->
+    <div class="page-header">
         <div>
-            <h2>Pending Dues</h2>
-            <p>Outstanding balances requiring attention.</p>
+            <h1 class="page-title">Pending Payments</h1>
+            <p class="page-subtitle">Track and collect outstanding member dues</p>
         </div>
-        <div *ngIf="totalDues$ | async as total">
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="stats-grid">
+        <div class="stat-card glass">
+            <div class="stat-icon" style="background-color: rgba(239, 68, 68, 0.15); color: var(--danger);">
+                <span class="material-icons">account_balance_wallet</span>
+            </div>
             <div>
-                <div>
-                    <span>warning</span>
-                    <div>
-                        <div>Total Outstanding</div>
-                        <div>₹{{ total | number }}</div>
-                    </div>
-                </div>
+                <p class="stat-label">Total Pending Amount</p>
+                <h2 class="stat-value text-danger">₹{{ getTotalPending() | number:'1.2-2' }}</h2>
+            </div>
+        </div>
+        <div class="stat-card glass">
+            <div class="stat-icon" style="background-color: rgba(245, 158, 11, 0.15); color: var(--warning);">
+                <span class="material-icons">people</span>
+            </div>
+            <div>
+                <p class="stat-label">Pending Members</p>
+                <h2 class="stat-value">{{ pendingPayments.length }}</h2>
+            </div>
+        </div>
+        <div class="stat-card glass">
+            <div class="stat-icon" style="background-color: rgba(59, 130, 246, 0.15); color: var(--info);">
+                <span class="material-icons">schedule</span>
+            </div>
+            <div>
+                <p class="stat-label">Avg Days Overdue</p>
+                <h2 class="stat-value">{{ getAvgDaysOverdue() }}</h2>
             </div>
         </div>
     </div>
 
-    <div>
-        <div>
-            <table>
+    <!-- FILTER BAR -->
+    <div class="filters-section">
+        <div class="filters-row">
+            <input type="text" placeholder="Search by member name or phone..." [(ngModel)]="searchQuery"
+                (input)="applyFilters()" class="search-input" />
+
+            <div class="date-range-picker">
+                <label>Last Payment Date:</label>
+                <input type="date" [(ngModel)]="lastPaymentStartDate" (change)="applyFilters()" class="date-input"
+                    placeholder="Start Date" />
+                <span class="date-separator">to</span>
+                <input type="date" [(ngModel)]="lastPaymentEndDate" (change)="applyFilters()" class="date-input"
+                    placeholder="End Date" />
+            </div>
+        </div>
+
+        <div class="filters-row">
+            <div class="form-group">
+                <label>Min Due Amount:</label>
+                <input type="number" [(ngModel)]="minDueAmount" (input)="applyFilters()"
+                    placeholder="Enter minimum amount" class="amount-input" />
+            </div>
+
+            <button class="btn btn-secondary" (click)="clearFilters()">
+                <span class="material-icons">clear</span>
+                Clear Filters
+            </button>
+        </div>
+    </div>
+
+    <!-- PENDING PAYMENTS TABLE -->
+    <div class="card">
+        <div class="table-container">
+            <table *ngIf="filteredPayments.length > 0; else emptyState">
                 <thead>
                     <tr>
-                        <th>Member Details</th>
-                        <th>Amount Due</th>
-                        <th>Due Date</th>
-                        <th>Status</th>
+                        <th>Member Name</th>
+                        <th>Phone</th>
+                        <th>Plan Type</th>
+                        <th>Total Amount</th>
+                        <th>Paid</th>
+                        <th>Due</th>
+                        <th>Days Overdue</th>
+                        <th>Last Payment</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let due of dues$ | async">
+                    <tr *ngFor="let payment of filteredPayments" [class.highlight-overdue-30]="payment.daysOverdue > 30"
+                        [class.highlight-overdue-15]="payment.daysOverdue > 15 && payment.daysOverdue <= 30">
+
+                        <!-- Member Name -->
                         <td>
-                            <div>
+                            <div class="member-info">
+                                <div class="member-avatar-small">{{ getInitials(payment.memberName) }}</div>
                                 <div>
-                                    <span>person_off</span>
-                                </div>
-                                <div>
-                                    <div>{{ due.memberName || due.name }}</div>
-                                    <div>ID: {{ due.memberId }}</div>
+                                    <div class="member-name">{{ payment.memberName }}</div>
+                                    <div class="member-id">ID: {{ payment.memberId }}</div>
                                 </div>
                             </div>
                         </td>
+
+                        <!-- Phone -->
                         <td>
-                            <div>₹{{ due.amount | number }}</div>
+                            <span class="phone-number">{{ payment.phone }}</span>
                         </td>
+
+                        <!-- Plan Type -->
                         <td>
-                            <div>{{ due.dueDate | date }}</div>
+                            <span class="plan-badge">{{ payment.planType }}</span>
                         </td>
+
+                        <!-- Total Amount -->
                         <td>
-                            <span [ngClass]="isOverdue(due.dueDate) ? 'badge-danger' : 'badge-warning'">
-                                {{ isOverdue(due.dueDate) ? 'Overdue' : 'Due Soon' }}
+                            <span class="amount">₹{{ payment.totalAmount | number:'1.2-2' }}</span>
+                        </td>
+
+                        <!-- Paid -->
+                        <td>
+                            <span class="amount-paid">₹{{ payment.paidAmount | number:'1.2-2' }}</span>
+                        </td>
+
+                        <!-- Due -->
+                        <td>
+                            <span class="amount-due" [class]="getDueBadgeClass(payment.dueAmount)">
+                                ₹{{ payment.dueAmount | number:'1.2-2' }}
                             </span>
                         </td>
+
+                        <!-- Days Overdue -->
                         <td>
-                            <button (click)="sendReminder(due)">
-                                <span>notifications</span>
-                                <span>Remind</span>
-                            </button>
-                            <button title="View Member">
-                                <span>visibility</span>
-                            </button>
+                            <span class="overdue-badge" [class]="getOverdueBadgeClass(payment.daysOverdue)">
+                                {{ payment.daysOverdue }} days
+                            </span>
                         </td>
-                    </tr>
-                    <tr *ngIf="(dues$ | async)?.length === 0">
-                        <td colspan="5">
-                            <div>
-                                <span>check_circle_outline</span>
-                                <h3>No pending dues!</h3>
-                                <p>All members are up to date with their payments.</p>
+
+                        <!-- Last Payment Date -->
+                        <td>
+                            <span class="payment-date">{{ payment.lastPaymentDate | date:'mediumDate' }}</span>
+                        </td>
+
+                        <!-- Actions -->
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-quick btn-collect" (click)="openCollectModal(payment)"
+                                    title="Collect Payment">
+                                    <span class="material-icons">payments</span>
+                                    Collect
+                                </button>
+                                <button class="btn-icon btn-secondary" (click)="viewHistory(payment)"
+                                    title="View History">
+                                    <span class="material-icons">history</span>
+                                </button>
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
+
+            <!-- EMPTY STATE -->
+            <ng-template #emptyState>
+                <div class="empty-state">
+                    <span class="material-icons empty-icon success-icon">check_circle</span>
+                    <h3>No pending payments 🎉</h3>
+                    <p>{{ searchQuery || minDueAmount ? 'Try adjusting your filters' : 'All members are up to date with
+                        their payments!' }}</p>
+                </div>
+            </ng-template>
         </div>
     </div>
 </div>
+
+<!-- COLLECT PAYMENT MODAL -->
+<div *ngIf="showCollectModal" class="modal-backdrop" (click)="closeCollectModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Collect Payment - {{ selectedPayment?.memberName }}</h3>
+            <button class="btn-icon btn-secondary" (click)="closeCollectModal()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <!-- Member Info Summary -->
+            <div class="collection-summary">
+                <div class="summary-item">
+                    <span class="summary-label">Member ID</span>
+                    <span class="summary-value">{{ selectedPayment?.memberId }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Phone</span>
+                    <span class="summary-value">{{ selectedPayment?.phone }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Plan Type</span>
+                    <span class="summary-value">{{ selectedPayment?.planType }}</span>
+                </div>
+            </div>
+
+            <!-- Payment Form -->
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Due Amount (Readonly)</label>
+                    <input type="number" [value]="selectedPayment?.dueAmount" disabled class="calculated-field" />
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Collect Amount *</label>
+                    <input type="number" [(ngModel)]="collectForm.collectAmount" [max]="selectedPayment?.dueAmount || 0"
+                        placeholder="Enter amount to collect" required />
+                    <small class="helper-text">Maximum: ₹{{ selectedPayment?.dueAmount | number:'1.2-2' }}</small>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Payment Method *</label>
+                    <select [(ngModel)]="collectForm.paymentMethod" required>
+                        <option value="">Select Method</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Card">Card</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width"
+                    *ngIf="collectForm.paymentMethod !== 'Cash' && collectForm.paymentMethod">
+                    <label>Transaction ID</label>
+                    <input type="text" [(ngModel)]="collectForm.transactionId" placeholder="Enter transaction ID" />
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Notes</label>
+                    <textarea [(ngModel)]="collectForm.notes" placeholder="Add any notes..." rows="3"></textarea>
+                </div>
+            </div>
+
+            <!-- Remaining Due Preview -->
+            <div class="remaining-due-preview" *ngIf="collectForm.collectAmount > 0">
+                <div class="preview-row">
+                    <span>Current Due:</span>
+                    <span>₹{{ selectedPayment?.dueAmount | number:'1.2-2' }}</span>
+                </div>
+                <div class="preview-row">
+                    <span>Collecting:</span>
+                    <span class="text-success">-₹{{ collectForm.collectAmount | number:'1.2-2' }}</span>
+                </div>
+                <div class="preview-row total-row">
+                    <span><strong>Remaining Due:</strong></span>
+                    <span><strong>₹{{ getRemainingDue() | number:'1.2-2' }}</strong></span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeCollectModal()">Cancel</button>
+            <button class="btn btn-primary" (click)="collectPayment()">
+                <span class="material-icons">check_circle</span>
+                Collect Payment
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- SUCCESS NOTIFICATION -->
+<div *ngIf="showSuccessNotification" class="success-notification">
+    <span class="material-icons">check_circle</span>
+    <span>{{ successMessage }}</span>
+</div>
+
+<!-- CUSTOM STYLES -->
+<style>
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--space-lg);
+        margin-bottom: var(--space-lg);
+    }
+
+    .stat-card {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-lg);
+        border-radius: var(--radius-lg);
+    }
+
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+    }
+
+    .stat-label {
+        font-size: var(--font-size-sm);
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .stat-value {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        margin: 0;
+    }
+
+    /* Filters Section */
+    .filters-section {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: var(--space-lg);
+        margin-bottom: var(--space-lg);
+    }
+
+    .filters-row {
+        display: flex;
+        gap: var(--space-md);
+        margin-bottom: var(--space-md);
+        align-items: flex-end;
+    }
+
+    .filters-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .date-range-picker {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    .date-range-picker label {
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+        white-space: nowrap;
+    }
+
+    .date-input {
+        padding: 0.625rem 1rem;
+        background-color: var(--bg-input);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        font-size: var(--font-size-sm);
+    }
+
+    .date-separator {
+        color: var(--text-muted);
+        font-size: var(--font-size-sm);
+    }
+
+    .amount-input {
+        padding: 0.625rem 1rem;
+        background-color: var(--bg-input);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        font-size: var(--font-size-sm);
+        width: 200px;
+    }
+
+    /* Member Info */
+    .member-info {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    .member-avatar-small {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-full);
+        background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+        color: var(--text-inverse);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-size-xs);
+        flex-shrink: 0;
+    }
+
+    .member-name {
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+    }
+
+    .member-id {
+        font-size: var(--font-size-xs);
+        color: var(--text-muted);
+    }
+
+    /* Phone Number */
+    .phone-number {
+        font-family: 'Courier New', monospace;
+        color: var(--text-secondary);
+    }
+
+    /* Plan Badge */
+    .plan-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background-color: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-medium);
+    }
+
+    /* Amounts */
+    .amount,
+    .amount-paid,
+    .amount-due {
+        font-weight: var(--font-weight-semibold);
+        font-family: 'Courier New', monospace;
+    }
+
+    .amount {
+        color: var(--text-primary);
+    }
+
+    .amount-paid {
+        color: var(--success);
+    }
+
+    .amount-due {
+        color: var(--text-secondary);
+    }
+
+    .due-high {
+        color: var(--danger);
+        font-weight: var(--font-weight-bold);
+    }
+
+    .due-medium {
+        color: var(--warning);
+    }
+
+    /* Overdue Badge */
+    .overdue-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .overdue-critical {
+        background-color: rgba(239, 68, 68, 0.15);
+        color: var(--danger);
+    }
+
+    .overdue-high {
+        background-color: rgba(245, 158, 11, 0.15);
+        color: var(--warning);
+    }
+
+    .overdue-normal {
+        background-color: rgba(59, 130, 246, 0.15);
+        color: var(--info);
+    }
+
+    /* Payment Date */
+    .payment-date {
+        color: var(--text-secondary);
+        font-size: var(--font-size-sm);
+    }
+
+    /* Quick Action Buttons */
+    .btn-quick {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-xs);
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
+        border: none;
+        cursor: pointer;
+        transition: var(--transition-fast);
+    }
+
+    .btn-quick .material-icons {
+        font-size: 1.125rem;
+    }
+
+    .btn-collect {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-collect:hover {
+        background-color: rgba(16, 185, 129, 0.25);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: var(--space-xs);
+        align-items: center;
+    }
+
+    /* Highlight Rows */
+    .highlight-overdue-30 {
+        background-color: rgba(239, 68, 68, 0.05);
+        border-left: 3px solid var(--danger);
+    }
+
+    .highlight-overdue-15 {
+        background-color: rgba(245, 158, 11, 0.03);
+        border-left: 3px solid var(--warning);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: var(--space-2xl);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        color: var(--text-muted);
+        margin-bottom: var(--space-md);
+    }
+
+    .success-icon {
+        color: var(--success) !important;
+    }
+
+    /* Collection Summary */
+    .collection-summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-md);
+        margin-bottom: var(--space-xl);
+        padding: var(--space-lg);
+        background-color: var(--bg-hover);
+        border-radius: var(--radius-md);
+    }
+
+    .summary-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .summary-label {
+        font-size: var(--font-size-xs);
+        color: var(--text-muted);
+        text-transform: uppercase;
+    }
+
+    .summary-value {
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    /* Form Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .calculated-field {
+        background-color: var(--bg-hover);
+        cursor: not-allowed;
+    }
+
+    .helper-text {
+        display: block;
+        margin-top: var(--space-xs);
+        font-size: var(--font-size-xs);
+        color: var(--text-muted);
+    }
+
+    /* Remaining Due Preview */
+    .remaining-due-preview {
+        margin-top: var(--space-xl);
+        padding: var(--space-lg);
+        background-color: var(--bg-hover);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-subtle);
+    }
+
+    .preview-row {
+        display: flex;
+        justify-content: space-between;
+        padding: var(--space-sm) 0;
+        color: var(--text-secondary);
+    }
+
+    .preview-row.total-row {
+        border-top: 2px solid var(--border-subtle);
+        padding-top: var(--space-md);
+        margin-top: var(--space-sm);
+        color: var(--text-primary);
+        font-size: var(--font-size-lg);
+    }
+
+    /* Success Notification */
+    .success-notification {
+        position: fixed;
+        top: 80px;
+        right: var(--space-lg);
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-md) var(--space-lg);
+        background-color: var(--success);
+        color: white;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-hover);
+        animation: slideInRight 0.3s ease-out;
+        z-index: 1000;
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filters-row {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .date-range-picker {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .collection-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+    }
+</style>

@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { WorkoutPlanStructure } from '../../../../core/models/workout-plan.model';
-import { selectSelectedPlan, selectLoading } from '../../../../core/store/workout-plans/workout-plan.selectors';
-import { loadPlanStructure } from '../../../../core/store/workout-plans/workout-plan.actions';
+import { WorkoutPlan } from '../../../../core/models/workout-plan.model';
+import { selectSelectedWorkoutPlan, selectLoading } from '../../../../core/store/workout-plans/workout-plan.selectors';
+import { loadWorkoutPlan } from '../../../../core/store/workout-plans/workout-plan.actions';
 
 @Component({
     selector: 'app-plan-detail',
@@ -19,18 +19,18 @@ export class PlanDetailComponent implements OnInit {
     private router = inject(Router);
     private store = inject(Store);
 
-    plan$: Observable<WorkoutPlanStructure | null>;
+    plan$: Observable<any | null>; // Using any as per reducer state
     loading$: Observable<boolean>;
 
     constructor() {
-        this.plan$ = this.store.select(selectSelectedPlan);
+        this.plan$ = this.store.select(selectSelectedWorkoutPlan);
         this.loading$ = this.store.select(selectLoading);
     }
 
     ngOnInit() {
         const planId = this.route.snapshot.paramMap.get('id');
         if (planId) {
-            this.store.dispatch(loadPlanStructure({ planId }));
+            this.store.dispatch(loadWorkoutPlan({ id: planId }));
         }
     }
 

@@ -1,0 +1,330 @@
+<div class="page-container">
+    <!-- ============================================ -->
+    <!-- PAGE HEADER -->
+    <!-- ============================================ -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Analytics Overview</h1>
+            <p class="page-subtitle">Business performance at a glance</p>
+        </div>
+
+        <!-- TIME RANGE SELECTOR -->
+        <div class="time-range-selector">
+            <button *ngFor="let range of timeRanges" [class.active]="selectedRange === range.value"
+                (click)="onRangeChange(range.value)" class="range-btn">
+                {{ range.label }}
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MAIN CONTENT (Show only if data available) -->
+    <!-- ============================================ -->
+    <div *ngIf="hasData; else emptyState">
+
+        <!-- ============================================ -->
+        <!-- KPI SUMMARY CARDS -->
+        <!-- ============================================ -->
+        <div class="kpi-grid">
+            <!-- Total Members -->
+            <div class="kpi-card glass">
+                <div class="kpi-icon" style="background-color: rgba(212, 175, 55, 0.15); color: var(--accent-primary);">
+                    <span class="material-icons">people</span>
+                </div>
+                <div class="kpi-content">
+                    <p class="kpi-label">Total Members</p>
+                    <h2 class="kpi-value">{{ formatNumber(kpiData.totalMembers.value) }}</h2>
+                    <div class="kpi-trend" [ngClass]="getTrendClass(kpiData.totalMembers.trend)">
+                        <span class="material-icons">{{ getTrendIcon(kpiData.totalMembers.trend) }}</span>
+                        <span>{{ formatPercentage(kpiData.totalMembers.change) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Members -->
+            <div class="kpi-card glass">
+                <div class="kpi-icon" style="background-color: rgba(16, 185, 129, 0.15); color: var(--success);">
+                    <span class="material-icons">how_to_reg</span>
+                </div>
+                <div class="kpi-content">
+                    <p class="kpi-label">Active Members</p>
+                    <h2 class="kpi-value">{{ formatNumber(kpiData.activeMembers.value) }}</h2>
+                    <div class="kpi-trend" [ngClass]="getTrendClass(kpiData.activeMembers.trend)">
+                        <span class="material-icons">{{ getTrendIcon(kpiData.activeMembers.trend) }}</span>
+                        <span>{{ formatPercentage(kpiData.activeMembers.change) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Revenue -->
+            <div class="kpi-card glass">
+                <div class="kpi-icon" style="background-color: rgba(59, 130, 246, 0.15); color: var(--info);">
+                    <span class="material-icons">account_balance_wallet</span>
+                </div>
+                <div class="kpi-content">
+                    <p class="kpi-label">Total Revenue</p>
+                    <h2 class="kpi-value">{{ formatCurrency(kpiData.totalRevenue.value) }}</h2>
+                    <div class="kpi-trend" [ngClass]="getTrendClass(kpiData.totalRevenue.trend)">
+                        <span class="material-icons">{{ getTrendIcon(kpiData.totalRevenue.trend) }}</span>
+                        <span>{{ formatPercentage(kpiData.totalRevenue.change) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Dues -->
+            <div class="kpi-card glass">
+                <div class="kpi-icon" style="background-color: rgba(239, 68, 68, 0.15); color: var(--danger);">
+                    <span class="material-icons">receipt_long</span>
+                </div>
+                <div class="kpi-content">
+                    <p class="kpi-label">Pending Dues</p>
+                    <h2 class="kpi-value">{{ formatCurrency(kpiData.pendingDues.value) }}</h2>
+                    <div class="kpi-trend text-success">
+                        <span class="material-icons">trending_down</span>
+                        <span>{{ formatPercentage(Math.abs(kpiData.pendingDues.change)) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Rate -->
+            <div class="kpi-card glass">
+                <div class="kpi-icon" style="background-color: rgba(245, 158, 11, 0.15); color: var(--warning);">
+                    <span class="material-icons">event_available</span>
+                </div>
+                <div class="kpi-content">
+                    <p class="kpi-label">Attendance Rate</p>
+                    <h2 class="kpi-value">{{ formatPercentage(kpiData.attendanceRate.value) }}</h2>
+                    <div class="kpi-trend" [ngClass]="getTrendClass(kpiData.attendanceRate.trend)">
+                        <span class="material-icons">{{ getTrendIcon(kpiData.attendanceRate.trend) }}</span>
+                        <span>{{ formatPercentage(kpiData.attendanceRate.change) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- CHARTS SECTION -->
+        <!-- ============================================ -->
+        <div class="charts-grid">
+
+            <!-- ATTENDANCE TREND CHART -->
+            <div class="chart-card card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Attendance Trend</h3>
+                    <span class="chart-subtitle">Daily check-ins this week</span>
+                </div>
+                <div class="chart-body">
+                    <div class="bar-chart">
+                        <div class="bar-chart-container">
+                            <div *ngFor="let value of attendanceTrendData.values; let i = index" class="bar-wrapper">
+                                <div class="bar-value">{{ value }}</div>
+                                <div class="bar" [style.height.%]="getAttendanceBarHeight(value)">
+                                    <div class="bar-fill"></div>
+                                </div>
+                                <div class="bar-label">{{ attendanceTrendData.labels[i] }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REVENUE BREAKDOWN CHART -->
+            <div class="chart-card card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Revenue Breakdown</h3>
+                    <span class="chart-subtitle">By category</span>
+                </div>
+                <div class="chart-body">
+                    <div class="revenue-breakdown">
+                        <div *ngFor="let item of revenueBreakdownData" class="revenue-item">
+                            <div class="revenue-info">
+                                <div class="revenue-category">
+                                    <span class="category-dot" [style.background-color]="item.color"></span>
+                                    <span class="category-name">{{ item.category }}</span>
+                                </div>
+                                <div class="revenue-amount">{{ formatCurrency(item.amount) }}</div>
+                            </div>
+                            <div class="revenue-bar-container">
+                                <div class="revenue-bar" [style.width.%]="item.percentage"
+                                    [style.background-color]="item.color"></div>
+                            </div>
+                            <div class="revenue-percentage">{{ formatPercentage(item.percentage) }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REVENUE TREND CHART -->
+            <div class="chart-card card full-width">
+                <div class="chart-header">
+                    <h3 class="chart-title">Revenue Trend</h3>
+                    <span class="chart-subtitle">Monthly progression</span>
+                </div>
+                <div class="chart-body">
+                    <div class="line-chart">
+                        <svg viewBox="0 0 600 200" class="line-chart-svg">
+                            <!-- Grid lines -->
+                            <line x1="0" y1="50" x2="600" y2="50" class="grid-line" />
+                            <line x1="0" y1="100" x2="600" y2="100" class="grid-line" />
+                            <line x1="0" y1="150" x2="600" y2="150" class="grid-line" />
+
+                            <!-- Line path -->
+                            <path
+                                [attr.d]="getLineChartPath(revenueTrendData.values, revenueTrendData.maxValue, 600, 180)"
+                                class="line-path" />
+
+                            <!-- Data points -->
+                            <circle *ngFor="let value of revenueTrendData.values; let i = index"
+                                [attr.cx]="(i / (revenueTrendData.values.length - 1)) * 600"
+                                [attr.cy]="180 - (value / revenueTrendData.maxValue) * 180" r="5" class="data-point" />
+                        </svg>
+                        <div class="line-chart-labels">
+                            <span *ngFor="let label of revenueTrendData.labels" class="chart-label">{{ label }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- ENGAGEMENT & STAFF SECTION -->
+        <!-- ============================================ -->
+        <div class="bottom-grid">
+
+            <!-- ENGAGEMENT METRICS -->
+            <div class="engagement-card card">
+                <div class="card-header">
+                    <h3 class="card-title">Member Engagement</h3>
+                </div>
+                <div class="engagement-body">
+
+                    <!-- Workout Plan Coverage -->
+                    <div class="engagement-item">
+                        <div class="engagement-info">
+                            <span class="engagement-label">Workout Plan Coverage</span>
+                            <span class="engagement-value">{{ formatPercentage(engagementData.workoutPlanCoverage.value)
+                                }}</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" [style.width.%]="engagementData.workoutPlanCoverage.value">
+                                <div class="progress-fill workout-fill"></div>
+                            </div>
+                        </div>
+                        <div class="engagement-meta">
+                            {{ engagementData.workoutPlanCoverage.covered }} of {{
+                            engagementData.workoutPlanCoverage.total }} members
+                        </div>
+                    </div>
+
+                    <!-- Diet Plan Coverage -->
+                    <div class="engagement-item">
+                        <div class="engagement-info">
+                            <span class="engagement-label">Diet Plan Coverage</span>
+                            <span class="engagement-value">{{ formatPercentage(engagementData.dietPlanCoverage.value)
+                                }}</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" [style.width.%]="engagementData.dietPlanCoverage.value">
+                                <div class="progress-fill diet-fill"></div>
+                            </div>
+                        </div>
+                        <div class="engagement-meta">
+                            {{ engagementData.dietPlanCoverage.covered }} of {{ engagementData.dietPlanCoverage.total }}
+                            members
+                        </div>
+                    </div>
+
+                    <!-- Workout Completion -->
+                    <div class="engagement-item">
+                        <div class="engagement-info">
+                            <span class="engagement-label">Workout Completion %</span>
+                            <span class="engagement-value">{{ formatPercentage(engagementData.workoutCompletion.value)
+                                }}</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" [style.width.%]="engagementData.workoutCompletion.value">
+                                <div class="progress-fill completion-fill"></div>
+                            </div>
+                        </div>
+                        <div class="engagement-meta">
+                            {{ engagementData.workoutCompletion.completed }} of {{
+                            engagementData.workoutCompletion.total }} completed
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STAFF PERFORMANCE -->
+            <div class="staff-card card">
+                <div class="card-header">
+                    <h3 class="card-title">Staff Performance</h3>
+                </div>
+                <div class="staff-body">
+
+                    <!-- Staff Stats -->
+                    <div class="staff-stats">
+                        <div class="staff-stat-item">
+                            <div class="staff-stat-icon">
+                                <span class="material-icons">groups</span>
+                            </div>
+                            <div class="staff-stat-content">
+                                <p class="staff-stat-label">Total Staff</p>
+                                <h3 class="staff-stat-value">{{ staffData.totalStaff }}</h3>
+                            </div>
+                        </div>
+
+                        <div class="staff-stat-item">
+                            <div class="staff-stat-icon">
+                                <span class="material-icons">event_available</span>
+                            </div>
+                            <div class="staff-stat-content">
+                                <p class="staff-stat-label">Attendance Rate</p>
+                                <h3 class="staff-stat-value">{{ formatPercentage(staffData.attendanceRate) }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Performer -->
+                    <div class="top-performer">
+                        <div class="performer-badge">
+                            <span class="material-icons">emoji_events</span>
+                            <span>Top Performer</span>
+                        </div>
+                        <div class="performer-info">
+                            <div class="performer-avatar">
+                                {{ staffData.topPerformer.name.charAt(0) }}
+                            </div>
+                            <div class="performer-details">
+                                <h4 class="performer-name">{{ staffData.topPerformer.name }}</h4>
+                                <p class="performer-role">{{ staffData.topPerformer.role }}</p>
+                                <div class="performer-stats">
+                                    <div class="performer-stat">
+                                        <span class="material-icons">star</span>
+                                        <span>{{ staffData.topPerformer.rating }}</span>
+                                    </div>
+                                    <div class="performer-stat">
+                                        <span class="material-icons">fitness_center</span>
+                                        <span>{{ staffData.topPerformer.sessionsCompleted }} sessions</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- EMPTY STATE -->
+    <!-- ============================================ -->
+    <ng-template #emptyState>
+        <div class="empty-state-container">
+            <div class="empty-state-content">
+                <span class="material-icons empty-icon">analytics</span>
+                <h3>Analytics data not available yet</h3>
+                <p>Start collecting data by adding members and tracking attendance</p>
+            </div>
+        </div>
+    </ng-template>
+</div>

@@ -1,91 +1,183 @@
 <div class="page-container fade-in">
-    <div class="page-header mb-lg">
+    <!-- Header -->
+    <div class="page-header flex justify-between items-center mb-lg">
         <div>
-            <h2 class="mb-xs">Sales Report</h2>
-            <p class="text-secondary">Track daily sales and revenue.</p>
+            <h1 class="page-title">POS Reports</h1>
+            <p class="page-subtitle">Sales performance and insights</p>
         </div>
 
-        <form [formGroup]="filterForm" (ngSubmit)="loadReport()" class="flex items-end gap-sm">
-            <div class="form-group mb-0">
-                <input type="date" formControlName="date"
-                    class="py-sm bg-[var(--bg-secondary)] border border-[var(--color-border)] rounded text-white">
-            </div>
-            <button type="submit" class="btn btn-primary py-sm">
-                <span class="material-icons text-sm">search</span>
+        <div class="flex gap-md items-center">
+            <form [formGroup]="filterForm" class="flex gap-sm items-center">
+                <input type="date" formControlName="date" class="form-control w-auto">
+                <button type="button" class="btn btn-primary" (click)="loadReport()">
+                    <span class="material-icons text-sm mr-1">refresh</span> Refresh
+                </button>
+            </form>
+            <button class="btn btn-secondary" (click)="exportCSV()">
+                <span class="material-icons text-sm mr-1">download</span> Export CSV
             </button>
-        </form>
+        </div>
     </div>
 
     <!-- Loading State -->
-    <div *ngIf="isLoading" class="flex justify-center p-xl">
-        <div class="animate-pulse text-accent">Loading report...</div>
+    <div *ngIf="isLoading" class="flex justify-center items-center py-xl">
+        <div class="text-center">
+            <span class="material-icons text-4xl text-primary animate-spin mb-2">refresh</span>
+            <p class="text-secondary">Loading report data...</p>
+        </div>
     </div>
 
-    <div *ngIf="!isLoading && salesData" class="grid gap-lg">
-
+    <!-- Main Content -->
+    <div *ngIf="!isLoading && salesData">
         <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
-            <div class="card bg-gradient-to-br from-[var(--bg-secondary)] to-[var(--bg-app)]">
-                <div class="text-secondary uppercase text-xs tracking-wider mb-sm">Total Revenue</div>
-                <div class="text-2xl font-bold text-success font-mono">
-                    ${{ salesData.totalRevenue | number:'1.2-2' }}
+        <div class="grid grid-4 mb-lg">
+            <!-- Total Revenue -->
+            <div class="card stat-card">
+                <div class="stat-icon bg-success-soft text-success">
+                    <span class="material-icons">attach_money</span>
+                </div>
+                <div>
+                    <p class="text-secondary text-sm mb-1">Total POS Revenue</p>
+                    <h3 class="mb-0 text-success">{{ totalRevenue | currency }}</h3>
                 </div>
             </div>
-            <div class="card bg-gradient-to-br from-[var(--bg-secondary)] to-[var(--bg-app)]">
-                <div class="text-secondary uppercase text-xs tracking-wider mb-sm">Total Transactions</div>
-                <div class="text-2xl font-bold text-white font-mono">
-                    {{ salesData.totalTransactions }}
+
+            <!-- Total Transactions -->
+            <div class="card stat-card">
+                <div class="stat-icon bg-info-soft text-info">
+                    <span class="material-icons">receipt_long</span>
+                </div>
+                <div>
+                    <p class="text-secondary text-sm mb-1">Total Transactions</p>
+                    <h3 class="mb-0">{{ totalTxns }}</h3>
                 </div>
             </div>
-            <div class="card bg-gradient-to-br from-[var(--bg-secondary)] to-[var(--bg-app)]">
-                <div class="text-secondary uppercase text-xs tracking-wider mb-sm">Items Sold</div>
-                <div class="text-2xl font-bold text-accent font-mono">
-                    {{ salesData.totalItemsSold }}
+
+            <!-- Gross Profit -->
+            <div class="card stat-card">
+                <div class="stat-icon bg-accent-soft text-accent">
+                    <span class="material-icons">trending_up</span>
+                </div>
+                <div>
+                    <p class="text-secondary text-sm mb-1">Gross Profit</p>
+                    <h3 class="mb-0 text-accent">{{ grossProfit | currency }}</h3>
+                </div>
+            </div>
+
+            <!-- Profit Margin -->
+            <div class="card stat-card">
+                <div class="stat-icon bg-primary-soft text-primary">
+                    <span class="material-icons">percent</span>
+                </div>
+                <div>
+                    <p class="text-secondary text-sm mb-1">Profit Margin</p>
+                    <h3 class="mb-0">{{ profitMargin | number:'1.1-1' }}%</h3>
                 </div>
             </div>
         </div>
 
-        <!-- Recent Transactions -->
-        <div class="card">
-            <h3 class="border-b border-[var(--color-border)] pb-md mb-md">Transactions</h3>
-
-            <div *ngIf="salesData.sales?.length === 0" class="text-center text-muted py-lg">
-                No transactions found for this date.
+        <!-- Charts Section -->
+        <div class="grid grid-2 mb-lg gap-lg">
+            <!-- Daily Sales Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Daily Sales by Hour</h4>
+                </div>
+                <div class="chart-container">
+                    <canvas baseChart [data]="hourlyChartData" [options]="hourlyChartOptions" type="bar">
+                    </canvas>
+                </div>
             </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse" *ngIf="salesData.sales?.length > 0">
-                    <thead>
-                        <tr class="text-xs text-muted uppercase border-b border-[var(--color-border)]">
-                            <th class="p-sm">Time</th>
-                            <th class="p-sm">Customer</th>
-                            <th class="p-sm">Payment</th>
-                            <th class="p-sm">Items</th>
-                            <th class="p-sm text-right">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let sale of salesData.sales"
-                            class="border-b border-[var(--color-border)] hover:bg-[var(--bg-app)]">
-                            <td class="p-sm text-sm font-mono">{{ sale.date | date:'shortTime' }}</td>
-                            <td class="p-sm text-sm">{{ sale.customerName || 'Walk-in' }}</td>
-                            <td class="p-sm text-sm">
-                                <span class="badge badge-outline text-xs">{{ sale.paymentMethod }}</span>
-                            </td>
-                            <td class="p-sm text-sm">
-                                <div class="flex flex-col gap-xs">
-                                    <span *ngFor="let item of sale.items" class="text-xs text-secondary">
-                                        {{ item.quantity }}x {{ item.productName }}
-                                    </span>
-                                </div>
-                            </td>
-                            <td class="p-sm text-sm text-right font-mono font-bold text-success">
-                                ${{ sale.totalAmount | number:'1.2-2' }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- Monthly Trend -->
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Revenue vs Profit Trend</h4>
+                </div>
+                <div class="chart-container">
+                    <canvas baseChart [data]="trendChartData" [options]="trendChartOptions" type="line">
+                    </canvas>
+                </div>
             </div>
         </div>
+
+        <!-- Data Tables Section -->
+        <div class="grid grid-2 mb-lg gap-lg">
+            <!-- Product-wise Performance -->
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Top Selling Products</h4>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th class="text-right">Qty Sold</th>
+                                <th class="text-right">Revenue</th>
+                                <th class="text-right">Profit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let product of productStats; let i = index" [class.highlight-row]="i < 3">
+                                <td>
+                                    <div class="flex items-center gap-2">
+                                        <span class="rank-badge" *ngIf="i < 3">{{ i + 1 }}</span>
+                                        <span class="font-medium">{{ product.name }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-right font-mono">{{ product.qty }}</td>
+                                <td class="text-right font-mono text-success">{{ product.revenue | currency }}</td>
+                                <td class="text-right font-mono text-accent">{{ product.profit | currency }}</td>
+                            </tr>
+                            <tr *ngIf="productStats.length === 0">
+                                <td colspan="4" class="text-center text-muted py-md">No product data available</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Staff-wise Performance -->
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Staff Performance</h4>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Staff Name</th>
+                                <th class="text-right">Transactions</th>
+                                <th class="text-right">Total Sales</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let staff of staffStats; let i = index" [class.highlight-row]="i === 0">
+                                <td>
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-icons text-sm text-muted">person</span>
+                                        <span class="font-medium">{{ staff.name }}</span>
+                                        <span class="badge badge-success text-xs" *ngIf="i === 0">Top Performer</span>
+                                    </div>
+                                </td>
+                                <td class="text-right font-mono">{{ staff.transactions }}</td>
+                                <td class="text-right font-mono text-success">{{ staff.sales | currency }}</td>
+                            </tr>
+                            <tr *ngIf="staffStats.length === 0">
+                                <td colspan="3" class="text-center text-muted py-md">No staff data available</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && !salesData" class="card text-center py-xl">
+        <span class="material-icons text-6xl text-muted mb-md opacity-50">assessment</span>
+        <h3 class="text-muted mb-2">No POS sales data available</h3>
+        <p class="text-secondary">Select a different date range or check back later.</p>
     </div>
 </div>
