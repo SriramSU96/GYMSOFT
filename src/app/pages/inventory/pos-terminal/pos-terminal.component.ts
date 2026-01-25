@@ -4,10 +4,13 @@ import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { PosService } from '../../../core/services/pos.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Product, Sale, SaleItem } from '../../../core/models/gym-extensions.model';
+import { Product, Sale, SaleItem } from '../../../core/models/pos.model';
 
-interface CartItem extends SaleItem {
+interface CartItem {
+    productId: string;
     productName: string;
+    price: number;
+    quantity: number;
     stock: number;
 }
 
@@ -48,7 +51,7 @@ export class PosTerminal implements OnInit {
     paymentMethods = [
         { id: 'Cash', icon: 'payments', label: 'Cash' },
         { id: 'Card', icon: 'credit_card', label: 'Card' },
-        { id: 'UPI', icon: 'qr_code_scanner', label: 'UPI' },
+        { id: 'Online', icon: 'qr_code_scanner', label: 'UPI/Online' },
         { id: 'Other', icon: 'more_horiz', label: 'Other' }
     ];
 
@@ -80,8 +83,8 @@ export class PosTerminal implements OnInit {
     loadProducts(): void {
         this.isLoading = true;
         this.posService.getProducts().subscribe({
-            next: (data) => {
-                this.products = data;
+            next: (data: any) => {
+                this.products = data.data;
                 this.applyFilters();
                 this.isLoading = false;
             },
@@ -188,24 +191,33 @@ export class PosTerminal implements OnInit {
         if (this.cart.length === 0) return;
 
         this.isLoading = true;
-        const user = this.authService.getCurrentUser();
+        const user = this.authService.currentUserValue;
+
+        // Map to Sale model
+        const saleItems: SaleItem[] = this.cart.map(item => ({
+            productId: item.productId,
+            productName: item.productName,
+            quantity: item.quantity,
+            unitPrice: item.price,
+            total: item.price * item.quantity
+        }));
 
         const saleData: Sale = {
-            products: this.cart.map(item => ({
-                productId: item.productId,
-                quantity: item.quantity,
-                price: item.price
-            })),
-            totalAmount: this.grandTotal,
+            items: saleItems,
+            subTotal: this.subTotal,
+            discount: this.discount,
+            tax: this.taxAmount,
+            total: this.grandTotal,
             paymentMethod: this.saleForm.get('paymentMethod')?.value,
+            status: 'Completed',
             soldBy: user?._id || 'SYS',
             gymId: user?.gymId || 'DEFAULT',
-            date: new Date().toISOString()
+            date: new Date()
         };
 
         this.posService.createSale(saleData).subscribe({
-            next: (res) => {
-                this.currentSale = { ...saleData, _id: res._id || 'REC-' + Date.now() }; // Ensure ID for receipt
+            next: (res: any) => {
+                this.currentSale = { ...saleData, _id: res.data?._id || 'REC-' + Date.now() }; // Ensure ID for receipt
                 this.showReceipt = true;
 
                 // Reset State

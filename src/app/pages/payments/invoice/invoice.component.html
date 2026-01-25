@@ -116,12 +116,13 @@
                 </div>
                 <div>
                     <span>Estimated Tax (18%)</span>
-                    <span>₹{{ (invoice.tax || (invoice.amount * 0.18)) | number }}</span>
+                    <span class="text-right font-bold w-32">₹{{ (invoice.tax || ((invoice.amount || 0) * 0.18)) | number
+                        }}</span>
                 </div>
                 <div>
                     <div>Grand Total</div>
                     <div>
-                        ₹{{ (invoice.total || (invoice.amount * 1.18)) | number }}
+                        ₹{{ (invoice.total || ((invoice.amount || 0) * 1.18)) | number }}
                     </div>
                 </div>
             </div>

@@ -3,7 +3,7 @@ import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import * as ExerciseActions from './workout.actions';
 import { Exercise } from '../../models/exercise.model';
 
-export interface ExercisesState extends EntityAdapter<Exercise> {
+export interface ExercisesState extends EntityState<Exercise> {
   isLoading: boolean;
   error: any;
 }
@@ -28,7 +28,7 @@ export const exerciseReducer = createReducer(
     error: null
   })),
   on(ExerciseActions.loadExercisesSuccess, (state, { response }) => {
-    return adapter.setAll(response.exercises, {
+    return adapter.setAll(response.data, {
       ...state,
       isLoading: false
     });

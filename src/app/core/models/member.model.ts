@@ -28,6 +28,17 @@ export interface Achievement {
     updatedAt?: Date;
 }
 
+export interface MemberProgress {
+    _id?: string;
+    memberId: string;
+    date: Date;
+    weight?: number;
+    bmi?: number;
+    bodyFat?: number;
+    notes?: string;
+    metrics?: Record<string, number>;
+}
+
 export interface MemberResponse {
     success: boolean;
     member: Member;

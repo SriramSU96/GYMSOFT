@@ -65,3 +65,19 @@ export const updateCouponFailure = createAction(
     '[Coupons] Update Coupon Failure',
     props<{ error: any }>()
 );
+
+// Delete
+export const deleteCoupon = createAction(
+    '[Coupons] Delete Coupon',
+    props<{ id: string }>()
+);
+
+export const deleteCouponSuccess = createAction(
+    '[Coupons] Delete Coupon Success',
+    props<{ id: string }>()
+);
+
+export const deleteCouponFailure = createAction(
+    '[Coupons] Delete Coupon Failure',
+    props<{ error: any }>()
+);

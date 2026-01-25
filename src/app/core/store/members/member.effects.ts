@@ -15,8 +15,8 @@ export class MemberEffects {
         this.actions$.pipe(
             ofType(MemberActions.loadMember),
             mergeMap(({ id }) =>
-                this.memberService.getMember(id).pipe(
-                    map((member) => MemberActions.loadMemberSuccess({ member })),
+                this.memberService.getMemberById(id).pipe(
+                    map((response) => MemberActions.loadMemberSuccess({ member: response.member })),
                     catchError((error) => of(MemberActions.loadMemberFailure({ error })))
                 )
             )
@@ -27,8 +27,8 @@ export class MemberEffects {
         this.actions$.pipe(
             ofType(MemberActions.registerMember),
             mergeMap(({ member }) =>
-                this.memberService.registerMember(member).pipe(
-                    map((newMember) => MemberActions.registerMemberSuccess({ member: newMember })),
+                this.memberService.createMember(member).pipe(
+                    map((response) => MemberActions.registerMemberSuccess({ member: response.member })),
                     catchError((error) => of(MemberActions.registerMemberFailure({ error })))
                 )
             )
@@ -40,7 +40,7 @@ export class MemberEffects {
             ofType(MemberActions.updateMember),
             mergeMap(({ id, changes }) =>
                 this.memberService.updateMember(id, changes).pipe(
-                    map((member) => MemberActions.updateMemberSuccess({ member })),
+                    map((response) => MemberActions.updateMemberSuccess({ member: response.member })),
                     catchError((error) => of(MemberActions.updateMemberFailure({ error })))
                 )
             )
@@ -64,7 +64,7 @@ export class MemberEffects {
             ofType(MemberActions.addProgress),
             mergeMap(({ record }) =>
                 this.memberService.addProgress(record).pipe(
-                    map((newRecord) => MemberActions.addProgressSuccess({ record: newRecord })),
+                    map((response) => MemberActions.addProgressSuccess({ record: response.progress })),
                     catchError((error) => of(MemberActions.addProgressFailure({ error })))
                 )
             )
@@ -76,7 +76,7 @@ export class MemberEffects {
             ofType(MemberActions.loadProgress),
             mergeMap(({ memberId }) =>
                 this.memberService.getProgress(memberId).pipe(
-                    map((records) => MemberActions.loadProgressSuccess({ records })),
+                    map((response) => MemberActions.loadProgressSuccess({ records: response.progress })),
                     catchError((error) => of(MemberActions.loadProgressFailure({ error })))
                 )
             )
@@ -87,8 +87,8 @@ export class MemberEffects {
         this.actions$.pipe(
             ofType(MemberActions.assignAchievement),
             mergeMap(({ achievement }) =>
-                this.memberService.assignAchievement(achievement).pipe(
-                    map((newAchievement) => MemberActions.assignAchievementSuccess({ achievement: newAchievement })),
+                this.memberService.addAchievement(achievement).pipe(
+                    map((response) => MemberActions.assignAchievementSuccess({ achievement: response.achievement })),
                     catchError((error) => of(MemberActions.assignAchievementFailure({ error })))
                 )
             )
@@ -100,7 +100,7 @@ export class MemberEffects {
             ofType(MemberActions.loadAchievements),
             mergeMap(({ memberId }) =>
                 this.memberService.getAchievements(memberId).pipe(
-                    map((achievements) => MemberActions.loadAchievementsSuccess({ achievements })),
+                    map((response) => MemberActions.loadAchievementsSuccess({ achievements: response.achievements })),
                     catchError((error) => of(MemberActions.loadAchievementsFailure({ error })))
                 )
             )
@@ -112,7 +112,7 @@ export class MemberEffects {
             ofType(MemberActions.loadMembers),
             mergeMap(() =>
                 this.memberService.getMembers().pipe(
-                    map((members) => MemberActions.loadMembersSuccess({ members })),
+                    map((response) => MemberActions.loadMembersSuccess({ members: response.members })),
                     catchError((error) => of(MemberActions.loadMembersFailure({ error })))
                 )
             )

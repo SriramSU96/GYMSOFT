@@ -13,6 +13,11 @@ export const selectCouponLoading = createSelector(
     (state) => state.loading
 );
 
+export const selectCouponError = createSelector(
+    selectCouponState,
+    (state) => state.error
+);
+
 export const selectCouponValidationResult = createSelector(
     selectCouponState,
     (state) => state.validationResult

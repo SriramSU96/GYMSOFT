@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DietService } from '../../../core/services/diet.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { DietPlan } from '../../../core/models/gym-extensions.model';
+import { DietPlan, AssignedDietPlan } from '../../../core/models/diet.model';
 
 @Component({
     selector: 'app-my-diet',
@@ -22,7 +22,7 @@ export class MyDiet implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        const user = this.authService.getCurrentUser();
+        const user = this.authService.currentUserValue;
         if (user && user._id) {
             this.loadAssignedDiet(user._id);
         }
@@ -30,8 +30,11 @@ export class MyDiet implements OnInit {
 
     loadAssignedDiet(memberId: string): void {
         this.dietService.getMemberDiet(memberId).subscribe({
-            next: (data: DietPlan) => {
-                this.dietPlan = data;
+            next: (res: any) => {
+                // Assuming res.diet.dietPlanId is populated with the Plan
+                if (res.diet && typeof res.diet.dietPlanId === 'object') {
+                    this.dietPlan = res.diet.dietPlanId;
+                }
                 this.isLoading = false;
             },
             error: (err: any) => {

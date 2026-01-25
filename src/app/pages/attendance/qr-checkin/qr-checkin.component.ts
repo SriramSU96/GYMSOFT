@@ -67,12 +67,6 @@ export class QrCheckinComponent implements OnInit, OnDestroy {
     private stream: MediaStream | null = null;
     private scanInterval: any;
 
-    // Store observables
-    isScanning$: Observable<boolean> = this.store.select(AttendanceSelectors.selectIsScanning);
-    scanSuccess$: Observable<boolean> = this.store.select(AttendanceSelectors.selectScanSuccess);
-    scannedData$: Observable<string | null> = this.store.select(AttendanceSelectors.selectScannedData);
-    statusMessage$: Observable<string> = this.store.select(AttendanceSelectors.selectScannerStatus);
-
     // Offline detection
     isOffline = !navigator.onLine;
     private onlineListener = () => this.isOffline = false;
@@ -96,7 +90,6 @@ export class QrCheckinComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.stopScanner();
-        this.store.dispatch(AttendanceActions.stopScan());
         window.removeEventListener('online', this.onlineListener);
         window.removeEventListener('offline', this.offlineListener);
     }
@@ -131,9 +124,6 @@ export class QrCheckinComponent implements OnInit, OnDestroy {
 
                     // Start scanning loop
                     this.startScanLoop();
-
-                    // Dispatch to store
-                    this.store.dispatch(AttendanceActions.startScan());
                 }
             }, 100);
 
@@ -235,18 +225,17 @@ export class QrCheckinComponent implements OnInit, OnDestroy {
 
         try {
             // Parse QR data
-            const tokenData = JSON.parse(qrData);
-
-            // Validate token
-            if (!tokenData.memberId || !tokenData.signature) {
-                throw new Error('Invalid QR code format');
+            let token = qrData;
+            try {
+                const parsed = JSON.parse(qrData);
+                if (parsed.token) token = parsed.token;
+                else if (parsed.memberId) token = JSON.stringify(parsed);
+            } catch (e) {
+                // Not JSON, use raw
             }
 
-            // Dispatch scan success to store
-            this.store.dispatch(AttendanceActions.scanSuccess({ data: tokenData.memberId }));
-
             // Process check-in
-            await this.processCheckIn(tokenData);
+            await this.processCheckIn({ memberId: token });
 
         } catch (error) {
             console.error('Error processing QR code:', error);
@@ -280,16 +269,6 @@ export class QrCheckinComponent implements OnInit, OnDestroy {
 
                 this.showToastNotification(`Welcome, ${response.memberName}!`, 'success');
 
-                // Dispatch to store
-                this.store.dispatch(AttendanceActions.qrCheckIn({
-                    data: {
-                        memberId: tokenData.memberId,
-                        gymId: tokenData.gymId || 'GYM-001',
-                        date: new Date().toISOString().split('T')[0],
-                        checkInTime: response.checkInTime
-                    }
-                }));
-
                 // Auto-reset after 3 seconds
                 setTimeout(() => {
                     this.resetScanner();
@@ -307,23 +286,17 @@ export class QrCheckinComponent implements OnInit, OnDestroy {
 
     /**
      * Submit check-in to backend
-     * In production, this calls your API
      */
     async submitCheckIn(tokenData: any): Promise<CheckInResponse> {
-        // TODO: Replace with actual API call
-        // Example: return this.http.post<CheckInResponse>('/api/attendance/check-in', tokenData).toPromise()
-
         // Mock API response
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             setTimeout(() => {
-                // Simulate different scenarios
                 const scenarios = [
                     { success: true, memberName: 'Rahul Sharma', checkInTime: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) },
                     { success: false, memberName: '', checkInTime: '', message: 'Already checked in today' },
                     { success: false, memberName: '', checkInTime: '', message: 'Membership expired' }
                 ];
 
-                // 80% success rate for demo
                 const scenario = Math.random() > 0.2 ? scenarios[0] : scenarios[Math.floor(Math.random() * 2) + 1];
                 resolve(scenario);
             }, 800);
@@ -352,7 +325,6 @@ export class QrCheckinComponent implements OnInit, OnDestroy {
 
         this.showToastNotification('Saved offline. Will sync when online.', 'success');
 
-        // Auto-reset after 3 seconds
         setTimeout(() => {
             this.resetScanner();
         }, 3000);
@@ -371,15 +343,10 @@ export class QrCheckinComponent implements OnInit, OnDestroy {
         this.showToastNotification(title, 'error');
         this.isProcessing = false;
 
-        // Auto-reset after 3 seconds
         setTimeout(() => {
             this.resetScanner();
         }, 3000);
     }
-
-    // ===================================
-    // UTILITY FUNCTIONS
-    // ===================================
 
     /**
      * Show toast notification
@@ -389,7 +356,6 @@ export class QrCheckinComponent implements OnInit, OnDestroy {
         this.toastType = type;
         this.showToast = true;
 
-        // Auto-hide after 3 seconds
         setTimeout(() => {
             this.showToast = false;
         }, 3000);

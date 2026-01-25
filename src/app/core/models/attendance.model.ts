@@ -21,3 +21,17 @@ export interface AttendanceResponse {
     count?: number;
     data: Attendance[];
 }
+
+export interface AttendanceFilter {
+    memberId?: string;
+    startDate?: string;
+    endDate?: string;
+    source?: string;
+}
+
+export interface CheckInPayload {
+    memberId: string;
+    date?: Date;
+    checkInTime: string;
+    source: 'QR' | 'Offline' | 'Manual';
+}

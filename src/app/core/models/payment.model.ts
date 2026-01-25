@@ -33,6 +33,7 @@ export interface Invoice {
     gymId: string;
     createdAt?: Date;
     amount?: number; // Total amount alias
+    planId?: string;
 }
 
 export interface InvoiceItem {

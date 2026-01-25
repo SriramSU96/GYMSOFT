@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BookingService } from '../../../core/services/booking.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Booking } from '../../../core/models/gym-extensions.model';
+import { Booking } from '../../../core/models/class.model';
 
 @Component({
     selector: 'app-my-bookings',
@@ -27,13 +27,13 @@ export class MyBookings implements OnInit {
     }
 
     loadBookings(): void {
-        const user = this.authService.getCurrentUser();
+        const user = this.authService.currentUserValue;
         if (!user?._id) return;
 
         this.isLoading = true;
         this.bookingService.getMemberBookings(user._id).subscribe({
             next: (data) => {
-                this.bookings = data;
+                this.bookings = data.data;
                 this.isLoading = false;
             },
             error: (err) => {
@@ -50,8 +50,7 @@ export class MyBookings implements OnInit {
         if (!confirm('Are you sure you want to cancel this booking?')) return;
 
         // Use classId._id because classId is populated as GymClass
-        const classId = (booking.classId as any)._id || booking.classId;
-        this.bookingService.cancelBooking(classId).subscribe({
+        this.bookingService.cancelBooking(bookingId).subscribe({
             next: () => {
                 this.successMessage = 'Booking cancelled successfully.';
                 this.loadBookings(); // Refresh list

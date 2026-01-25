@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BookingService } from '../../../core/services/booking.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { GymClass } from '../../../core/models/gym-extensions.model';
+import { GymClass } from '../../../core/models/class.model';
 
 @Component({
     selector: 'app-class-list',
@@ -28,13 +28,13 @@ export class ClassList implements OnInit {
     }
 
     loadClasses(): void {
-        const user = this.authService.getCurrentUser();
+        const user = this.authService.currentUserValue;
         if (!user?.gymId) return;
 
         this.isLoading = true;
         this.bookingService.getClasses().subscribe({
             next: (data) => {
-                this.classes = data;
+                this.classes = data.data;
                 this.isLoading = false;
             },
             error: (err) => {
@@ -45,23 +45,23 @@ export class ClassList implements OnInit {
     }
 
     bookClass(gymClass: GymClass): void {
-        const user = this.authService.getCurrentUser();
+        const user = this.authService.currentUserValue;
         if (!user?._id || !user?.gymId) {
             this.errorMessage = 'You must be logged in to book a class.';
             return;
         }
 
-        const currentBookings = gymClass.bookingsCount || 0;
+        const currentBookings = gymClass.enrolledCount || 0;
         if (currentBookings >= gymClass.capacity) {
             this.errorMessage = 'Class is full.';
             return;
         }
 
-        this.bookingService.bookClass(gymClass._id || '', user._id, user.gymId).subscribe({
+        this.bookingService.bookClass(gymClass._id || '', user._id).subscribe({
             next: () => {
                 this.successMessage = `Successfully booked ${gymClass.title}!`;
                 // Optimistic update
-                gymClass.bookingsCount = currentBookings + 1;
+                gymClass.enrolledCount = currentBookings + 1;
                 setTimeout(() => this.successMessage = '', 3000);
             },
             error: (err) => {

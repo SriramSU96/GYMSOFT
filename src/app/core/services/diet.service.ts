@@ -92,6 +92,10 @@ export class DietService {
         return this.http.post<{ success: boolean; assignment: AssignedDietPlan }>(`${this.apiUrl}/assign`, assignment);
     }
 
+    getMemberDiet(memberId: string): Observable<{ success: boolean; diet: AssignedDietPlan }> {
+        return this.http.get<{ success: boolean; diet: AssignedDietPlan }>(`${this.apiUrl}/member/${memberId}`);
+    }
+
     // Meals Library
     getMeals(params: any = {}): Observable<{ success: boolean; meals: DietMeal[] }> {
         let httpParams = new HttpParams();

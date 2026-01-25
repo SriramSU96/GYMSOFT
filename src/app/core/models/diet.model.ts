@@ -9,6 +9,7 @@ export interface DietPlan {
     createdBy?: string;
     gymId: string;
     isActive: boolean;
+    calories?: number;
     meals?: any[];
     createdAt?: Date;
     updatedAt?: Date;

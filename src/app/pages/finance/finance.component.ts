@@ -235,8 +235,8 @@ export class FinanceComponent implements OnInit {
     // ============================================
     // TIME RANGE FILTER
     // ============================================
-    onRangeChange(range: '30d' | '3m' | '6m' | '1y'): void {
-        this.selectedRange = range;
+    onRangeChange(range: string): void {
+        this.selectedRange = range as any;
         this.loadFinanceData();
     }
 

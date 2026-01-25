@@ -6,7 +6,7 @@
     <div *ngIf="analytics$ | async as analytics">
         <div>
             <h3>Member Retention Rate</h3>
-            <p>{{ analytics.retentionRate }}%</p>
+            <p>{{ (analytics.overview?.retentionRate || 0) }}%</p>
         </div>
 
         <div>
@@ -16,7 +16,7 @@
 
         <div>
             <h3>Avg. Session Duration</h3>
-            <p>{{ analytics.avgSessionDuration }} min</p>
+            <p>{{ (analytics.overview?.avgSessionDuration || 0) }} min</p>
         </div>
 
         <div>

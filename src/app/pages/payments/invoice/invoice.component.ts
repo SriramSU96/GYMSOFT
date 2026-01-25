@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Invoice } from '../../../core/models/payment.model';
 import { loadInvoice } from '../../../core/store/payments/payment.actions';
-import { selectSelectedInvoice, selectPaymentIsLoading, selectPaymentError } from '../../../core/store/payments/payment.selectors';
+import { selectSelectedInvoice, selectPaymentLoading, selectPaymentError } from '../../../core/store/payments/payment.selectors';
 import { InvoiceService } from '../../../core/services/invoice.service';
 
 @Component({
@@ -19,7 +19,7 @@ export class InvoiceComponent implements OnInit {
     private route = inject(ActivatedRoute);
 
     invoice$: Observable<Invoice | null> = this.store.select(selectSelectedInvoice);
-    isLoading$: Observable<boolean> = this.store.select(selectPaymentIsLoading);
+    isLoading$: Observable<boolean> = this.store.select(selectPaymentLoading);
     error$: Observable<any> = this.store.select(selectPaymentError);
 
     private invoiceService = inject(InvoiceService);

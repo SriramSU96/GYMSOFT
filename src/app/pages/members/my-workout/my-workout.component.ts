@@ -24,7 +24,7 @@ export class MyWorkout implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        const user = this.authService.getCurrentUser();
+        const user = this.authService.currentUserValue;
         if (user && user._id) {
             // Assuming user._id is the memberId or we have a way to get memberId
             // For now, using user._id. In real app, might need to fetch associated Member profile first.

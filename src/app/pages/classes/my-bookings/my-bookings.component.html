@@ -45,15 +45,13 @@
             </div>
 
             <div class="flex items-center gap-lg w-full md:w-auto justify-between md:justify-end">
-                <span class="badge" [ngClass]="{
-                          'badge-success': booking.status === 'Booked',
-                          'badge-danger': booking.status === 'Cancelled',
-                          'badge-outline': booking.status === 'Attended'
-                      }">
+                <span [class.badge]="true" [class.badge-success]="booking.status === 'Confirmed'"
+                    [class.badge-warning]="booking.status === 'Waitlisted'"
+                    [class.badge-outline]="booking.status === 'CheckedIn'">
                     {{ booking.status }}
                 </span>
 
-                <button *ngIf="booking.status === 'Booked'" class="btn btn-ghost text-danger hover:bg-red-900/10"
+                <button *ngIf="booking.status === 'Confirmed'" class="btn btn-ghost btn-xs text-danger"
                     (click)="cancelBooking(booking._id || '')">
                     Cancel
                 </button>

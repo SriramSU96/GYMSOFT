@@ -4,7 +4,7 @@ import * as MemberActions from './members.actions';
 import { Member, Achievement } from '../../models/member.model';
 import { MemberProgress } from '../../models/progress.model';
 
-export interface MembersState extends EntityAdapter<Member> {
+export interface MembersState extends EntityState<Member> {
     members: Member[];
     total: number;
     page: number;

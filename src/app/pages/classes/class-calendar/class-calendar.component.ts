@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BookingService } from '../../../core/services/booking.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { GymClass } from '../../../core/models/gym-extensions.model';
+import { GymClass } from '../../../core/models/class.model';
 
 @Component({
     selector: 'app-class-calendar',
@@ -52,12 +52,12 @@ export class ClassCalendar implements OnInit {
     }
 
     loadClasses(): void {
-        const user = this.authService.getCurrentUser();
+        const user = this.authService.currentUserValue;
         if (!user?.gymId) return;
 
         this.bookingService.getClasses().subscribe({
             next: (data) => {
-                this.classes = data;
+                this.classes = data.data;
                 this.organizeClassesByDate();
             },
             error: (err) => console.error(err)
@@ -70,8 +70,9 @@ export class ClassCalendar implements OnInit {
         this.weekDates.forEach(date => {
             const dateKey = date.toISOString().split('T')[0];
             this.calendarData[dateKey] = this.classes.filter(c => {
-                // Assuming scheduleDate matches YYYY-MM-DD
-                return c.scheduleDate.startsWith(dateKey);
+                const cDate = new Date(c.scheduleDate);
+                const cDateStr = cDate.toISOString().split('T')[0];
+                return cDateStr === dateKey;
             });
             // Sort by time
             this.calendarData[dateKey].sort((a, b) => a.startTime.localeCompare(b.startTime));

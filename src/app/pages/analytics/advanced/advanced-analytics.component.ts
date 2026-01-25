@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { FilterPipe } from '../../../core/pipes/filter.pipe';
 
 // ============================================
 // ADVANCED ANALYTICS COMPONENT
@@ -10,11 +11,12 @@ import { FormsModule } from '@angular/forms';
 @Component({
     selector: 'app-advanced-analytics',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, FilterPipe],
     templateUrl: './advanced-analytics.component.html',
     styleUrls: ['./advanced-analytics.component.css']
 })
 export class AdvancedAnalyticsComponent implements OnInit {
+    protected Math = Math;
     // ============================================
     // TIME RANGE SELECTION
     // ============================================
@@ -444,7 +446,7 @@ export class AdvancedAnalyticsComponent implements OnInit {
     // ============================================
     // TIME RANGE FILTER
     // ============================================
-    onRangeChange(range: '30d' | '3m' | '6m' | '1y'): void {
+    onRangeChange(range: any): void {
         this.selectedRange = range;
         this.loadAdvancedAnalytics();
     }

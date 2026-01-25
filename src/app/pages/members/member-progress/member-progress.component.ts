@@ -49,7 +49,7 @@ export class MemberProgressComponent implements OnInit {
 
     ngOnInit() {
         // Get current gym ID from auth service
-        const currentUser = this.authService.getCurrentUser();
+        const currentUser = this.authService.currentUserValue;
         if (currentUser?.gymId) {
             this.currentGymId = currentUser.gymId;
         }
@@ -67,13 +67,13 @@ export class MemberProgressComponent implements OnInit {
     loadMembers() {
         this.loadingMembers = true;
         this.memberService.getMembers().subscribe({
-            next: (members) => {
-                this.members = members;
+            next: (members: any) => {
+                this.members = members.data || [];
                 this.loadingMembers = false;
 
                 // Auto-select first member if available
-                if (members.length > 0 && !this.selectedMemberId) {
-                    this.selectedMemberId = members[0]._id || '';
+                if (this.members.length > 0 && !this.selectedMemberId) {
+                    this.selectedMemberId = this.members[0]._id || '';
                     this.onMemberChange();
                 }
             },
@@ -101,10 +101,15 @@ export class MemberProgressComponent implements OnInit {
         this.loading = true;
         console.log('Loading progress for member:', this.selectedMemberId);
 
-        this.progressService.getMemberProgress(this.selectedMemberId).subscribe({
-            next: (records) => {
-                console.log('Received progress records:', records);
-                this.progressRecords = records;
+        this.progressService.getProgressHistory(this.selectedMemberId).subscribe({
+            next: (res) => {
+                console.log('Received progress records:', res);
+                this.progressRecords = (res.progressHistory || []).map(p => ({
+                    ...p,
+                    recordedDate: p.date, // Map date to recordedDate for component compatibility
+                    recordedBy: 'Trainer', // Default or fetch
+                    bmi: 0 // Placeholder
+                }));
                 this.applyFilters();
                 this.loading = false;
 
@@ -126,9 +131,9 @@ export class MemberProgressComponent implements OnInit {
         this.loadingSummary = true;
 
         this.progressService.getMemberProgressSummary(memberId).subscribe({
-            next: (summary) => {
-                console.log('Received member summary:', summary);
-                this.selectedMember = summary;
+            next: (res) => {
+                console.log('Received member summary:', res);
+                this.selectedMember = res.summary;
                 this.loadingSummary = false;
             },
             error: (error) => {
@@ -147,7 +152,7 @@ export class MemberProgressComponent implements OnInit {
 
         if (memberRecords.length > 0) {
             // Sort records by date to get latest and oldest
-            memberRecords.sort((a, b) => new Date(b.recordedDate).getTime() - new Date(a.recordedDate).getTime());
+            memberRecords.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
             const latest = memberRecords[0];
             const oldest = memberRecords[memberRecords.length - 1];
 
@@ -157,12 +162,15 @@ export class MemberProgressComponent implements OnInit {
                 phone: '',
                 age: 0,
                 fitnessGoal: 'Fitness',
+                startingWeight: oldest.weight,
                 currentWeight: latest.weight,
-                currentBMI: latest.bmi,
+                weightChange: latest.weight - oldest.weight,
+                currentBMI: latest.bmi || 0,
+                bmiChange: (latest.bmi || 0) - (oldest.bmi || 0),
                 progressStatus: this.calculateProgressStatus(latest.weight, oldest.weight),
                 totalRecords: memberRecords.length,
-                weightChange: latest.weight - oldest.weight,
-                bmiChange: latest.bmi - oldest.bmi
+                attendanceCount: 0, // Mock
+                trend: (latest.weight < oldest.weight) ? 'up' : 'down' // interpretation varies
             };
         }
     }
@@ -191,7 +199,10 @@ export class MemberProgressComponent implements OnInit {
             progressStatus: 'Improving',
             totalRecords: 3,
             weightChange: -5.5,
-            bmiChange: -1.8
+            bmiChange: -1.8,
+            startingWeight: 81,
+            attendanceCount: 12,
+            trend: 'up'
         };
 
         this.progressRecords = [
@@ -203,6 +214,7 @@ export class MemberProgressComponent implements OnInit {
                 bodyFat: 18.5,
                 notes: 'Great progress this month!',
                 recordedBy: 'Trainer Mike',
+                date: new Date('2024-01-15'),
                 recordedDate: new Date('2024-01-15'),
                 gymId: 'gym1'
             },
@@ -214,6 +226,7 @@ export class MemberProgressComponent implements OnInit {
                 bodyFat: 19.2,
                 notes: 'Steady improvement',
                 recordedBy: 'Trainer Sarah',
+                date: new Date('2024-01-01'),
                 recordedDate: new Date('2024-01-01'),
                 gymId: 'gym1'
             },
@@ -225,6 +238,7 @@ export class MemberProgressComponent implements OnInit {
                 bodyFat: 20.1,
                 notes: 'Starting point',
                 recordedBy: 'Admin',
+                date: new Date('2023-12-15'),
                 recordedDate: new Date('2023-12-15'),
                 gymId: 'gym1'
             }
@@ -242,15 +256,15 @@ export class MemberProgressComponent implements OnInit {
         switch (this.timeFilter) {
             case 'last30':
                 const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
-                filtered = filtered.filter(r => new Date(r.recordedDate) >= thirtyDaysAgo);
+                filtered = filtered.filter(r => new Date(r.date) >= thirtyDaysAgo);
                 break;
             case 'last90':
                 const ninetyDaysAgo = new Date(now.getTime() - (90 * 24 * 60 * 60 * 1000));
-                filtered = filtered.filter(r => new Date(r.recordedDate) >= ninetyDaysAgo);
+                filtered = filtered.filter(r => new Date(r.date) >= ninetyDaysAgo);
                 break;
             case 'last180':
                 const oneEightyDaysAgo = new Date(now.getTime() - (180 * 24 * 60 * 60 * 1000));
-                filtered = filtered.filter(r => new Date(r.recordedDate) >= oneEightyDaysAgo);
+                filtered = filtered.filter(r => new Date(r.date) >= oneEightyDaysAgo);
                 break;
             // 'all' - no filter
         }
@@ -293,7 +307,7 @@ export class MemberProgressComponent implements OnInit {
 
         this.confirmDialog.confirm({
             title: 'Delete Progress Record',
-            message: `Are you sure you want to delete this progress record from ${new Date(record?.recordedDate || '').toLocaleDateString()}?`,
+            message: `Are you sure you want to delete this progress record from ${new Date(record?.date || '').toLocaleDateString()}?`,
             confirmText: 'Delete',
             cancelText: 'Cancel'
         }).subscribe(confirmed => {

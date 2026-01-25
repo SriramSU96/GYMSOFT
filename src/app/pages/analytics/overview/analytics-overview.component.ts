@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
     styleUrls: ['./analytics-overview.component.css']
 })
 export class AnalyticsOverviewComponent implements OnInit {
+    protected Math = Math;
     // ============================================
     // TIME RANGE SELECTION
     // ============================================
@@ -135,7 +136,7 @@ export class AnalyticsOverviewComponent implements OnInit {
     // ============================================
     // TIME RANGE FILTER
     // ============================================
-    onRangeChange(range: '30d' | '3m' | '6m' | '1y'): void {
+    onRangeChange(range: any): void {
         this.selectedRange = range;
         this.loadAnalyticsData();
     }

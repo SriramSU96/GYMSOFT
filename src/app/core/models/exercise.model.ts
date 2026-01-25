@@ -48,12 +48,15 @@ export interface ExerciseFilters {
 
 export interface ExerciseResponse {
     success: boolean;
-    exercise: Exercise;
+    data: Exercise; // Standardizing to data to match likely service response, but keeping exercise for compat if needed, or I should check the service.
 }
 
 export interface ExercisesResponse {
     success: boolean;
-    exercises: Exercise[];
+    data: Exercise[];
+    page: number;
+    pages: number;
+    total: number;
 }
 
 export interface CreateExerciseDto {

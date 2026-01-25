@@ -9,7 +9,7 @@ import { SidebarComponent } from '../../core/components/layout/sidebar/sidebar.c
 import { ToastComponent } from '../../core/components/toast/toast.component';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { MemberInfoModalComponent } from '../../core/components/member-info-modal/member-info-modal.component';
-import { selectNotifications, selectUnreadCount } from '../../core/store/notifications/notification.selectors';
+import { selectAllNotifications, selectUnreadCount } from '../../core/store/notifications/notification.selectors';
 import { filter, skip, take } from 'rxjs';
 import { Subscription } from 'rxjs';
 
@@ -32,7 +32,7 @@ export class MainLayoutComponent {
 
     ngOnInit() {
         // Auto-show notifications for 10s when new data arrives
-        this.notificationsSub = this.store.select(selectNotifications).pipe(
+        this.notificationsSub = this.store.select(selectAllNotifications).pipe(
             skip(1), // Skip initial load
             filter(notifs => notifs.length > 0)
         ).subscribe(() => {

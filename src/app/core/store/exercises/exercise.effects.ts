@@ -19,9 +19,9 @@ export class ExerciseEffects {
         this.actions$.pipe(
             ofType(ExerciseActions.loadExercises),
             mergeMap(({ filters, pageSize, pageNumber }) =>
-                this.exerciseService.getExercises(filters, pageSize, pageNumber).pipe(
+                this.exerciseService.getExercises({ ...filters, pageSize, pageNumber }).pipe(
                     map((response) => ExerciseActions.loadExercisesSuccess({
-                        exercises: response.exercises,
+                        exercises: response.data,
                         page: response.page,
                         pages: response.pages,
                         total: response.total
@@ -40,7 +40,7 @@ export class ExerciseEffects {
             ofType(ExerciseActions.loadExercise),
             mergeMap(({ id }) =>
                 this.exerciseService.getExerciseById(id).pipe(
-                    map((response) => ExerciseActions.loadExerciseSuccess({ exercise: response.exercise })),
+                    map((response) => ExerciseActions.loadExerciseSuccess({ exercise: response.data })),
                     catchError((error) => {
                         this.toastService.error('Failed to load exercise');
                         return of(ExerciseActions.loadExerciseFailure({ error }));
@@ -55,9 +55,9 @@ export class ExerciseEffects {
             ofType(ExerciseActions.createExercise),
             mergeMap(({ exercise }) =>
                 this.exerciseService.createExercise(exercise as any).pipe(
-                    map((newExercise) => {
+                    map((response) => {
                         this.toastService.success('Exercise created successfully');
-                        return ExerciseActions.createExerciseSuccess({ exercise: newExercise });
+                        return ExerciseActions.createExerciseSuccess({ exercise: response.data });
                     }),
                     catchError((error) => {
                         this.toastService.error('Failed to create exercise');
@@ -83,9 +83,9 @@ export class ExerciseEffects {
             ofType(ExerciseActions.updateExercise),
             mergeMap(({ id, changes }) =>
                 this.exerciseService.updateExercise(id, changes as any).pipe(
-                    map((exercise) => {
+                    map((response) => {
                         this.toastService.success('Exercise updated successfully');
-                        return ExerciseActions.updateExerciseSuccess({ exercise });
+                        return ExerciseActions.updateExerciseSuccess({ exercise: response.data });
                     }),
                     catchError((error) => {
                         this.toastService.error('Failed to update exercise');

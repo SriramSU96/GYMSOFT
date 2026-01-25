@@ -126,14 +126,14 @@ export class SalesReport implements OnInit {
     }
 
     loadReport(): void {
-        const user = this.authService.getCurrentUser();
+        const user = this.authService.currentUserValue;
         if (!user?.gymId) return;
 
         this.isLoading = true;
         // const date = this.filterForm.get('date')?.value; // Use in API call
 
         this.posService.getSales().subscribe({
-            next: (data) => {
+            next: (data: any) => {
                 this.salesData = data;
                 this.processData(data); // Aggregate raw data
                 this.isLoading = false;
@@ -145,15 +145,13 @@ export class SalesReport implements OnInit {
         });
     }
 
-    processData(data: any): void {
-        // Mocking sophisticated processing since API likely returns simple list
-        // In a real app, this logic might be server-side
-
-        const rawSales: any[] = data.sales || []; // Assume { date, totalAmount, soldBy, items: [{productName, price, quantity, costPrice?}] }
+    processData(data: any): void { // Start of processData
+        // data matches SaleResponse: { success: boolean, data: Sale[] }
+        const rawSales: any[] = data.data || [];
 
         // 1. Core Metrics
-        this.totalRevenue = data.totalRevenue || 0;
-        this.totalTxns = data.totalTransactions || 0;
+        this.totalRevenue = rawSales.reduce((sum, sale) => sum + (sale.total || sale.totalAmount || 0), 0);
+        this.totalTxns = rawSales.length;
 
         // Est. Profit (Mocking Cost as 60% of Revenue if not present)
         this.grossProfit = rawSales.reduce((acc, sale) => {

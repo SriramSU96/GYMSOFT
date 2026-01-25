@@ -6,8 +6,8 @@ import { Observable, filter, take } from 'rxjs';
 import { selectUser } from '../../../core/store/auth/auth.selectors';
 import { loadMember, loadProgress, loadAchievements } from '../../../core/store/members/member.actions';
 import { selectCurrentMember, selectProgressHistory, selectAchievements, selectMemberIsLoading } from '../../../core/store/members/member.selectors';
-import { loadMemberAttendance } from '../../../core/store/attendance/attendance.actions';
-import { selectAttendanceRecords } from '../../../core/store/attendance/attendance.selectors';
+import { loadAttendance } from '../../../core/store/attendance/attendance.actions';
+import { selectAllAttendance } from '../../../core/store/attendance/attendance.selectors';
 
 @Component({
     selector: 'app-member-dashboard',
@@ -22,7 +22,7 @@ export class MemberDashboardComponent implements OnInit {
 
     member$ = this.store.select(selectCurrentMember);
     progress$ = this.store.select(selectProgressHistory);
-    attendance$ = this.store.select(selectAttendanceRecords);
+    attendance$ = this.store.select(selectAllAttendance);
     achievements$ = this.store.select(selectAchievements);
     isLoading$ = this.store.select(selectMemberIsLoading);
 
@@ -37,7 +37,7 @@ export class MemberDashboardComponent implements OnInit {
                 this.store.dispatch(loadMember({ id: user._id }));
                 this.store.dispatch(loadProgress({ memberId: user._id }));
                 this.store.dispatch(loadAchievements({ memberId: user._id }));
-                this.store.dispatch(loadMemberAttendance({ memberId: user._id }));
+                this.store.dispatch(loadAttendance({ filter: { memberId: user._id } }));
             }
         });
     }

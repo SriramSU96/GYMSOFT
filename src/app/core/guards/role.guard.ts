@@ -9,7 +9,7 @@ export function roleGuard(allowedRoles: string[]): CanActivateFn {
         const router = inject(Router);
         const toastService = inject(ToastService);
 
-        const currentUser = authService.getCurrentUser();
+        const currentUser = authService.currentUserValue;
 
         if (!currentUser) {
             router.navigate(['/login']);

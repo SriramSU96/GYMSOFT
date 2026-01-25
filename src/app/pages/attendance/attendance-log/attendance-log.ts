@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { combineLatest, map, Observable } from 'rxjs';
-import { loadAllAttendance } from '../../../core/store/attendance/attendance.actions';
-import { selectAttendanceRecords, selectAttendanceIsLoading } from '../../../core/store/attendance/attendance.selectors';
+import { loadAttendance } from '../../../core/store/attendance/attendance.actions';
+import { selectAllAttendance, selectAttendanceLoading } from '../../../core/store/attendance/attendance.selectors';
 import { selectMembers } from '../../../core/store/members/member.selectors';
 import { loadMembers } from '../../../core/store/members/member.actions';
 import { Attendance } from '../../../core/models/attendance.model';
@@ -58,9 +58,9 @@ export class AttendanceLog implements OnInit {
   // STATE MANAGEMENT
   // ===================================
 
-  logs$: Observable<Attendance[]> = this.store.select(selectAttendanceRecords);
+  logs$: Observable<Attendance[]> = this.store.select(selectAllAttendance);
   members$: Observable<Member[]> = this.store.select(selectMembers);
-  isLoading$: Observable<boolean> = this.store.select(selectAttendanceIsLoading);
+  isLoading$: Observable<boolean> = this.store.select(selectAttendanceLoading);
 
   // Attendance data
   attendanceRecords: AttendanceRecord[] = [];
@@ -97,7 +97,7 @@ export class AttendanceLog implements OnInit {
   // ===================================
 
   ngOnInit(): void {
-    this.store.dispatch(loadAllAttendance());
+    this.store.dispatch(loadAttendance({}));
     this.store.dispatch(loadMembers());
 
     // Subscribe to enriched logs
@@ -156,7 +156,7 @@ export class AttendanceLog implements OnInit {
       { id: 'M007', name: 'Rajesh Verma', phone: '+91 98765 43216', membership: 'Active' as const },
       { id: 'M008', name: 'Kavita Nair', phone: '+91 98765 43217', membership: 'Active' as const },
       { id: 'M009', name: 'Suresh Iyer', phone: '+91 98765 43218', membership: 'Active' as const },
-      { id: 'M010', name: 'Deepa Menon', phone: '+91 98765 43219', membership: 'Not Visited' as const }
+      { id: 'M010', name: 'Deepa Menon', phone: '+91 98765 43219', membership: 'Active' as const }
     ];
 
     return mockMembers.map((member, index) => {

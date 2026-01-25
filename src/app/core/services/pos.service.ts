@@ -63,6 +63,7 @@ export class PosService {
     processSale(sale: Partial<Sale>): Observable<{ success: boolean; data: Sale }> {
         return this.http.post<{ success: boolean; data: Sale }>(`${this.apiUrl}/sales`, sale);
     }
+    createSale(sale: Partial<Sale>) { return this.processSale(sale); }
 
     getSalesHistory(filter: SaleFilter = {}): Observable<SaleResponse> {
         let params = new HttpParams();
@@ -73,4 +74,5 @@ export class PosService {
         });
         return this.http.get<SaleResponse>(`${this.apiUrl}/sales`, { params });
     }
+    getSales(filter: SaleFilter = {}) { return this.getSalesHistory(filter); }
 }

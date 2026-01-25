@@ -52,8 +52,8 @@ export class MemberInfoModalComponent implements OnInit, OnDestroy {
     loadMemberData(memberId: string) {
         // Load member-specific workout
         this.loadingWorkout = true;
-        this.memberService.getMemberWorkout(memberId).subscribe({
-            next: (workout) => {
+        this.memberService.getMemberWorkoutPlan(memberId).subscribe({
+            next: (workout: Workout) => {
                 this.memberWorkout = workout;
                 this.loadingWorkout = false;
             },
@@ -65,8 +65,8 @@ export class MemberInfoModalComponent implements OnInit, OnDestroy {
 
         // Load member-specific diet
         this.loadingDiet = true;
-        this.memberService.getMemberDiet(memberId).subscribe({
-            next: (diet) => {
+        this.memberService.getMemberDietPlan(memberId).subscribe({
+            next: (diet: DietPlan) => {
                 this.memberDiet = diet;
                 this.loadingDiet = false;
             },

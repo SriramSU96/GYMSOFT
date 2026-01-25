@@ -1,22 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Attendance, AttendanceStats, AttendanceResponse } from '../models/attendance.model';
+import { Attendance, AttendanceStats, AttendanceResponse, CheckInPayload, AttendanceFilter } from '../models/attendance.model';
 import { environment } from '../../../environments/environment';
-
-export interface CheckInPayload {
-    memberId: string;
-    checkInTime?: Date;
-    source?: 'QR' | 'Manual' | 'Offline';
-}
-
-export interface AttendanceFilter {
-    memberId?: string;
-    date?: string; // YYYY-MM-DD
-    startDate?: string;
-    endDate?: string;
-    gymId?: string;
-}
 
 @Injectable({
     providedIn: 'root'

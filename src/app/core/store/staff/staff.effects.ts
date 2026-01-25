@@ -75,7 +75,7 @@ export class StaffEffects {
         this.actions$.pipe(
             ofType(StaffActions.loadStaffAttendance),
             switchMap((action) =>
-                this.staffService.getAttendance(action.date).pipe(
+                this.staffService.getAttendance(action.date || '').pipe(
                     map((response) => StaffActions.loadStaffAttendanceSuccess({ attendance: response.attendance })),
                     catchError((error) => of(StaffActions.loadStaffAttendanceFailure({ error })))
                 )

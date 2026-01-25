@@ -15,6 +15,6 @@ export class AuditLog implements OnInit {
   logs$ = this.store.select(selectLogs);
 
   ngOnInit() {
-    this.store.dispatch(loadLogs());
+    this.store.dispatch(loadLogs({}));
   }
 }

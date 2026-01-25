@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { loadPendingPayments } from '../../../core/store/payments/payment.actions';
-import { selectPayments, selectPaymentIsLoading } from '../../../core/store/payments/payment.selectors';
+import { selectAllPayments, selectPaymentLoading } from '../../../core/store/payments/payment.selectors';
 
 // ===================================
 // INTERFACES
@@ -62,8 +62,8 @@ export class PaymentList implements OnInit {
   // STATE MANAGEMENT
   // ===================================
 
-  payments$: any = this.store.select(selectPayments);
-  isLoading$: any = this.store.select(selectPaymentIsLoading);
+  payments$ = this.store.select(selectAllPayments);
+  isLoading$ = this.store.select(selectPaymentLoading);
 
   payments: Payment[] = [];
   filteredPayments: Payment[] = [];

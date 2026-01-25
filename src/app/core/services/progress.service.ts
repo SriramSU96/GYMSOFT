@@ -20,6 +20,10 @@ export class ProgressService {
         return this.http.get<ProgressHistoryResponse>(`${this.apiUrl}/${memberId}`);
     }
 
+    getMemberProgressSummary(memberId: string): Observable<{ success: boolean; summary: any }> {
+        return this.http.get<{ success: boolean; summary: any }>(`${this.apiUrl}/${memberId}/summary`);
+    }
+
     updateProgress(id: string, progressData: Partial<MemberProgress>): Observable<ProgressResponse> {
         return this.http.put<ProgressResponse>(`${this.apiUrl}/${id}`, progressData);
     }

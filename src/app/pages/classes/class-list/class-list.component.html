@@ -29,7 +29,7 @@
         <div *ngFor="let c of classes"
             class="card relative overflow-hidden group hover:border-[var(--accent-primary)] transition-colors">
             <!-- Full Overlay -->
-            <div *ngIf="(c.bookingsCount || 0) >= c.capacity"
+            <div *ngIf="(c.enrolledCount || 0) >= c.capacity"
                 class="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-2 py-1 z-10">
                 FULL
             </div>
@@ -47,8 +47,8 @@
                 </div>
                 <div class="text-center bg-[var(--bg-app)] p-sm rounded border border-[var(--color-border)]">
                     <div class="text-xs text-muted uppercase">Spots</div>
-                    <div class="font-mono font-bold" [class.text-danger]="c.capacity - (c.bookingsCount || 0) < 5">
-                        {{ c.capacity - (c.bookingsCount || 0) }}
+                    <div class="font-mono font-bold" [class.text-danger]="c.capacity - (c.enrolledCount || 0) < 5">
+                        {{ c.capacity - (c.enrolledCount || 0) }}
                     </div>
                 </div>
             </div>
@@ -61,8 +61,8 @@
                 </div>
 
                 <button class="btn btn-primary btn-sm" (click)="bookClass(c)"
-                    [disabled]="(c.bookingsCount || 0) >= c.capacity">
-                    {{ (c.bookingsCount || 0) >= c.capacity ? 'Class Full' : 'Book Now' }}
+                    [disabled]="(c.enrolledCount || 0) >= c.capacity">
+                    {{ (c.enrolledCount || 0) >= c.capacity ? 'Class Full' : 'Book Now' }}
                 </button>
             </div>
         </div>

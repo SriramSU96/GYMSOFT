@@ -64,7 +64,7 @@
                 <p class="member-meta">{{ selectedMember.phone }} • Age: {{ selectedMember.age }}</p>
             </div>
         </div>
-        <span class="status-badge" [ngClass]="getStatusClass(selectedMember.progressStatus)">
+        <span class="status-badge" [ngClass]="getStatusClass(selectedMember.progressStatus || 'Stable')">
             {{ selectedMember.progressStatus }}
         </span>
     </div>

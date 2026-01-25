@@ -18,7 +18,7 @@
         </div>
         <div>
             <div class="text-sm text-muted">Active Members</div>
-            <div class="text-2xl font-bold">{{ stats.activeCount }}</div>
+            <div class="text-2xl font-bold">{{ stats.overview?.activeCount || 0 }}</div>
             <div class="text-xs text-success flex items-center mt-xs">
                 <span class="material-icons" style="font-size: 1rem;">trending_up</span>
                 <span>+12% from last month</span>
@@ -32,7 +32,7 @@
         </div>
         <div>
             <div class="text-sm text-muted">Daily Attendance</div>
-            <div class="text-2xl font-bold">{{ stats.totalMembers }}</div>
+            <div class="text-2xl font-bold">{{ stats.overview?.totalMembers || 0 }}</div>
             <div class="text-xs text-muted mt-xs">Based on current check-ins</div>
         </div>
     </div>
@@ -43,7 +43,7 @@
         </div>
         <div>
             <div class="text-sm text-muted">Monthly Revenue</div>
-            <div class="text-2xl font-bold">${{ stats.netProfit | number:'1.2-2' }}</div>
+            <div class="text-2xl font-bold">${{ stats.overview?.netProfit || 0 | number:'1.2-2' }}</div>
             <div class="text-xs text-muted mt-xs">Projected current month</div>
         </div>
     </div>

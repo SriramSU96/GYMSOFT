@@ -3,7 +3,7 @@ import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import * as DietActions from './diets.actions';
 import { DietPlan } from '../../models/diet.model';
 
-export interface DietsState extends EntityAdapter<DietPlan> {
+export interface DietsState extends EntityState<DietPlan> {
     selectedPlan: any | null;
     isLoading: boolean;
     error: any;

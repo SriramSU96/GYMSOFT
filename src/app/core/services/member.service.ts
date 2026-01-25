@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Member, MemberResponse, MembersResponse, Achievement } from '../models/member.model';
+import { Member, MemberResponse, MembersResponse, Achievement, MemberProgress } from '../models/member.model';
 
 @Injectable({
     providedIn: 'root'
@@ -74,5 +74,14 @@ export class MemberService {
 
     getAchievements(memberId: string): Observable<{ success: boolean; achievements: Achievement[] }> {
         return this.http.get<{ success: boolean; achievements: Achievement[] }>(`${this.apiUrl}/achievements/${memberId}`);
+    }
+
+    // Progress
+    addProgress(record: Partial<MemberProgress>): Observable<{ success: boolean; progress: MemberProgress }> {
+        return this.http.post<{ success: boolean; progress: MemberProgress }>(`${this.apiUrl}/progress`, record);
+    }
+
+    getProgress(memberId: string): Observable<{ success: boolean; progress: MemberProgress[] }> {
+        return this.http.get<{ success: boolean; progress: MemberProgress[] }>(`${this.apiUrl}/progress/${memberId}`);
     }
 }

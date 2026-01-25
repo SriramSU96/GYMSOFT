@@ -23,6 +23,13 @@ export interface Product {
     updatedAt?: Date;
 }
 
+export interface ProductFilter {
+    category?: string;
+    search?: string;
+    isActive?: boolean;
+    lowStock?: boolean;
+}
+
 export interface SaleItem {
     productId: string;
     productName: string; // Snapshot
@@ -46,6 +53,14 @@ export interface Sale {
     gymId: string;
 }
 
+export interface SaleFilter {
+    startDate?: string;
+    endDate?: string;
+    memberId?: string;
+    status?: string;
+    paymentMethod?: string;
+}
+
 export interface StockAdjustment {
     productId: string;
     adjustment: number; // Positive (add) or Negative (remove)
@@ -53,6 +68,7 @@ export interface StockAdjustment {
     type: 'Restock' | 'Correction' | 'Damaged' | 'Sold' | 'Return';
     date: Date;
     performedBy: string;
+
 }
 
 export interface ProductResponse {

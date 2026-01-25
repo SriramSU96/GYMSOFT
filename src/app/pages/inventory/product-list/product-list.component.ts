@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { PosService } from '../../../core/services/pos.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Product } from '../../../core/models/gym-extensions.model';
+import { Product } from '../../../core/models/pos.model';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 // Extended Interface for UI Logic
@@ -13,7 +13,6 @@ interface ExtendedProduct extends Product {
     reorderLevel?: number;
     unit?: string;
     description?: string;
-    isActive?: boolean;
 }
 
 @Component({
@@ -81,14 +80,14 @@ export class ProductList implements OnInit {
     // --- Data Loading & Metrics ---
 
     loadProducts(): void {
-        const user = this.authService.getCurrentUser();
+        const user = this.authService.currentUserValue;
         if (!user || !user.gymId) return;
 
         this.isLoading = true;
         this.posService.getProducts().subscribe({
-            next: (data) => {
+            next: (data: any) => {
                 // Map and extend with mock data if missing (simulating enterprise fields)
-                this.products = data.map((p: any) => ({
+                this.products = (data.data || []).map((p: any) => ({
                     ...p,
                     sku: p.sku || `SKU-${p.name.substring(0, 3).toUpperCase()}-${Math.floor(Math.random() * 1000)}`,
                     costPrice: p.costPrice || Math.round(p.price * 0.6),
@@ -171,7 +170,7 @@ export class ProductList implements OnInit {
         if (this.productForm.invalid) return;
 
         this.isSubmitting = true;
-        const user = this.authService.getCurrentUser();
+        const user = this.authService.currentUserValue;
         const formValue = this.productForm.value;
 
         // Ensure numeric values

@@ -170,16 +170,19 @@
             </div>
 
             <div class="mb-md">
-                <div *ngFor="let item of currentSale?.products" class="flex justify-between mb-1">
-                    <span>{{ item.quantity }}x Item {{item.productId | slice:0:4}}...</span>
-                    <span>{{ item.price * item.quantity | currency }}</span>
+                <div *ngFor="let item of currentSale?.items" class="flex justify-between py-2 border-b border-gray-800">
+                    <div>
+                        <div class="font-bold">{{ item.productName }}</div>
+                        <div class="text-xs text-muted">{{ item.quantity }} x {{ item.unitPrice | currency }}</div>
+                    </div>
+                    <div>{{ item.total | currency }}</div>
                 </div>
             </div>
 
             <div class="border-t border-gray-200 pt-sm space-y-1">
                 <div class="flex justify-between font-bold text-lg">
                     <span>Total</span>
-                    <span>{{ currentSale?.totalAmount | currency }}</span>
+                    <span>{{ currentSale?.total | currency }}</span>
                 </div>
                 <div class="flex justify-between text-xs text-gray-500">
                     <span>Payment Method</span>

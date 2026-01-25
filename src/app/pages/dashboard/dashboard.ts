@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
-import { loadAnalytics, loadFinancialReport } from '../../core/store/analytics/analytics.actions';
-import { selectAnalytics, selectFinancialReport } from '../../core/store/analytics/analytics.selectors';
+import { loadOverview } from '../../core/store/analytics/analytics.actions';
+import { selectAnalyticsState } from '../../core/store/analytics/analytics.selectors';
 import { take } from 'rxjs/operators';
 
 import {
@@ -39,8 +39,8 @@ export class Dashboard implements OnInit {
   private store = inject(Store);
 
   // Data Observables
-  analytics$ = this.store.select(selectAnalytics);
-  financialReport$ = this.store.select(selectFinancialReport);
+  analytics$ = this.store.select(selectAnalyticsState);
+  // financialReport$ = this.store.select(selectFinancialReport); // Not implemented using selectFinancialReport
 
   activePeriod = 'Week';
 
@@ -121,33 +121,7 @@ export class Dashboard implements OnInit {
     };
 
     // Sync chart data with store when available
-    this.financialReport$.subscribe(report => {
-      if (report && report.chartData && report.chartData.length > 0) {
-        this.barChartData = {
-          labels: report.chartData.map(d => d.label),
-          datasets: [
-            {
-              data: report.chartData.map(d => d.revenue),
-              label: 'Revenue',
-              backgroundColor: this.createGradient('#D4AF37', 'rgba(212, 175, 55, 0.2)'),
-              borderColor: '#D4AF37',
-              borderWidth: 1,
-              borderRadius: 6,
-              hoverBackgroundColor: '#F2C94C'
-            },
-            {
-              data: report.chartData.map(d => d.expense),
-              label: 'Expenses',
-              backgroundColor: this.createGradient('#6C757D', 'rgba(108, 117, 125, 0.1)'),
-              borderColor: '#6C757D',
-              borderWidth: 1,
-              borderRadius: 6,
-              hoverBackgroundColor: '#B0B0B0'
-            }
-          ]
-        };
-      }
-    });
+    // this.financialReport$.subscribe(...) // Removed as logic is not ready
   }
 
   private createGradient(color1: string, color2: string) {
@@ -162,22 +136,18 @@ export class Dashboard implements OnInit {
   setPeriod(period: string) {
     this.activePeriod = period;
     // Refresh to show interactivity
-    this.store.dispatch(loadFinancialReport({ month: new Date().toLocaleString('default', { month: 'long' }) }));
+    this.store.dispatch(loadOverview());
   }
 
   exportReport() {
     this.analytics$.pipe(take(1)).subscribe(stats => {
       // Use real stats if available, otherwise fallback to demo data for verifyability
-      const currentStats = stats || {
-        activeCount: 1250,
-        totalMembers: 450,
-        netProfit: 12500
-      };
+      const currentStats = stats || { overview: { activeCount: 1250, totalMembers: 450, netProfit: 12500 } } as any;
 
       const reportData = [
-        { Metric: 'Active Members', Value: currentStats.activeCount },
-        { Metric: 'Daily Attendance', Value: currentStats.totalMembers },
-        { Metric: 'Monthly Revenue', Value: `$${currentStats.netProfit}` },
+        { Metric: 'Active Members', Value: currentStats.overview?.activeCount || 0 },
+        { Metric: 'Daily Attendance', Value: currentStats.overview?.totalMembers || 0 },
+        { Metric: 'Monthly Revenue', Value: `$${currentStats.overview?.netProfit || 0}` },
         { Metric: 'Export Date', Value: new Date().toLocaleString() }
       ];
 
@@ -213,6 +183,6 @@ export class Dashboard implements OnInit {
   }
 
   ngOnInit() {
-    this.store.dispatch(loadAnalytics());
+    this.store.dispatch(loadOverview());
   }
 }

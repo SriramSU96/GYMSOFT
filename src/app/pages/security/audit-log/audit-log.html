@@ -35,7 +35,7 @@
                                 <div>
                                     <span>person</span>
                                 </div>
-                                <span>{{ log.details || '-' }}</span>
+                                <span>{{ log.ipAddress || '-' }}</span>
                             </div>
                         </td>
                         <td>
@@ -49,10 +49,10 @@
                             </span>
                         </td>
                         <td>
-                            <code>{{ log.entity }}</code>
+                            <code>{{ log.resource }}</code>
                         </td>
                         <td>
-                            <span>{{ log.details || '-' }}</span>
+                            <span>{{ log.errorMessage || (log.changes ? 'Update' : '-') }}</span>
                         </td>
                     </tr>
                     <tr *ngIf="(logs$ | async)?.length === 0">

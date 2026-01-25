@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { loadPendingDues, sendReminder } from '../../../core/store/payments/payment.actions';
-import { selectPendingDues, selectPaymentIsLoading, selectPaymentError } from '../../../core/store/payments/payment.selectors';
+import { selectPendingDues, selectPaymentLoading, selectPaymentError } from '../../../core/store/payments/payment.selectors';
 
 // ===================================
 // INTERFACES
@@ -49,7 +49,7 @@ export class PendingDuesComponent implements OnInit {
     // ===================================
 
     dues$: Observable<any[]> = this.store.select(selectPendingDues);
-    isLoading$: Observable<boolean> = this.store.select(selectPaymentIsLoading);
+    isLoading$: Observable<boolean> = this.store.select(selectPaymentLoading);
     error$: Observable<any> = this.store.select(selectPaymentError);
 
     totalDues$: Observable<number> = this.dues$.pipe(
@@ -314,8 +314,8 @@ export class PendingDuesComponent implements OnInit {
      * Send reminder (from store)
      */
     sendReminder(member: any) {
-        if (member.memberId) {
-            this.store.dispatch(sendReminder({ memberId: member.memberId }));
+        if (member && member._id) {
+            this.store.dispatch(sendReminder({ paymentId: member._id }));
         } else {
             alert(`Reminder sent to ${member.name} for ₹${member.amount}`);
         }
