@@ -70,7 +70,7 @@ export class DietService {
     }
 
     createSlot(dayId: string, slot: { mealTime: string }): Observable<DietMealSlot> {
-        return this.http.post<DietMealSlot>(`${this.apiUrl}/days/${dayId}/meal-slots`, { ...slot, slotName: slot.mealTime });
+        return this.http.post<DietMealSlot>(`${this.apiUrl}/days/${dayId}/meal-slots`, slot);
     }
 
     deleteSlot(slotId: string): Observable<any> {
@@ -96,7 +96,7 @@ export class DietService {
         return this.http.get<{ success: boolean; diet: AssignedDietPlan }>(`${this.apiUrl}/member/${memberId}`);
     }
 
-    // Meals Library
+    // Meals Library (Note: Uses /diet-meals prefix in Backend 2.0)
     getMeals(params: any = {}): Observable<{ success: boolean; meals: DietMeal[] }> {
         let httpParams = new HttpParams();
         Object.keys(params).forEach(key => {
@@ -104,22 +104,22 @@ export class DietService {
                 httpParams = httpParams.append(key, params[key]);
             }
         });
-        return this.http.get<{ success: boolean; meals: DietMeal[] }>(`${this.apiUrl}/meals`, { params: httpParams });
+        return this.http.get<{ success: boolean; meals: DietMeal[] }>(`${environment.apiUrl}/diet-meals`, { params: httpParams });
     }
 
     getMeal(id: string): Observable<DietMeal> {
-        return this.http.get<DietMeal>(`${this.apiUrl}/meals/${id}`);
+        return this.http.get<DietMeal>(`${environment.apiUrl}/diet-meals/${id}`);
     }
 
     createMeal(meal: Partial<DietMeal>): Observable<DietMeal> {
-        return this.http.post<DietMeal>(`${this.apiUrl}/meals`, meal);
+        return this.http.post<DietMeal>(`${environment.apiUrl}/diet-meals`, meal);
     }
 
     updateMeal(id: string, meal: Partial<DietMeal>): Observable<DietMeal> {
-        return this.http.put<DietMeal>(`${this.apiUrl}/meals/${id}`, meal);
+        return this.http.put<DietMeal>(`${environment.apiUrl}/diet-meals/${id}`, meal);
     }
 
     deactivateMeal(id: string): Observable<any> {
-        return this.http.patch(`${this.apiUrl}/meals/${id}/deactivate`, {});
+        return this.http.patch(`${environment.apiUrl}/diet-meals/${id}/deactivate`, {});
     }
 }

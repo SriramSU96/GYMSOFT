@@ -68,3 +68,16 @@ export interface FinancialReport {
         type: 'Income' | 'Expense';
     }[];
 }
+
+export interface AnalyticsAlert {
+    _id: string;
+    gymId: string;
+    type: 'Churn' | 'Revenue' | 'Attendance' | 'Staff';
+    message: string;
+    severity: 'Info' | 'Warning' | 'Critical';
+    data?: any;
+    generatedAt: Date;
+    isSent: boolean;
+    sentAt?: Date;
+    sentVia: string[];
+}

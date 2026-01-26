@@ -11,7 +11,7 @@ interface ExtendedProduct extends Product {
     sku?: string;
     costPrice?: number;
     reorderLevel?: number;
-    unit?: string;
+    unit?: 'Piece' | 'Bottle' | 'Pack' | 'Box' | 'Kg';
     description?: string;
 }
 
@@ -56,13 +56,13 @@ export class ProductList implements OnInit {
     ) {
         this.productForm = this.fb.group({
             name: ['', Validators.required],
-            category: ['Supplement', Validators.required],
+            category: ['Supplements', Validators.required],
             sku: ['', Validators.required],
             price: [0, [Validators.required, Validators.min(0)]],
             costPrice: [0, [Validators.required, Validators.min(0)]],
-            stock: [0, [Validators.required, Validators.min(0)]],
+            stockQuantity: [0, [Validators.required, Validators.min(0)]],
             reorderLevel: [5, [Validators.required, Validators.min(0)]],
-            unit: ['pcs', Validators.required],
+            unit: ['Piece', Validators.required],
             description: [''],
             isActive: [true]
         });
@@ -92,7 +92,7 @@ export class ProductList implements OnInit {
                     sku: p.sku || `SKU-${p.name.substring(0, 3).toUpperCase()}-${Math.floor(Math.random() * 1000)}`,
                     costPrice: p.costPrice || Math.round(p.price * 0.6),
                     reorderLevel: p.reorderLevel || 10,
-                    unit: p.unit || 'pcs',
+                    unit: p.unit || 'Piece',
                     description: p.description || '',
                     isActive: p.isActive !== undefined ? p.isActive : true
                 }));
@@ -107,11 +107,11 @@ export class ProductList implements OnInit {
     }
 
     get totalInventoryValue(): number {
-        return this.products.reduce((acc, p) => acc + (p.stock * (p.costPrice || 0)), 0);
+        return this.products.reduce((acc, p) => acc + (p.stockQuantity * (p.costPrice || 0)), 0);
     }
 
     get lowStockCount(): number {
-        return this.products.filter(p => p.stock <= (p.reorderLevel || 5)).length;
+        return this.products.filter(p => p.stockQuantity <= (p.reorderLevel || 5)).length;
     }
 
     // --- Filtering ---
@@ -121,7 +121,7 @@ export class ProductList implements OnInit {
             const matchesSearch = p.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
                 (p.sku && p.sku.toLowerCase().includes(this.searchQuery.toLowerCase()));
             const matchesCategory = this.filterCategory === 'All' || p.category === this.filterCategory;
-            const matchesLowStock = !this.showLowStockOnly || p.stock <= (p.reorderLevel || 5);
+            const matchesLowStock = !this.showLowStockOnly || p.stockQuantity <= (p.reorderLevel || 5);
 
             return matchesSearch && matchesCategory && matchesLowStock;
         });
@@ -141,10 +141,10 @@ export class ProductList implements OnInit {
             this.isEditing = false;
             this.selectedProduct = null;
             this.productForm.reset({
-                category: 'Supplement',
-                stock: 0,
+                category: 'Supplements',
+                stockQuantity: 0,
                 reorderLevel: 5,
-                unit: 'pcs',
+                unit: 'Piece',
                 isActive: true,
                 price: 0,
                 costPrice: 0
@@ -178,7 +178,7 @@ export class ProductList implements OnInit {
             ...formValue,
             gymId: user?.gymId,
             price: Number(formValue.price),
-            stock: Number(formValue.stock),
+            stockQuantity: Number(formValue.stockQuantity),
             // In a real scenario, we'd send the extended fields to the API.
             // Since the interface is restricted, we'll just send what we can or mock the local update.
         };
@@ -212,14 +212,14 @@ export class ProductList implements OnInit {
         // In a real app, we would have a dedicated 'adjustStock' endpoint.
         // Here we will simulate it by updating the product.
         const adjustment = Number(this.stockForm.value.adjustment);
-        const newStock = this.selectedProduct.stock + adjustment;
+        const newStock = (this.selectedProduct.stockQuantity || 0) + adjustment;
 
         if (newStock < 0) {
             alert('Cannot reduce stock below zero.');
             return;
         }
 
-        const updateData = { stock: newStock };
+        const updateData = { stockQuantity: newStock };
         this.isSubmitting = true;
 
         this.posService.updateProduct(this.selectedProduct._id!, updateData).subscribe({

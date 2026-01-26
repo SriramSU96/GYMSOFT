@@ -28,12 +28,13 @@
         <div class="product-grid p-md custom-scrollbar">
             <div *ngFor="let product of filteredProducts"
                 class="product-card card p-sm cursor-pointer hover:border-primary transition-all active:scale-95"
-                [class.opacity-50]="product.stock === 0" [class.pointer-events-none]="product.stock === 0"
-                (click)="addToCart(product)">
+                [class.opacity-50]="product.stockQuantity === 0"
+                [class.pointer-events-none]="product.stockQuantity === 0" (click)="addToCart(product)">
 
                 <div class="flex justify-between items-start mb-2">
-                    <span class="badge text-[10px]" [ngClass]="product.stock > 5 ? 'badge-neutral' : 'badge-danger'">
-                        {{ product.stock > 0 ? product.stock + ' left' : 'Out of Stock' }}
+                    <span class="badge text-[10px]"
+                        [ngClass]="product.stockQuantity > 5 ? 'badge-neutral' : 'badge-danger'">
+                        {{ product.stockQuantity > 0 ? product.stockQuantity + ' left' : 'Out of Stock' }}
                     </span>
                     <span class="text-xs text-muted font-mono uppercase">{{ product.category }}</span>
                 </div>
@@ -182,7 +183,7 @@
             <div class="border-t border-gray-200 pt-sm space-y-1">
                 <div class="flex justify-between font-bold text-lg">
                     <span>Total</span>
-                    <span>{{ currentSale?.total | currency }}</span>
+                    <span>{{ currentSale?.grandTotal | currency }}</span>
                 </div>
                 <div class="flex justify-between text-xs text-gray-500">
                     <span>Payment Method</span>

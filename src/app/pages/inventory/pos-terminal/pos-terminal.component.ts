@@ -11,7 +11,7 @@ interface CartItem {
     productName: string;
     price: number;
     quantity: number;
-    stock: number;
+    stockQuantity: number;
 }
 
 @Component({
@@ -113,13 +113,13 @@ export class PosTerminal implements OnInit {
     // --- Cart Actions ---
 
     addToCart(product: Product): void {
-        if (product.stock <= 0) return;
+        if (product.stockQuantity <= 0) return;
 
         const existingItem = this.cart.find(item => item.productId === product._id);
 
         if (existingItem) {
             // Check stock limit
-            if (existingItem.quantity < product.stock) {
+            if (existingItem.quantity < product.stockQuantity) {
                 existingItem.quantity++;
             } else {
                 // Shake animation trigger could go here
@@ -132,7 +132,7 @@ export class PosTerminal implements OnInit {
                 productName: product.name,
                 price: product.price,
                 quantity: 1,
-                stock: product.stock
+                stockQuantity: product.stockQuantity
             });
         }
         this.calculateTotals();
@@ -149,7 +149,7 @@ export class PosTerminal implements OnInit {
             return;
         }
 
-        if (newQty <= item.stock) {
+        if (newQty <= item.stockQuantity) {
             item.quantity = newQty;
         } else {
             alert('Cannot add more than available stock');
@@ -203,13 +203,14 @@ export class PosTerminal implements OnInit {
         }));
 
         const saleData: Sale = {
+            saleNumber: 'SALE-' + Date.now(), // Mock sale number
             items: saleItems,
             subTotal: this.subTotal,
             discount: this.discount,
             tax: this.taxAmount,
-            total: this.grandTotal,
-            paymentMethod: this.saleForm.get('paymentMethod')?.value,
-            status: 'Completed',
+            grandTotal: this.grandTotal,
+            paymentMethod: this.getMappedPaymentMethod(this.saleForm.get('paymentMethod')?.value),
+            status: 'Paid',
             soldBy: user?._id || 'SYS',
             gymId: user?.gymId || 'DEFAULT',
             date: new Date()
@@ -248,5 +249,11 @@ export class PosTerminal implements OnInit {
 
     printReceipt() {
         window.print();
+    }
+
+    private getMappedPaymentMethod(method: string): 'Cash' | 'Card' | 'UPI' {
+        if (method === 'Online') return 'UPI';
+        if (method === 'Card') return 'Card';
+        return 'Cash'; // Default to Cash for 'Other' or 'Cash'
     }
 }

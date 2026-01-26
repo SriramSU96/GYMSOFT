@@ -31,8 +31,8 @@ export class PlanBuilderComponent implements OnInit {
     planForm: FormGroup;
 
     // Step 2: Workout Days
-    days: { dayNumber: number; title: string }[] = [];
-    newDayTitle: string = '';
+    days: { dayNumber: number; focus: string }[] = [];
+    newDayFocus: string = '';
 
     // Step 3: Add Exercises
     selectedDayId: string | null = null;
@@ -76,12 +76,12 @@ export class PlanBuilderComponent implements OnInit {
 
     // Step 2: Day Management
     addDay() {
-        if (this.newDayTitle.trim()) {
+        if (this.newDayFocus.trim()) {
             this.days.push({
                 dayNumber: this.days.length + 1,
-                title: this.newDayTitle.trim()
+                focus: this.newDayFocus.trim()
             });
-            this.newDayTitle = '';
+            this.newDayFocus = '';
         }
     }
 
@@ -191,7 +191,7 @@ export class PlanBuilderComponent implements OnInit {
                     console.log(`\n--- Processing Day ${index + 1} ---`);
                     console.log(`Day Number: ${day.dayNumber}`);
                     console.log(`Day ID: ${day._id}`);
-                    console.log(`Day Focus: ${day.title}`);
+                    console.log(`Day Focus: ${day.focus}`);
 
                     const exercises = this.dayExercises.get(day._id!);
                     console.log(`Exercises for this day:`, exercises);

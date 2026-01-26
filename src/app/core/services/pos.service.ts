@@ -43,7 +43,11 @@ export class PosService {
     }
 
     updateProduct(id: string, updates: Partial<Product>): Observable<{ success: boolean; data: Product }> {
-        return this.http.patch<{ success: boolean; data: Product }>(`${this.apiUrl}/products/${id}`, updates);
+        return this.http.put<{ success: boolean; data: Product }>(`${this.apiUrl}/products/${id}`, updates);
+    }
+
+    deactivateProduct(id: string): Observable<any> {
+        return this.http.patch(`${this.apiUrl}/products/${id}/deactivate`, {});
     }
 
     deleteProduct(id: string): Observable<any> {
@@ -52,11 +56,11 @@ export class PosService {
 
     // Stock
     adjustStock(id: string, adjustment: Partial<StockAdjustment>): Observable<{ success: boolean; data: Product }> {
-        return this.http.post<{ success: boolean; data: Product }>(`${this.apiUrl}/products/${id}/stock`, adjustment);
+        return this.http.patch<{ success: boolean; data: Product }>(`${this.apiUrl}/products/${id}/stock`, adjustment);
     }
 
     getLowStockAlerts(): Observable<{ success: boolean; data: Product[] }> {
-        return this.http.get<{ success: boolean; data: Product[] }>(`${this.apiUrl}/products/low-stock`);
+        return this.http.get<{ success: boolean; data: Product[] }>(`${this.apiUrl}/reports/low-stock`);
     }
 
     // Sales
@@ -75,4 +79,25 @@ export class PosService {
         return this.http.get<SaleResponse>(`${this.apiUrl}/sales`, { params });
     }
     getSales(filter: SaleFilter = {}) { return this.getSalesHistory(filter); }
+
+    refundSale(id: string): Observable<any> {
+        return this.http.patch(`${this.apiUrl}/sales/${id}/refund`, {});
+    }
+
+    // Reports
+    getDailyReport(): Observable<any> {
+        return this.http.get(`${this.apiUrl}/reports/daily`);
+    }
+
+    getMonthlyReport(): Observable<any> {
+        return this.http.get(`${this.apiUrl}/reports/monthly`);
+    }
+
+    getProductReport(): Observable<any> {
+        return this.http.get(`${this.apiUrl}/reports/products`);
+    }
+
+    getStaffReport(): Observable<any> {
+        return this.http.get(`${this.apiUrl}/reports/staff`);
+    }
 }

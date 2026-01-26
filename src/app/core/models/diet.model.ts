@@ -19,7 +19,6 @@ export interface DietDay {
     _id?: string;
     dietPlanId: string;
     dayNumber: number;
-    title: string;
     gymId: string;
     createdAt?: Date;
     updatedAt?: Date;
@@ -29,9 +28,8 @@ export interface DietDay {
 export interface DietMealSlot {
     _id?: string;
     dietDayId: string;
-    slotName: string; // Breakfast, Lunch, etc.
-    mealTime?: string; // Component usage alias
-    time?: string;
+    mealTime: 'Breakfast' | 'Lunch' | 'Dinner' | 'Snack'; // Matches backend enum
+    time?: string; // Component usage alias
     gymId: string;
     createdAt?: Date;
     updatedAt?: Date;
@@ -40,7 +38,7 @@ export interface DietMealSlot {
 
 export interface DietMealItem {
     _id?: string;
-    mealSlotId: string;
+    dietMealSlotId: string;
     dietMealId?: string | DietMeal; // Reference to DietMeal
     foodName?: string; // Fallback or override
     quantity: string;
@@ -82,16 +80,13 @@ export enum MealCategory {
     Breakfast = 'Breakfast',
     Lunch = 'Lunch',
     Dinner = 'Dinner',
-    Snack = 'Snack',
-    PreWorkout = 'Pre-Workout',
-    PostWorkout = 'Post-Workout'
+    Snack = 'Snack'
 }
 
 export enum FoodType {
-    Vegetarian = 'Vegetarian',
-    NonVegetarian = 'Non-Vegetarian',
-    Vegan = 'Vegan',
-    Eggetarian = 'Eggetarian'
+    Veg = 'Veg',
+    NonVeg = 'Non-Veg',
+    Vegan = 'Vegan'
 }
 
 export interface DietMeal {

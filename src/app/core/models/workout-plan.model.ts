@@ -43,7 +43,7 @@ export interface WorkoutDay {
     _id?: string;
     workoutPlanId: string;
     dayNumber: number;
-    title: string;
+    focus: string;
     description?: string;
     exercises?: WorkoutExercise[]; // Populated in frontend usage often
     gymId: string;
@@ -59,6 +59,7 @@ export interface WorkoutExercise {
     sets: number;
     reps: string;
     restSeconds?: number;
+    tempo?: string;
     notes?: string;
     order: number;
     gymId: string;
@@ -76,7 +77,7 @@ export interface AssignedWorkoutPlan {
     workoutPlanId: string;
     startDate: Date;
     endDate?: Date;
-    status: 'Active' | 'Completed' | 'Cancelled';
+    status: 'Active' | 'Completed' | 'Paused' | 'Cancelled';
     assignedBy: string;
     gymId: string;
     createdAt?: Date;
@@ -91,6 +92,7 @@ export interface WorkoutCompletion {
     completedSets?: number;
     completedReps?: string;
     weight?: number;
+    completed?: boolean;
     notes?: string;
     completedAt: Date;
     gymId: string;

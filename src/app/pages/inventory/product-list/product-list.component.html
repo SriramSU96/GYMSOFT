@@ -96,8 +96,8 @@
                         <td class="font-mono">{{ product.price | currency }}</td>
                         <td>
                             <span class="badge"
-                                [ngClass]="product.stock <= (product.reorderLevel || 5) ? 'badge-danger' : 'badge-success'">
-                                {{ product.stock }} {{ product.unit }}
+                                [ngClass]="product.stockQuantity <= (product.reorderLevel || 5) ? 'badge-danger' : 'badge-success'">
+                                {{ product.stockQuantity }} {{ product.unit }}
                             </span>
                         </td>
                         <td class="text-secondary pl-6">{{ product.reorderLevel || 5 }}</td>
@@ -177,7 +177,7 @@
                 <div class="grid grid-3 gap-md mb-md">
                     <div class="form-group">
                         <label>Current Stock*</label>
-                        <input type="number" formControlName="stock" [readonly]="isEditing"
+                        <input type="number" formControlName="stockQuantity" [readonly]="isEditing"
                             title="Use Adjust Stock button to change stock for existing items">
                         <small *ngIf="isEditing" class="text-muted text-xs">Use Stock Adjustment for existing
                             items</small>
@@ -227,7 +227,8 @@
         <div class="modal-body">
             <div class="bg-card p-md rounded mb-md border border-subtle">
                 <p class="text-secondary text-sm mb-1">Current Stock</p>
-                <h2 class="mb-0">{{ selectedProduct?.stock }} <span class="text-lg text-muted">{{ selectedProduct?.unit
+                <h2 class="mb-0">{{ selectedProduct?.stockQuantity }} <span class="text-lg text-muted">{{
+                        selectedProduct?.unit
                         }}</span></h2>
                 <p class="text-sm text-white mt-1">{{ selectedProduct?.name }}</p>
             </div>

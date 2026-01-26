@@ -6,6 +6,7 @@ export interface Member {
     phone: string;
     gender: 'Male' | 'Female' | 'Other';
     age: number;
+    address: string;
     membershipStatus: 'Active' | 'Inactive' | 'Pending' | 'Expired';
     membershipExpiry?: Date; // typed as Date
     trainerId?: string;
@@ -22,7 +23,7 @@ export interface Achievement {
     memberId: string;
     title: string;
     description?: string;
-    date: Date; // backend calls it 'date'
+    earnedDate: Date; // backend calls it 'earnedDate'
     gymId: string;
     createdAt?: Date;
     updatedAt?: Date;

@@ -26,20 +26,29 @@ export class AnalyticsService {
     }
 
     getTrainerPerformance(): Observable<{ success: boolean; data: TrainerPerformance[] }> {
-        return this.http.get<{ success: boolean; data: TrainerPerformance[] }>(`${this.apiUrl}/trainers/performance`);
+        return this.http.get<{ success: boolean; data: TrainerPerformance[] }>(`${this.apiUrl}/trainer-performance`);
     }
 
     // Advanced / Detailed Analytics
     getAdvancedAnalytics(period: 'week' | 'month' | 'year' = 'month'): Observable<{ success: boolean; data: AdvancedAnalytics }> {
         const params = new HttpParams().set('period', period);
-        return this.http.get<{ success: boolean; data: AdvancedAnalytics }>(`${this.apiUrl}/dashboard/advanced`, { params });
+        return this.http.get<{ success: boolean; data: AdvancedAnalytics }>(`${this.apiUrl}/advanced`, { params });
     }
 
-    // Financial
+    // Financial (Mapping to General Finance/Profit-Loss)
     getFinancialReport(month: string, year: number): Observable<{ success: boolean; data: FinancialReport }> {
         const params = new HttpParams()
             .set('month', month)
             .set('year', year.toString());
-        return this.http.get<{ success: boolean; data: FinancialReport }>(`${this.apiUrl}/finance/report`, { params });
+        return this.http.get<{ success: boolean; data: FinancialReport }>(`${environment.apiUrl}/finance/profit-loss`, { params });
+    }
+
+    // New Backend 2.0 Methods
+    getPredictions(type: 'churn' | 'attendance' | 'revenue'): Observable<{ success: boolean; data: any }> {
+        return this.http.get<{ success: boolean; data: any }>(`${this.apiUrl}/predictions/${type}`);
+    }
+
+    getAlerts(): Observable<{ success: boolean; data: any[] }> {
+        return this.http.get<{ success: boolean; data: any[] }>(`${this.apiUrl}/alerts`);
     }
 }

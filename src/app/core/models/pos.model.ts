@@ -10,11 +10,12 @@ export interface Product {
     name: string;
     sku?: string;
     description?: string;
-    category: string; // e.g., 'Supplement', 'Merchandise', or ref ID
+    category: string; // e.g., 'Supplements', 'Drinks', 'Accessories', 'Merchandise', 'Other'
     price: number;
     costPrice?: number;
-    stock: number;
-    minStockLevel?: number;
+    stockQuantity: number;
+    reorderLevel?: number;
+    unit?: 'Piece' | 'Bottle' | 'Pack' | 'Box' | 'Kg';
     isLowStock?: boolean; // Computable on frontend or backend
     images?: string[];
     isActive: boolean;
@@ -40,13 +41,14 @@ export interface SaleItem {
 
 export interface Sale {
     _id?: string;
+    saleNumber: string;
     items: SaleItem[];
     subTotal: number;
     discount?: number;
     tax?: number;
-    total: number;
-    paymentMethod: 'Cash' | 'Card' | 'Online' | 'Other';
-    status: 'Completed' | 'Refunded' | 'Cancelled';
+    grandTotal: number;
+    paymentMethod: 'Cash' | 'Card' | 'UPI';
+    status: 'Paid' | 'Pending' | 'Refunded';
     soldBy: string; // Staff/User ID
     memberId?: string; // Optional linkage
     date: Date;

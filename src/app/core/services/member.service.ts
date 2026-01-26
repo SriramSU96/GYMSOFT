@@ -53,11 +53,11 @@ export class MemberService {
 
     // Related Data Fetching
     getMemberWorkoutPlan(id: string): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/${id}/workout`);
+        return this.http.get<any>(`${this.apiUrl}/${id}/workout-plan`);
     }
 
     getMemberDietPlan(id: string): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/${id}/diet`);
+        return this.http.get<any>(`${this.apiUrl}/${id}/diet-plan`);
     }
 
     getMemberAttendance(id: string, startDate?: string, endDate?: string): Observable<any> {
