@@ -47,7 +47,7 @@ export class ProductList implements OnInit {
     filterCategory: string = 'All';
     showLowStockOnly: boolean = false;
 
-    categories = ['Supplement', 'Drink', 'Gear', 'Apparel', 'Accessories', 'Other'];
+    categories = ['Supplements', 'Drinks', 'Accessories', 'Merchandise', 'Gear', 'Apparel', 'Other'];
 
     constructor(
         private posService: PosService,

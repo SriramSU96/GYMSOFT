@@ -36,7 +36,7 @@ export interface SaleItem {
     productName: string; // Snapshot
     quantity: number;
     unitPrice: number; // Snapshot
-    total: number;
+    totalPrice: number;
 }
 
 export interface Sale {

@@ -59,7 +59,7 @@ export interface AssignedDietPlan {
     dietPlanId: string;
     startDate: Date;
     endDate?: Date;
-    status: 'Active' | 'Completed' | 'Cancelled';
+    status: 'Active' | 'Completed' | 'Paused';
     assignedBy: string;
     gymId: string;
     createdAt?: Date;

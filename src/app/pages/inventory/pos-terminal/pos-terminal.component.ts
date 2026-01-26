@@ -28,7 +28,7 @@ export class PosTerminal implements OnInit {
     cart: CartItem[] = [];
 
     // UI State
-    categories: string[] = ['All', 'Supplement', 'Drink', 'Gear', 'Other'];
+    categories: string[] = ['All', 'Supplements', 'Drinks', 'Accessories', 'Merchandise', 'Gear', 'Other'];
     selectedCategory: string = 'All';
     searchQuery: string = '';
 
@@ -199,7 +199,7 @@ export class PosTerminal implements OnInit {
             productName: item.productName,
             quantity: item.quantity,
             unitPrice: item.price,
-            total: item.price * item.quantity
+            totalPrice: item.price * item.quantity
         }));
 
         const saleData: Sale = {
