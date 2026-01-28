@@ -84,7 +84,8 @@ export class MemberDietAssignmentService {
                 gender: 'Male',
                 age: 0,
                 membershipStatus: 'Active',
-                gymId: dietPlan.gymId
+                gymId: dietPlan.gymId,
+                address: ''
             } : undefined,
             dietPlanId: dietPlan._id || '',
             dietPlan: dietPlan,
